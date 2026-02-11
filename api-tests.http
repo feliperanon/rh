@@ -1,8 +1,8 @@
 ### 1. Health Check
-GET https://rh-gppm.onrender.com
+GET https://rh-backend.onrender.com
 
 ### 2. Login (Admin)
-POST https://rh-gppm.onrender.com/auth/login
+POST https://rh-backend.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### 3. Login (Psicóloga)
-POST https://rh-gppm.onrender.com/auth/login
+POST https://rh-backend.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### 4. Criar Empresa
-POST https://rh-gppm.onrender.com/companies
+POST https://rh-backend.onrender.com/companies
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
 
@@ -32,11 +32,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6Z
 }
 
 ### 5. Listar Empresas
-GET https://rh-gppm.onrender.com/companies
+GET https://rh-backend.onrender.com/companies
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
 
 ### 6. Criar Setor
-POST https://rh-gppm.onrender.com/sectors
+POST https://rh-backend.onrender.com/sectors
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
 
@@ -46,11 +46,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6Z
 }
 
 ### 7. Listar Setores
-GET https://rh-gppm.onrender.com/sectors
+GET https://rh-backend.onrender.com/sectors
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
 
 ### 8. Criar Pré-Cadastro (Application)
-POST https://rh-gppm.onrender.com/applications
+POST https://rh-backend.onrender.com/applications
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
 
@@ -61,9 +61,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6Z
 }
 
 ### 9. Listar Applications
-GET https://rh-gppm.onrender.com/applications
+GET https://rh-backend.onrender.com/applications
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
 
 ### 10. Buscar Candidatos
-GET https://rh-gppm.onrender.com/candidates?search=987654321
+GET https://rh-backend.onrender.com/candidates?search=987654321
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx

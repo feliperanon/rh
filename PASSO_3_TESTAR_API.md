@@ -10,7 +10,7 @@ Validar que todos os endpoints do backend estão funcionando corretamente após 
 - ✅ Migrations rodadas com sucesso
 - ✅ Seed executado (usuários criados)
 - ✅ Deploy no Render concluído
-- ✅ URL da API: `https://rh-gppm.onrender.com`
+- ✅ URL da API: `https://rh-backend.onrender.com`
 
 ---
 
@@ -40,7 +40,7 @@ Abra o terminal e rode os comandos abaixo.
 
 **cURL:**
 ```bash
-curl https://rh-gppm.onrender.com
+curl https://rh-backend.onrender.com
 ```
 
 **Resposta esperada:**
@@ -56,7 +56,7 @@ Hello World!
 
 **cURL:**
 ```bash
-curl -X POST https://rh-gppm.onrender.com/auth/login \
+curl -X POST https://rh-backend.onrender.com/auth/login \
   -H "Content-Type: application/json" \
   -d "{\"email\":\"admin@rh.com\",\"password\":\"admin123\"}"
 ```
@@ -84,7 +84,7 @@ curl -X POST https://rh-gppm.onrender.com/auth/login \
 
 **cURL:**
 ```bash
-curl -X POST https://rh-gppm.onrender.com/companies \
+curl -X POST https://rh-backend.onrender.com/companies \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN_AQUI" \
   -d "{\"nome_interno\":\"Empresa Teste\",\"sigilosa\":false,\"perguntar_recontratacao\":true,\"modo_pergunta_recontratacao\":\"COM_NOME\"}"
@@ -112,7 +112,7 @@ curl -X POST https://rh-gppm.onrender.com/companies \
 
 **cURL:**
 ```bash
-curl https://rh-gppm.onrender.com/companies \
+curl https://rh-backend.onrender.com/companies \
   -H "Authorization: Bearer SEU_TOKEN_AQUI"
 ```
 
@@ -134,7 +134,7 @@ curl https://rh-gppm.onrender.com/companies \
 
 **cURL:**
 ```bash
-curl -X POST https://rh-gppm.onrender.com/sectors \
+curl -X POST https://rh-backend.onrender.com/sectors \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN_AQUI" \
   -d "{\"company_id\":\"ID_DA_EMPRESA\",\"nome\":\"Operacional\"}"
@@ -161,7 +161,7 @@ curl -X POST https://rh-gppm.onrender.com/sectors \
 
 **cURL:**
 ```bash
-curl -X POST https://rh-gppm.onrender.com/applications \
+curl -X POST https://rh-backend.onrender.com/applications \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN_AQUI" \
   -d "{\"phone\":\"(11) 98765-4321\",\"company_id\":\"ID_DA_EMPRESA\",\"sector_id\":\"ID_DO_SETOR\"}"
@@ -192,10 +192,10 @@ Crie um arquivo `api-tests.http` na raiz do projeto:
 
 ```http
 ### 1. Health Check
-GET https://rh-gppm.onrender.com
+GET https://rh-backend.onrender.com
 
 ### 2. Login
-POST https://rh-gppm.onrender.com/auth/login
+POST https://rh-backend.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -204,7 +204,7 @@ Content-Type: application/json
 }
 
 ### 3. Criar Empresa
-POST https://rh-gppm.onrender.com/companies
+POST https://rh-backend.onrender.com/companies
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -216,11 +216,11 @@ Authorization: Bearer {{token}}
 }
 
 ### 4. Listar Empresas
-GET https://rh-gppm.onrender.com/companies
+GET https://rh-backend.onrender.com/companies
 Authorization: Bearer {{token}}
 
 ### 5. Criar Setor
-POST https://rh-gppm.onrender.com/sectors
+POST https://rh-backend.onrender.com/sectors
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -230,7 +230,7 @@ Authorization: Bearer {{token}}
 }
 
 ### 6. Criar Pré-Cadastro
-POST https://rh-gppm.onrender.com/applications
+POST https://rh-backend.onrender.com/applications
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -273,7 +273,7 @@ Authorization: Bearer {{token}}
 
 **Causa**: Endpoint não existe ou URL incorreta
 
-**Solução**: Verifique a URL: `https://rh-gppm.onrender.com`
+**Solução**: Verifique a URL: `https://rh-backend.onrender.com`
 
 ---
 

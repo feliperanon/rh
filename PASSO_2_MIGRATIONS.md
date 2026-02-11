@@ -78,7 +78,7 @@ Psicóloga: psicologa@rh.com / admin123
 Teste o endpoint de login:
 
 ```bash
-curl -X POST https://rh-gppm.onrender.com/auth/login \
+curl -X POST https://rh-backend.onrender.com/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@rh.com","password":"admin123"}'
 ```

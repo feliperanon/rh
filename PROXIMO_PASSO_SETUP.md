@@ -44,7 +44,7 @@ Adicione no `api-tests.http`:
 
 ```http
 ### 0. Setup (Criar Usuários)
-POST https://rh-gppm.onrender.com/auth/setup
+POST https://rh-backend.onrender.com/auth/setup
 ```
 
 Clique em "Send Request".
@@ -52,14 +52,14 @@ Clique em "Send Request".
 **Ou no PowerShell**:
 
 ```powershell
-Invoke-WebRequest -Uri "https://rh-gppm.onrender.com/auth/setup" -Method POST
+Invoke-WebRequest -Uri "https://rh-backend.onrender.com/auth/setup" -Method POST
 ```
 
 ### 3. Teste o Login
 
 ```http
 ### 2. Login (Admin)
-POST https://rh-gppm.onrender.com/auth/login
+POST https://rh-backend.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -78,7 +78,7 @@ Substitua `SEU_TOKEN_AQUI` pelo token copiado:
 
 ```http
 ### 4. Criar Empresa
-POST https://rh-gppm.onrender.com/companies
+POST https://rh-backend.onrender.com/companies
 Content-Type: application/json
 Authorization: Bearer SEU_TOKEN_AQUI
 

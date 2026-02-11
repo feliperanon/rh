@@ -99,7 +99,7 @@ Após salvar:
 4. ✅ Vai rodar `npx prisma generate`
 5. ✅ Vai rodar `npm run build`
 6. ✅ Vai rodar `npm run start:prod`
-7. ✅ API vai ficar online em `https://rh-gppm.onrender.com`
+7. ✅ API vai ficar online em `https://rh-backend.onrender.com`
 
 ---
 
@@ -124,7 +124,7 @@ Após o deploy, você deve ver nos logs:
 Teste:
 
 ```powershell
-Invoke-WebRequest -Uri "https://rh-gppm.onrender.com"
+Invoke-WebRequest -Uri "https://rh-backend.onrender.com"
 ```
 
 Deve retornar: `StatusCode: 200`
@@ -143,7 +143,7 @@ Após deploy bem-sucedido:
    ```
 3. **Testar login**:
    ```bash
-   curl -X POST https://rh-gppm.onrender.com/auth/login \
+  curl -X POST https://rh-backend.onrender.com/auth/login \
      -H "Content-Type: application/json" \
      -d '{"email":"admin@rh.com","password":"admin123"}'
    ```
