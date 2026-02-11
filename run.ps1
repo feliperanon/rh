@@ -18,12 +18,23 @@ if (Test-Path "backend/tsconfig.tsbuildinfo") { Remove-Item "backend/tsconfig.ts
 
 # Build do Backend (necessario para o dist/main)
 Write-Host "Construindo Backend..." -ForegroundColor Yellow
-Start-Process -Wait -NoNewWindow -FilePath $npmCmd -ArgumentList "install" -WorkingDirectory "backend"
-Start-Process -Wait -NoNewWindow -FilePath $npmCmd -ArgumentList "run build" -WorkingDirectory "backend"
+$backendPath = Join-Path $PSScriptRoot "backend"
+Push-Location $backendPath
+try {
+    & $npmCmd install
+    & $npmCmd run build
+    if (-not (Test-Path "dist/main.js")) {
+        Write-Error "Build falhou: dist/main.js nao foi criado. Execute manualmente em backend: npm run build"
+        exit 1
+    }
+    Write-Host "Build concluido. dist/main.js encontrado." -ForegroundColor Green
+} finally {
+    Pop-Location
+}
 
 # Inicia o Backend (NestJS) em segundo plano
 Write-Host "Iniciando Backend..." -ForegroundColor Yellow
-Start-Process -NoNewWindow -FilePath $npmCmd -ArgumentList "run start:dev" -WorkingDirectory "backend"
+Start-Process -NoNewWindow -FilePath $npmCmd -ArgumentList "run start:dev" -WorkingDirectory $backendPath
 
 # Inicia o Frontend (Next.js) em segundo plano
 Write-Host "Iniciando Frontend..." -ForegroundColor Yellow
