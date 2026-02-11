@@ -33,7 +33,6 @@ URL do seu site: `https://rh-gppm.onrender.com`
 
 ### 3. Configurar Root Directory
 
-**Procure por**: "Root Directory"
 
 **Valor atual**: (provavelmente vazio ou `src`)
 
