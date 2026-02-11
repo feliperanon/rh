@@ -27,6 +27,7 @@ export default function NewApplicationPage() {
     const [successData, setSuccessData] = useState<{
         protocol: string;
         link: string;
+        whatsapp_link: string;
         id: string;
     } | null>(null);
 
@@ -58,7 +59,8 @@ export default function NewApplicationPage() {
 
             setSuccessData({
                 protocol: result.protocol,
-                link: result.link,
+                link: result.cadastro_link, // Backend returns cadastro_link
+                whatsapp_link: result.whatsapp_link,
                 id: result.id,
             });
             toast.success("Pré-cadastro criado com sucesso!");
@@ -73,18 +75,9 @@ export default function NewApplicationPage() {
     };
 
     const handleWhatsApp = async () => {
-        if (!successData) return;
+        if (!successData?.whatsapp_link) return;
 
-        // Generate WhatsApp link logic (should match backend or use link directly)
-        // The plan suggested implementing generateWhatsAppLink in frontend too.
-        // Or we can rely on what backend returns if it returns the full message/link.
-        // Assuming we construct it here or open the link directly if provided?
-        // Let's construct it.
-
-        const message = `Olá! 😊 Tudo bem?\nPara concluir seu cadastro no processo seletivo, preencha este link: ${successData.link}\nProtocolo: ${successData.protocol}\nObrigado!`;
-        const whatsappUrl = `https://wa.me/55${phone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
-
-        window.open(whatsappUrl, "_blank");
+        window.open(successData.whatsapp_link, "_blank");
 
         // Register event
         try {

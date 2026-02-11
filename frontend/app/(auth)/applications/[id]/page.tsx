@@ -38,16 +38,22 @@ export default function ApplicationDetailsPage() {
     const handleWhatsApp = async () => {
         if (!application) return;
 
-        const phone = application.candidate.phone_normalizado.replace(/\D/g, "");
-        const whatsappUrl = `https://wa.me/55${phone}`;
-
-        window.open(whatsappUrl, "_blank");
-
         try {
+            const { whatsapp_link } = await api.refreshInviteLink(application.id);
+            window.open(whatsapp_link, "_blank");
+
+            // Also mark as opened (redundant if refresh-link records it? 
+            // but requirement says 'Ao clicar Abrir WhatsApp -> register WHATSAPP_ABERTO_PARA_ENVIO')
+            // refresh-link records REENVIO_LINK.
+            // Let's keep both for clarity or just rely on refresh-link?
+            // The requirement says specifically WHATSAPP_ABERTO_PARA_ENVIO.
+            // So we call it.
             await api.whatsappOpened(application.id);
+
             fetchApplication();
         } catch (e) {
             console.error(e);
+            toast.error("Erro ao gerar link do WhatsApp");
         }
     };
 

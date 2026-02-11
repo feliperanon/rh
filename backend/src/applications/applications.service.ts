@@ -132,6 +132,14 @@ export class ApplicationsService {
                 candidate: true,
                 company: true,
                 sector: true,
+                invite_tokens: {
+                    where: {
+                        used_at: null, // Only unused tokens
+                        // expires_at: { gt: new Date() } // Optional: only non-expired.
+                    },
+                    orderBy: { created_at: 'desc' },
+                    take: 1
+                },
                 events: {
                     include: {
                         user: {
@@ -149,6 +157,41 @@ export class ApplicationsService {
 
         return application;
     }
+
+    async refreshInviteLink(id: string, userId: string) {
+        const application = await this.findOne(id);
+        const { phone_e164 } = application.candidate;
+
+        // Invalidate old tokens? Or just create new one?
+        // Let's just create a new one.
+
+        const token = generateToken();
+        const tokenHash = hashToken(token);
+
+        await this.prisma.inviteToken.create({
+            data: {
+                application_id: application.id,
+                token_hash: tokenHash,
+                expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+            },
+        });
+
+        // Log event
+        await this.prisma.event.create({
+            data: {
+                application_id: application.id,
+                candidate_id: application.candidate_id,
+                user_id: userId,
+                type: EventType.REENVIO_LINK,
+            },
+        });
+
+        const cadastroLink = `${process.env.FRONTEND_URL || 'http://localhost:3001'}/cadastro/t/${token}`;
+        const whatsappLink = generateWhatsAppLink(phone_e164, application.protocol, cadastroLink);
+
+        return { whatsapp_link: whatsappLink, cadastro_link: cadastroLink };
+    }
+
 
     async updateStatus(id: string, updateApplicationDto: UpdateApplicationDto, userId: string) {
         const application = await this.findOne(id);

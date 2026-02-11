@@ -80,4 +80,10 @@ export class ApplicationsController {
     markSent(@Param('id') id: string, @CurrentUser() user: any) {
         return this.applicationsService.markSent(id, user.id);
     }
+
+    @Post(':id/refresh-link')
+    @Roles(Role.ADMIN, Role.PSICOLOGA)
+    refreshLink(@Param('id') id: string, @CurrentUser() user: any) {
+        return this.applicationsService.refreshInviteLink(id, user.id);
+    }
 }

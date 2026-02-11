@@ -119,4 +119,8 @@ export const api = {
 
         return response.blob();
     },
+
+    refreshInviteLink: (id: string) => fetchWithAuth(`/applications/${id}/refresh-link`, {
+        method: "POST",
+    }),
 };
