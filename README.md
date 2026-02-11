@@ -1,181 +1,75 @@
 # Sistema de Recrutamento Multiempresa
 
-Sistema web de recrutamento/triagem multiempresa com captação inicial via WhatsApp (sem integração com API do WhatsApp).
+Sistema web de recrutamento/triagem multiempresa com captação inicial via WhatsApp (sem integração direta com a API).
 
-## 🏗️ Arquitetura
+## Arquitetura
+- Frontend: Next.js 14 + TypeScript + TailwindCSS + shadcn/ui
+- Backend: NestJS + Prisma + PostgreSQL
+- Deploy: Render (backend + frontend + Postgres)
 
-- **Frontend**: Next.js 14 + TypeScript + TailwindCSS + shadcn/ui
-- **Backend**: NestJS + Prisma + PostgreSQL
-- **Deploy**: Render (2 Web Services + Postgres)
-
-## 📁 Estrutura do Projeto
-
+## Estrutura do repositório
 ```
 rh/
-├── backend/          # API NestJS
-│   ├── prisma/       # Schema e migrations
-│   └── src/          # Código fonte
-├── frontend/         # App Next.js
-│   └── app/          # Next.js App Router
-└── README.md         # Este arquivo
+├── backend/           # API NestJS + Prisma
+│   ├── prisma/        # schema.prisma, migrations e seeds
+│   └── src/           # código fonte
+├── frontend/          # App Next.js (App Router)
+└── render.yaml        # definição dos serviços no Render
 ```
 
-## 🚀 Como Rodar Localmente
-
-### Pré-requisitos
-
-- Node.js 18+
-- PostgreSQL 14+
-- npm ou pnpm
-
-### Backend (NestJS)
-
-```bash
-cd backend
-
-# Instalar dependências (já instalado)
-npm install
-
-# Configurar .env
-cp .env.example .env
-# Editar .env com suas credenciais do PostgreSQL
-
-# Rodar migrations
-npx prisma migrate dev
-
-# Iniciar servidor de desenvolvimento
-npm run start:dev
-```
-
-O backend estará disponível em `http://localhost:3000`
-
-### Frontend (Next.js)
-
-```bash
-cd frontend
-
-# Instalar dependências (já instalado)
-npm install
-
-# Configurar .env.local
-cp .env.local.example .env.local
-# Editar .env.local com a URL do backend
-
-# Iniciar servidor de desenvolvimento
-npm run dev
-```
-
-O frontend estará disponível em `http://localhost:3001`
-
-## 🔑 Funcionalidades Principais
-
-### Para Psicólogas/Admins
-
-- ✅ Login com autenticação (NextAuth)
-- ✅ CRUD de empresas e setores
-- ✅ Criação de pré-cadastros (telefone + empresa + setor)
-- ✅ Geração automática de protocolo e link de cadastro
-- ✅ Abertura de WhatsApp com mensagem pré-preenchida
-- ✅ Linha do tempo completa de eventos
-- ✅ Exportação para Excel (inscrições + eventos)
-
-### Para Candidatos
-
-- ✅ Formulário público de cadastro (via link com token)
-- ✅ Validação de CPF (dígitos verificadores)
-- ✅ Sigilo total (nome da empresa só aparece se configurado)
-- ✅ Pergunta condicional de recontratação
-
-## 🛡️ Segurança
-
-- Tokens com hash SHA-256 (nunca salvos em texto puro)
-- Rate limiting no endpoint público (10 req/min)
-- Validação de CPF e telefone
-- RBAC (Admin / Psicóloga)
-- CORS configurado
-
-## 📊 Banco de Dados
-
-Modelagem completa com 7 tabelas:
-
-- `users` - Usuários do sistema (admin/psicóloga)
-- `companies` - Empresas clientes
-- `sectors` - Setores/vagas por empresa
-- `candidates` - Candidatos (reutilizáveis)
-- `applications` - Inscrições em processos seletivos
-- `invite_tokens` - Tokens de acesso ao formulário
-- `events` - Auditoria completa (timeline)
-
-## 🌐 Deploy no Render
+## Executar localmente
+Pré-requisitos: Node 18+, PostgreSQL 14+, npm.
 
 ### Backend
-
-1. Criar Web Service no Render
-2. Conectar repositório Git
-3. Build Command: `cd backend && npm install && npx prisma generate && npm run build`
-4. Start Command: `cd backend && npm run start:prod`
-5. Adicionar variáveis de ambiente:
-   - `DATABASE_URL`
-   - `JWT_SECRET`
-   - `NODE_ENV=production`
+```bash
+cd backend
+npm install
+cp .env.example .env        # ajuste DATABASE_URL e JWT_SECRET
+npx prisma db push          # cria tabelas conforme schema
+npm run start:dev           # http://localhost:3000
+```
+Seed rápido (cria admin e psicóloga, senha `admin123`):
+```bash
+node seed-simple.js
+# ou: curl -X POST http://localhost:3000/auth/setup
+```
 
 ### Frontend
-
-1. Criar Web Service no Render
-2. Conectar repositório Git
-3. Build Command: `cd frontend && npm install && npm run build`
-4. Start Command: `cd frontend && npm start`
-5. Adicionar variáveis de ambiente:
-   - `NEXT_PUBLIC_API_URL` (URL do backend)
-   - `NEXTAUTH_SECRET`
-   - `NEXTAUTH_URL`
-
-### Banco de Dados
-
-1. Criar Postgres no Render
-2. Copiar `DATABASE_URL` para o backend
-3. Rodar migrations: `npx prisma migrate deploy`
-
-## 📝 Variáveis de Ambiente
-
-### Backend (.env)
-
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/rh"
-JWT_SECRET="seu-secret-super-seguro"
-PORT=3000
-NODE_ENV=development
-```
-
-### Frontend (.env.local)
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXTAUTH_SECRET=seu-secret-nextauth
-NEXTAUTH_URL=http://localhost:3001
-```
-
-## 🧪 Testes
-
 ```bash
-# Backend
-cd backend
-npm test
-
-# Frontend
 cd frontend
-npm test
+npm install
+cp .env.local.example .env.local   # defina NEXT_PUBLIC_API_URL
+npm run dev                         # http://localhost:3001
 ```
 
-## 📚 Documentação Técnica
+## Testes rápidos de API
+```bash
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@rh.com","password":"admin123"}'
+```
+Use o access_token retornado em `Authorization: Bearer <token>` para rotas protegidas (`/companies`, `/sectors`, `/applications`, etc.).
 
-- [Plano de Implementação](../.gemini/antigravity/brain/3c4f029e-4f0f-432e-ae7e-038050af0a04/implementation_plan.md)
-- [Checklist de Tarefas](../.gemini/antigravity/brain/3c4f029e-4f0f-432e-ae7e-038050af0a04/task.md)
+## Deploy no Render
+- Arquivo `render.yaml` já preparado:
+  - Backend build: `cd backend && npm install --production=false && npx prisma generate && npm run build`
+  - Backend start: `cd backend && npm run start:prod`
+  - Variáveis obrigatórias backend: `DATABASE_URL`, `JWT_SECRET`, `NODE_ENV=production`, `PORT=10000`, `FRONTEND_URL`
+  - `.npmrc` no backend força instalação de devDependencies (necessárias para o `nest build`).
+- Banco: crie Postgres no Render e defina `DATABASE_URL`.
+- Após primeiro deploy, rode no shell do serviço:
+  - `npx prisma db push` (ou `npx prisma migrate deploy` se houver migrations)
+  - `node seed-simple.js` ou `curl -X POST https://<seu-backend>/auth/setup`
 
-## 🤝 Contribuindo
+## Modelagem (tabelas principais)
+`users`, `companies`, `sectors`, `candidates`, `applications`, `invite_tokens`, `events`.
 
-Este é um projeto interno. Para dúvidas ou sugestões, entre em contato com a equipe de desenvolvimento.
+## Segurança
+- Hash de senha com bcrypt
+- Tokens JWT com segredo configurável
+- Tokens de convite armazenados com hash
+- CORS liberado apenas para `FRONTEND_URL`
+- Validação de CPF, telefone e rate limit no endpoint público
 
-## 📄 Licença
-
-Propriedade privada. Todos os direitos reservados.
+## Licença
+Uso interno. Todos os direitos reservados.
