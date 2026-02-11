@@ -18,27 +18,34 @@ Inicializar o banco de dados com as tabelas e dados iniciais (usuários admin e 
 
 ### 2. Rodar Migrations
 
-No terminal do Shell, execute:
+⚠️ **IMPORTANTE**: Primeiro faça push do código atualizado (Prisma 5):
+
+```bash
+git add .
+git commit -m "fix: downgrade Prisma para v5.22.0"
+git push origin main
+```
+
+Aguarde o Render fazer redeploy automático (1-2 minutos).
+
+Depois, no terminal do Shell do Render, execute:
 
 ```bash
 cd backend
-npx prisma migrate deploy
+npm install
+npx prisma generate
+npx prisma db push
 ```
 
 **O que esperar:**
 ```
+Environment variables loaded from .env
 Prisma schema loaded from prisma/schema.prisma
 Datasource "db": PostgreSQL database "rh_backend"
 
-Applying migration `20260211000000_init`
+🚀  Your database is now in sync with your Prisma schema. Done in 2.5s
 
-The following migration(s) have been applied:
-
-migrations/
-  └─ 20260211000000_init/
-    └─ migration.sql
-
-All migrations have been successfully applied.
+✔ Generated Prisma Client (5.22.0) to ./node_modules/@prisma/client
 ```
 
 ---
