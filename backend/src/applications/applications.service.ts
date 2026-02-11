@@ -373,12 +373,37 @@ export class ApplicationsService {
     }
 
 
-    async exportApplications(res: any) {
+    async exportApplications(res: any, filters?: {
+        status?: ApplicationStatus;
+        companyId?: string;
+        sectorId?: string;
+        startDate?: string;
+        endDate?: string;
+    }) {
+        const where: any = {};
+
+        if (filters?.status) where.status = filters.status;
+        if (filters?.companyId) where.company_id = filters.companyId;
+        if (filters?.sectorId) where.sector_id = filters.sectorId;
+
+        if (filters?.startDate || filters?.endDate) {
+            where.created_at = {};
+            if (filters.startDate) where.created_at.gte = new Date(filters.startDate);
+            if (filters.endDate) where.created_at.lte = new Date(filters.endDate); // Consider end of day if needed
+        }
+
         const applications = await this.prisma.application.findMany({
+            where,
             include: {
                 candidate: true,
                 company: true,
                 sector: true,
+                events: {
+                    include: {
+                        user: { select: { name: true } }
+                    },
+                    orderBy: { occurred_at: 'asc' }
+                }
             },
             orderBy: { created_at: 'desc' },
         });
@@ -386,6 +411,8 @@ export class ApplicationsService {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const Workbook = require('exceljs').Workbook;
         const workbook = new Workbook();
+
+        // --- ABA 1: INSCRIÇÕES ---
         const sheet = workbook.addWorksheet('Inscrições');
 
         sheet.columns = [
@@ -399,21 +426,47 @@ export class ApplicationsService {
             { header: 'Status', key: 'status', width: 15 },
         ];
 
-        applications.forEach(app => {
+        applications.forEach((app: any) => {
             sheet.addRow({
                 date: app.created_at,
                 protocol: app.protocol,
-                name: app.candidate.name,
+                name: app.candidate.name || 'N/A',
                 phone: app.candidate.phone_normalizado,
-                cpf: app.candidate.cpf,
-                company: app.company.nome_interno,
+                cpf: app.candidate.cpf || 'N/A',
+                company: app.company.sigilosa ? 'Confidencial' : app.company.nome_interno,
                 sector: app.sector.nome,
                 status: app.status,
             });
         });
 
-        // Formatar data
         sheet.getColumn('date').numFmt = 'dd/mm/yyyy';
+
+        // --- ABA 2: EVENTOS (TIMELINE) ---
+        const eventsSheet = workbook.addWorksheet('Eventos');
+
+        eventsSheet.columns = [
+            { header: 'Protocolo', key: 'protocol', width: 15 },
+            { header: 'Data/Hora', key: 'occurred_at', width: 20 },
+            { header: 'Tipo', key: 'type', width: 25 },
+            { header: 'Usuário', key: 'user', width: 20 },
+            { header: 'Notas', key: 'notes', width: 30 },
+        ];
+
+        applications.forEach((app: any) => {
+            if (app.events && app.events.length > 0) {
+                app.events.forEach((event: any) => {
+                    eventsSheet.addRow({
+                        protocol: app.protocol,
+                        occurred_at: event.occurred_at,
+                        type: event.type,
+                        user: event.user?.name || 'Sistema/Candidato',
+                        notes: event.notes || '',
+                    });
+                });
+            }
+        });
+
+        eventsSheet.getColumn('occurred_at').numFmt = 'dd/mm/yyyy hh:mm';
 
         await workbook.xlsx.write(res);
     }

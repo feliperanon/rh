@@ -47,10 +47,17 @@ export class ApplicationsController {
 
     @Get('export/all')
     @Roles(Role.ADMIN, Role.PSICOLOGA)
-    async export(@Res() res: any) {
+    async export(
+        @Res() res: any,
+        @Query('status') status?: ApplicationStatus,
+        @Query('company_id') companyId?: string,
+        @Query('sector_id') sectorId?: string,
+        @Query('start_date') startDate?: string,
+        @Query('end_date') endDate?: string,
+    ) {
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename="inscricoes.xlsx"');
-        return this.applicationsService.exportApplications(res);
+        return this.applicationsService.exportApplications(res, { status, companyId, sectorId, startDate, endDate });
     }
 
     @Get(':id')

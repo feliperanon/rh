@@ -102,7 +102,7 @@ export const api = {
     }),
 
     // Export
-    exportApplications: async () => {
+    exportApplications: async (filters?: { status?: string, companyId?: string, sectorId?: string, startDate?: string, endDate?: string }) => {
         const session = await getSession();
         const headers = {
             ...(session?.accessToken && {
@@ -110,7 +110,14 @@ export const api = {
             }),
         };
 
-        const response = await fetch(`${API_URL}/applications/export/all`, {
+        const params = new URLSearchParams();
+        if (filters?.status) params.append('status', filters.status);
+        if (filters?.companyId) params.append('company_id', filters.companyId);
+        if (filters?.sectorId) params.append('sector_id', filters.sectorId);
+        if (filters?.startDate) params.append('start_date', filters.startDate);
+        if (filters?.endDate) params.append('end_date', filters.endDate);
+
+        const response = await fetch(`${API_URL}/applications/export/all?${params.toString()}`, {
             method: 'GET',
             headers,
         });

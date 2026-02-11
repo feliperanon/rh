@@ -1,7 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+    throw new Error('Missing DATABASE_URL environment variable when running seed');
+}
+
+const prisma = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: databaseUrl }),
+});
 
 async function main() {
     console.log('🌱 Iniciando seed do banco de dados...');

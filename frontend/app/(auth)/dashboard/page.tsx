@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { ExportModal } from "@/components/ExportModal";
 
 export default function DashboardPage() {
     const [stats, setStats] = useState<any>(null);
@@ -117,6 +118,7 @@ export default function DashboardPage() {
                         <Button onClick={() => router.push('/candidates')} variant="outline" className="w-full justify-start" size="lg">
                             <Users className="mr-2 h-4 w-4" /> Buscar Candidato
                         </Button>
+                        <ExportModal />
                     </CardContent>
                 </Card>
             </div>

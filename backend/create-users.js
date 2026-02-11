@@ -1,7 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
+const { PrismaPg } = require('@prisma/adapter-pg');
 const bcrypt = require('bcrypt');
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+    throw new Error('Missing DATABASE_URL environment variable when running create-users');
+}
+
+const prisma = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: databaseUrl }),
+});
 
 async function createUsers() {
     console.log('🌱 Criando usuários...');
