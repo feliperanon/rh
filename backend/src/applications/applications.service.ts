@@ -329,3 +329,48 @@ export class ApplicationsService {
         return { message: 'Cadastro realizado com sucesso' };
     }
 }
+
+    async exportApplications(res: any) {
+    const applications = await this.prisma.application.findMany({
+        include: {
+            candidate: true,
+            company: true,
+            sector: true,
+        },
+        orderBy: { created_at: 'desc' },
+    });
+
+    const Workbook = require('exceljs').Workbook;
+    const workbook = new Workbook();
+    const sheet = workbook.addWorksheet('Inscrições');
+
+    sheet.columns = [
+        { header: 'Data', key: 'date', width: 15 },
+        { header: 'Protocolo', key: 'protocol', width: 15 },
+        { header: 'Nome', key: 'name', width: 30 },
+        { header: 'Telefone', key: 'phone', width: 20 },
+        { header: 'CPF', key: 'cpf', width: 15 },
+        { header: 'Empresa', key: 'company', width: 20 },
+        { header: 'Setor', key: 'sector', width: 20 },
+        { header: 'Status', key: 'status', width: 15 },
+    ];
+
+    applications.forEach(app => {
+        sheet.addRow({
+            date: app.created_at,
+            protocol: app.protocol,
+            name: app.candidate.name,
+            phone: app.candidate.phone_normalizado,
+            cpf: app.candidate.cpf,
+            company: app.company.nome_interno,
+            sector: app.sector.nome,
+            status: app.status,
+        });
+    });
+
+    // Formatar data
+    sheet.getColumn('date').numFmt = 'dd/mm/yyyy';
+
+    await workbook.xlsx.write(res);
+}
+}

@@ -99,4 +99,23 @@ export const api = {
         method: "POST",
         body: JSON.stringify(data),
     }),
+
+    // Export
+    exportApplications: async () => {
+        const session = await getSession();
+        const headers = {
+            ...(session?.accessToken && {
+                Authorization: `Bearer ${session.accessToken}`,
+            }),
+        };
+
+        const response = await fetch(`${API_URL}/applications/export/all`, {
+            method: 'GET',
+            headers,
+        });
+
+        if (!response.ok) throw new Error("Erro ao exportar");
+
+        return response.blob();
+    },
 };

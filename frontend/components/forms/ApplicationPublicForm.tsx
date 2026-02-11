@@ -53,7 +53,7 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
     const [loading, setLoading] = useState(false);
 
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema) as any,
         defaultValues: {
             name: initialData.candidate.name || "",
             cpf: initialData.candidate.cpf || "",
