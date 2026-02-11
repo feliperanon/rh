@@ -7,6 +7,7 @@ import {
     Param,
     UseGuards,
     Query,
+    Res,
 } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -36,6 +37,14 @@ export class ApplicationsController {
         @Query('sector_id') sectorId?: string,
     ) {
         return this.applicationsService.findAll(status, companyId, sectorId);
+    }
+
+    @Get('export/all')
+    @Roles(Role.ADMIN, Role.PSICOLOGA)
+    async export(@Res() res: any) {
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename="inscricoes.xlsx"');
+        return this.applicationsService.exportApplications(res);
     }
 
     @Get(':id')

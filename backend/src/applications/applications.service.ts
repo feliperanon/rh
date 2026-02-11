@@ -210,4 +210,122 @@ export class ApplicationsService {
 
         return { message: 'Link marcado como enviado' };
     }
+
+    async findByToken(token: string) {
+        const tokenHash = hashToken(token);
+
+        const inviteToken = await this.prisma.inviteToken.findUnique({
+            where: { token_hash: tokenHash },
+            include: {
+                application: {
+                    include: {
+                        candidate: true,
+                        company: true,
+                        sector: true,
+                    },
+                },
+            },
+        });
+
+        if (!inviteToken) {
+            throw new NotFoundException('Token inválido ou não encontrado');
+        }
+
+        if (inviteToken.expires_at && inviteToken.expires_at < new Date()) {
+            throw new BadRequestException('Token expirado');
+        }
+
+        if (inviteToken.used_at) {
+            throw new BadRequestException('Este link já foi utilizado');
+        }
+
+        const app = inviteToken.application;
+
+        // Regra de Sigilo
+        let companyName = app.company.nome_interno;
+
+        if (app.company.sigilosa) {
+            companyName = "Empresa Confidencial";
+        }
+
+        return {
+            id: app.id,
+            protocol: app.protocol,
+            status: app.status,
+            candidate: {
+                id: app.candidate.id,
+                name: app.candidate.name,
+                phone_normalizado: app.candidate.phone_normalizado,
+                cpf: app.candidate.cpf,
+                birth_date: app.candidate.birth_date,
+                education: app.candidate.education,
+                vt_value_cents: app.candidate.vt_value_cents,
+                schedule_prefs: app.candidate.schedule_prefs,
+                worked_here_before: app.candidate.worked_here_before,
+            },
+            company: {
+                id: app.company.id,
+                nome: companyName, // Retorna nome mascarado ou real
+                perguntar_recontratacao: app.company.perguntar_recontratacao,
+                modo_pergunta_recontratacao: app.company.modo_pergunta_recontratacao,
+                sigilosa: app.company.sigilosa,
+            },
+            sector: {
+                id: app.sector.id,
+                nome: app.sector.nome,
+            },
+        };
+    }
+
+    async submitByToken(token: string, data: any) {
+        // Valida token novamente
+        const tokenHash = hashToken(token);
+        const inviteToken = await this.prisma.inviteToken.findUnique({
+            where: { token_hash: tokenHash },
+            include: { application: true },
+        });
+
+        if (!inviteToken || (inviteToken.expires_at && inviteToken.expires_at < new Date()) || inviteToken.used_at) {
+            throw new BadRequestException('Token inválido ou expirado');
+        }
+
+        const applicationId = inviteToken.application_id;
+        const candidateId = inviteToken.application.candidate_id;
+
+        // Atualiza Candidato
+        await this.prisma.candidate.update({
+            where: { id: candidateId },
+            data: {
+                name: data.name,
+                cpf: data.cpf,
+                birth_date: data.birth_date ? new Date(data.birth_date) : null,
+                education: data.education,
+                vt_value_cents: typeof data.vt_value_cents === 'string' ? parseInt(data.vt_value_cents) : data.vt_value_cents,
+                schedule_prefs: data.schedule_prefs, // Array de string/enum
+                worked_here_before: data.worked_here_before,
+            },
+        });
+
+        // Atualiza Aplicação e Token
+        await this.prisma.$transaction([
+            this.prisma.application.update({
+                where: { id: applicationId },
+                data: { status: ApplicationStatus.CADASTRO_PREENCHIDO },
+            }),
+            this.prisma.inviteToken.update({
+                where: { id: inviteToken.id },
+                data: { used_at: new Date() },
+            }),
+            this.prisma.event.create({
+                data: {
+                    application_id: applicationId,
+                    candidate_id: candidateId,
+                    type: EventType.CADASTRO_PREENCHIDO,
+                    notes: 'Candidato completou o formulário via link público',
+                }
+            })
+        ]);
+
+        return { message: 'Cadastro realizado com sucesso' };
+    }
 }

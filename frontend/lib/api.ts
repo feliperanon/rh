@@ -31,6 +31,23 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     return response.json();
 }
 
+async function fetchPublic(endpoint: string, options: RequestInit = {}) {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Erro API: ${response.status}`);
+    }
+
+    return response.json();
+}
+
 export const api = {
     // Companies
     getCompanies: () => fetchWithAuth("/companies"),
@@ -43,7 +60,7 @@ export const api = {
         body: JSON.stringify(data),
     }),
     toggleCompany: (id: string) => fetchWithAuth(`/companies/${id}`, {
-        method: "DELETE", // Assuming DELETE toggles active status or actual delete
+        method: "DELETE",
     }),
 
     // Sectors
@@ -56,4 +73,30 @@ export const api = {
 
     // Applications
     getApplications: () => fetchWithAuth("/applications"),
+    createApplication: (data: any) => fetchWithAuth("/applications", {
+        method: "POST",
+        body: JSON.stringify(data),
+    }),
+    getApplication: (id: string) => fetchWithAuth(`/applications/${id}`),
+    updateApplicationStatus: (id: string, status: string) => fetchWithAuth(`/applications/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+    }),
+    whatsappOpened: (id: string) => fetchWithAuth(`/applications/${id}/whatsapp-opened`, {
+        method: "POST",
+    }),
+    markSent: (id: string) => fetchWithAuth(`/applications/${id}/mark-sent`, {
+        method: "POST",
+    }),
+
+    // Candidates
+    getCandidates: (search: string) => fetchWithAuth(`/candidates?search=${search}`),
+    getCandidate: (id: string) => fetchWithAuth(`/candidates/${id}`),
+
+    // Public
+    getApplicationByToken: (token: string) => fetchPublic(`/invite/${token}`),
+    submitApplicationByToken: (token: string, data: any) => fetchPublic(`/invite/${token}`, {
+        method: "POST",
+        body: JSON.stringify(data),
+    }),
 };
