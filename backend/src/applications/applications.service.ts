@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { normalizePhone, phoneToE164, validatePhone } from '../common/validators/validators';
+// import { normalizePhone, phoneToE164, validatePhone } from '../common/validators/validators';
 import { generateProtocol } from '../common/utils/protocol';
 import { generateToken, hashToken } from '../common/utils/tokens';
 import { generateWhatsAppLink } from '../common/utils/whatsapp';
@@ -340,6 +340,7 @@ export class ApplicationsService {
             orderBy: { created_at: 'desc' },
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const Workbook = require('exceljs').Workbook;
         const workbook = new Workbook();
         const sheet = workbook.addWorksheet('Inscrições');
