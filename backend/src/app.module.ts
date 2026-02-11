@@ -8,8 +8,15 @@ import { SectorsModule } from './sectors/sectors.module';
 import { CandidatesModule } from './candidates/candidates.module';
 import { ApplicationsModule } from './applications/applications.module';
 
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 10,
+    }]),
     PrismaModule,
     AuthModule,
     CompaniesModule,
@@ -18,6 +25,12 @@ import { ApplicationsModule } from './applications/applications.module';
     ApplicationsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule { }

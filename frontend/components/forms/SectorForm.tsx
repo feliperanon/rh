@@ -42,12 +42,12 @@ export function SectorForm({ sector, companyId, onSuccess }: SectorFormProps) {
     const [loading, setLoading] = useState(false);
 
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema) as any,
         defaultValues: {
             nome: sector?.nome || "",
             ativo: sector?.ativo ?? true,
             company_id: sector?.company_id || companyId,
-        },
+        } as any,
     });
 
     async function onSubmit(values: FormValues) {
