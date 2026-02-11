@@ -25,8 +25,8 @@ const formSchema = z.object({
         message: "Nome deve ter pelo menos 2 caracteres.",
     }),
     ativo: z.boolean().default(true),
-    company_id: z.string().uuid({
-        message: "Empresa inválida",
+    company_id: z.string().min(1, {
+        message: "Empresa é obrigatória",
     }),
 });
 
@@ -54,10 +54,6 @@ export function SectorForm({ sector, companyId, onSuccess }: SectorFormProps) {
         setLoading(true);
         try {
             if (sector) {
-                // Update sector logic (needs endpoint in api.ts)
-                // ensure api.updateSector exists or use generic patch
-                // For now assuming updateSector exists or create works
-                // await api.updateSector(sector.id, values);
                 toast.error("Edição ainda não implementada no API client");
             } else {
                 await api.createSector(values);
@@ -91,28 +87,26 @@ export function SectorForm({ sector, companyId, onSuccess }: SectorFormProps) {
                     )}
                 />
 
-                <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                        <FormLabel>Ativo</FormLabel>
-                        <FormDescription>
-                            Disponível para seleção
-                        </FormDescription>
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="ativo"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="ativo"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                            <div className="space-y-0.5">
+                                <FormLabel>Ativo</FormLabel>
+                                <FormDescription>
+                                    Disponível para seleção
+                                </FormDescription>
+                            </div>
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
 
                 <Button type="submit" disabled={loading}>
                     {loading ? "Salvando..." : (sector ? "Atualizar" : "Criar")}

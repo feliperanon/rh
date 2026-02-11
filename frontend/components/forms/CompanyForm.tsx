@@ -110,74 +110,68 @@ export function CompanyForm({ company, onSuccess }: CompanyFormProps) {
                     )}
                 />
 
-                <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                        <FormLabel>Ativo</FormLabel>
-                        <FormDescription>
-                            Disponível para novas vagas
-                        </FormDescription>
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="ativo"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="ativo"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                            <div className="space-y-0.5">
+                                <FormLabel>Ativo</FormLabel>
+                                <FormDescription>
+                                    Disponível para novas vagas
+                                </FormDescription>
+                            </div>
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
 
-                <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                        <FormLabel>Sigilosa</FormLabel>
-                        <FormDescription>
-                            Esconde nome da empresa no formulário público
-                        </FormDescription>
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="sigilosa"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="sigilosa"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                            <div className="space-y-0.5">
+                                <FormLabel>Sigilosa</FormLabel>
+                                <FormDescription>
+                                    Esconde nome da empresa no formulário público
+                                </FormDescription>
+                            </div>
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
 
-                <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                        <FormLabel>Perguntar Recontratação</FormLabel>
-                        <FormDescription>
-                            Questiona se o candidato já trabalhou na empresa
-                        </FormDescription>
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="perguntar_recontratacao"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="perguntar_recontratacao"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                            <div className="space-y-0.5">
+                                <FormLabel>Perguntar Recontratação</FormLabel>
+                                <FormDescription>
+                                    Questiona se o candidato já trabalhou na empresa
+                                </FormDescription>
+                            </div>
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}
