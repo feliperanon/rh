@@ -18,4 +18,19 @@ services:
       - key: NPM_CONFIG_PRODUCTION
         value: false
       - key: FRONTEND_URL
-        value: https://rh-frontend.onrender.com
+        value: https://rh-gppm.onrender.com
+
+  - type: web
+    name: rh-gppm
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm run start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://rh-backend.onrender.com
+      - key: NEXTAUTH_URL
+        value: https://rh-gppm.onrender.com
+      - key: NEXTAUTH_SECRET
+        generateValue: true

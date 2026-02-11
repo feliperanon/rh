@@ -31,7 +31,7 @@ DATABASE_URL=postgresql://user:password@host:5432/database
 JWT_SECRET=seu-secret-super-seguro-mude-em-producao
 NODE_ENV=production
 PORT=3000
-FRONTEND_URL=https://rh-frontend.onrender.com
+FRONTEND_URL=https://rh-gppm.onrender.com
 ```
 
 ### 4. Banco de Dados (Render Postgres)
@@ -53,7 +53,7 @@ npx prisma db seed
 
 ### 1. Criar Web Service no Render
 
-- **Name**: rh-frontend
+- **Name**: rh-gppm *(essa será a URL pública do sistema, ou seja, https://rh-gppm.onrender.com)*
 - **Environment**: Node
 - **Branch**: main
 
@@ -72,7 +72,7 @@ cd frontend && npm start
 ```
 NEXT_PUBLIC_API_URL=https://rh-backend.onrender.com
 NEXTAUTH_SECRET=seu-secret-nextauth
-NEXTAUTH_URL=https://rh-frontend.onrender.com
+NEXTAUTH_URL=https://rh-gppm.onrender.com
 ```
 
 ---

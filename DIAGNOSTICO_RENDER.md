@@ -2,7 +2,7 @@
 
 ## ❌ Problema Detectado
 
-A API `https://rh-gppm.onrender.com` não está respondendo.
+A API `https://rh-backend.onrender.com` não está respondendo.
 
 **Erro**: `A conexão foi fechada de modo inesperado`
 
@@ -146,7 +146,7 @@ Após corrigir o deploy:
 1. **Aguarde** o serviço ficar "Live" (5-10 min)
 2. **Teste** o health check:
    ```powershell
-   Invoke-WebRequest -Uri "https://rh-gppm.onrender.com"
+Invoke-WebRequest -Uri "https://rh-backend.onrender.com"
    ```
 3. **Abra o Shell do Render** e rode migrations:
    ```bash

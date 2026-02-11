@@ -64,7 +64,7 @@ DATABASE_URL=postgresql://rh_user:senha@dpg-xxxxx/rh
 JWT_SECRET=seu-secret-super-seguro-mude-em-producao-12345
 NODE_ENV=production
 PORT=10000
-FRONTEND_URL=https://rh-frontend.onrender.com
+FRONTEND_URL=https://rh-gppm.onrender.com
 ```
 
 ⚠️ **IMPORTANTE**: 

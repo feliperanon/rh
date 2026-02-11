@@ -59,7 +59,7 @@ Value: 10000
 Key: FRONTEND_URL
 Value: http://localhost:3001
 ```
-⚠️ **Atualizar depois** quando o frontend estiver no ar: `https://rh-frontend.onrender.com`
+⚠️ **Atualizar depois** quando o frontend estiver no ar: `https://rh-gppm.onrender.com`
 
 ---
 
@@ -107,4 +107,4 @@ Após configurar as variáveis de ambiente:
 | `JWT_SECRET` | `rh-jwt-secret-production-2026-super-seguro-nao-compartilhar` |
 | `NODE_ENV` | `production` |
 | `PORT` | `10000` |
-| `FRONTEND_URL` | `http://localhost:3001` (atualizar depois) |
+| `FRONTEND_URL` | `http://localhost:3001` (atualizar depois para `https://rh-gppm.onrender.com`) |

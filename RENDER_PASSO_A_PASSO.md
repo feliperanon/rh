@@ -57,7 +57,7 @@ No Render, **o banco de dados é criado automaticamente** quando você adiciona 
 | `JWT_SECRET` | `rh-jwt-secret-production-2026-super-seguro` |
 | `NODE_ENV` | `production` |
 | `PORT` | `10000` |
-| `FRONTEND_URL` | `https://rh-frontend.onrender.com` (ou `http://localhost:3001` se o frontend ainda estiver local) |
+| `FRONTEND_URL` | `https://rh-gppm.onrender.com` (ou `http://localhost:3001` se o frontend ainda estiver local) |
 
 3. Clique em **Save Changes**
 
