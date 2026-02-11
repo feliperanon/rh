@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Table,
     TableBody,
@@ -31,15 +31,15 @@ import { api } from "@/lib/api";
 import { Company, Sector } from "@/types";
 import { SectorForm } from "@/components/forms/SectorForm";
 import { format } from "date-fns";
+import { MainLayout } from "@/components/layout/MainLayout";
 
 export default function SectorsPage() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [selectedCompanyId, setSelectedCompanyId] = useState<string>("");
     const [sectors, setSectors] = useState<Sector[]>([]);
     const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
-    // Load companies on mount
     useEffect(() => {
         const loadCompanies = async () => {
             try {
@@ -55,7 +55,6 @@ export default function SectorsPage() {
         loadCompanies();
     }, []);
 
-    // Load sectors when selected company changes
     useEffect(() => {
         if (!selectedCompanyId) return;
 
@@ -74,53 +73,52 @@ export default function SectorsPage() {
     }, [selectedCompanyId]);
 
     const onSuccess = () => {
-        setOpen(false);
-        // Reload sectors
+        setDialogOpen(false);
         if (selectedCompanyId) {
             api.getSectors(selectedCompanyId).then(setSectors);
         }
     };
 
+    const headerActions = useMemo(() => (
+        <div className="flex flex-wrap items-center gap-3">
+            <Select value={selectedCompanyId} onValueChange={setSelectedCompanyId}>
+                <SelectTrigger className="w-[240px]">
+                    <SelectValue placeholder="Selecione uma empresa" />
+                </SelectTrigger>
+                <SelectContent>
+                    {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                            {company.nome_interno}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button disabled={!selectedCompanyId}>
+                        <Plus className="mr-2 h-4 w-4" /> Novo Setor
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Novo Setor</DialogTitle>
+                        <DialogDescription>
+                            Adicione um setor ou vaga para a empresa selecionada.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {selectedCompanyId && <SectorForm companyId={selectedCompanyId} onSuccess={onSuccess} />}
+                </DialogContent>
+            </Dialog>
+        </div>
+    ), [companies, dialogOpen, onSuccess, selectedCompanyId]);
+
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Setores</h1>
-                <div className="flex items-center gap-4">
-                    <Select value={selectedCompanyId} onValueChange={setSelectedCompanyId}>
-                        <SelectTrigger className="w-[280px]">
-                            <SelectValue placeholder="Selecione uma empresa" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {companies.map((company) => (
-                                <SelectItem key={company.id} value={company.id}>
-                                    {company.nome_interno}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-
-                    <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogTrigger asChild>
-                            <Button disabled={!selectedCompanyId}>
-                                <Plus className="mr-2 h-4 w-4" /> Novo Setor
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Novo Setor</DialogTitle>
-                                <DialogDescription>
-                                    Adicione um setor ou vaga para a empresa selecionada.
-                                </DialogDescription>
-                            </DialogHeader>
-                            {selectedCompanyId && (
-                                <SectorForm companyId={selectedCompanyId} onSuccess={onSuccess} />
-                            )}
-                        </DialogContent>
-                    </Dialog>
-                </div>
-            </div>
-
-            <div className="rounded-md border">
+        <MainLayout
+            title="Setores"
+            description="Gerencie vagas e sub-áreas por empresa."
+            actions={headerActions}
+        >
+            <div className="glass-panel border border-white/5">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -162,6 +160,6 @@ export default function SectorsPage() {
                     </TableBody>
                 </Table>
             </div>
-        </div>
+        </MainLayout>
     );
 }
