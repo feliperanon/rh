@@ -6,15 +6,28 @@ import * as bcrypt from 'bcrypt';
 export class SetupController {
     constructor(private prisma: PrismaService) { }
 
-    @Post('setup')
+    @Post('init')
     @HttpCode(HttpStatus.OK)
-    async setup() {
+    async init() {
+        // Verificar se já existem usuários
+        const existingUsers = await this.prisma.user.count();
+
+        if (existingUsers > 0) {
+            const users = await this.prisma.user.findMany({
+                select: { email: true, role: true }
+            });
+            return {
+                message: 'Usuários já existem no sistema',
+                count: existingUsers,
+                users,
+            };
+        }
+
+        // Criar usuários
         const passwordHash = await bcrypt.hash('admin123', 10);
 
-        const admin = await this.prisma.user.upsert({
-            where: { email: 'admin@rh.com' },
-            update: {},
-            create: {
+        const admin = await this.prisma.user.create({
+            data: {
                 name: 'Administrador',
                 email: 'admin@rh.com',
                 password_hash: passwordHash,
@@ -22,10 +35,8 @@ export class SetupController {
             },
         });
 
-        const psicologa = await this.prisma.user.upsert({
-            where: { email: 'psicologa@rh.com' },
-            update: {},
-            create: {
+        const psicologa = await this.prisma.user.create({
+            data: {
                 name: 'Psicóloga',
                 email: 'psicologa@rh.com',
                 password_hash: passwordHash,
