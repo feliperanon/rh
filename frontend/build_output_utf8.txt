@@ -1,0 +1,141 @@
+﻿
+> frontend@0.1.0 build
+> next build
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+node.exe : ÔÜá The 
+"middleware" file 
+convention is 
+deprecated. Please 
+use "proxy" instead. 
+Learn more: https://ne
+xtjs.org/docs/messages
+/middleware-to-proxy
+No linha:1 caractere:1
++ & "C:\Program Files\
+nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (ÔÜá The "m   
+ iddle...leware-to    
+-proxy:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 32.4s
+  Running TypeScript ...
+Failed to compile.
+
+./components/forms/Com
+panyForm.tsx:59:9
+Type error: Type 
+'Resolver<{ 
+nome_interno: string; 
+modo_pergunta_recontra
+tacao: "GENERICO" | 
+"COM_NOME"; ativo?: 
+boolean | undefined; 
+sigilosa?: boolean | 
+undefined; perguntar_r
+econtratacao?: 
+boolean | undefined; 
+}, any, { ...; }>' is 
+not assignable to 
+type 'Resolver<{ 
+nome_interno: string; 
+ativo: boolean; 
+sigilosa: boolean; per
+guntar_recontratacao: 
+boolean; modo_pergunta
+_recontratacao: 
+"GENERICO" | 
+"COM_NOME"; }, any, { 
+nome_interno: string; 
+ativo: boolean; 
+sigilosa: boolean; per
+guntar_recontratacao: 
+boolean; modo_pergunta
+_recontratacao: 
+"GENERICO" | 
+"COM_NOME"; }>'.
+  Types of parameters 
+'options' and 
+'options' are 
+incompatible.
+    Type 
+'ResolverOptions<{ 
+nome_interno: string; 
+ativo: boolean; 
+sigilosa: boolean; per
+guntar_recontratacao: 
+boolean; modo_pergunta
+_recontratacao: 
+"GENERICO" | 
+"COM_NOME"; }>' is 
+not assignable to 
+type 
+'ResolverOptions<{ 
+nome_interno: string; 
+modo_pergunta_recontra
+tacao: "GENERICO" | 
+"COM_NOME"; ativo?: 
+boolean | undefined; 
+sigilosa?: boolean | 
+undefined; perguntar_r
+econtratacao?: 
+boolean | undefined; 
+}>'.
+      Type 'boolean | 
+undefined' is not 
+assignable to type 
+'boolean'.
+        Type 
+'undefined' is not 
+assignable to type 
+'boolean'.
+
+[0m [90m 57 |[39m
+ [90m 58 |[39m     
+[36mconst[39m form 
+[33m=[39m useForm[3
+3m<[39m[33mFormValue
+s[39m[33m>[39m({
+[31m[1m>[22m[39m[
+90m 59 |[39m         
+resolver[33m:[39m zo
+dResolver(formSchema)
+[33m,[39m
+ [90m    |[39m      
+   
+[31m[1m^[22m[39m
+ [90m 60 |[39m      
+   defaultValues[33m:
+[39m {
+ [90m 61 |[39m      
+       nome_interno[3
+3m:[39m company[33m?
+[39m[33m.[39mnome_i
+nterno [33m||[39m [
+32m""[39m[33m,[39m
+ [90m 62 |[39m      
+       
+ativo[33m:[39m compa
+ny[33m?[39m[33m.[3
+9mativo [33m?[39m[3
+3m?[39m [36mtrue[39
+m[33m,[39m[0m
+Next.js build worker 
+exited with code: 1 
+and signal: null

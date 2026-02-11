@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
+import { SubmitApplicationDto } from './dto/submit-application.dto';
 
 @Controller('invite')
 export class InviteController {
@@ -11,7 +12,8 @@ export class InviteController {
     }
 
     @Post(':token')
-    async submitByToken(@Param('token') token: string, @Body() data: any) {
+    @UsePipes(new ValidationPipe({ transform: true }))
+    async submitByToken(@Param('token') token: string, @Body() data: SubmitApplicationDto) {
         return this.applicationsService.submitByToken(token, data);
     }
 }

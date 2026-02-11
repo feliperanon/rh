@@ -56,14 +56,14 @@ export function CompanyForm({ company, onSuccess }: CompanyFormProps) {
     const [loading, setLoading] = useState(false);
 
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema) as any,
         defaultValues: {
             nome_interno: company?.nome_interno || "",
             ativo: company?.ativo ?? true,
             sigilosa: company?.sigilosa ?? false,
             perguntar_recontratacao: company?.perguntar_recontratacao ?? false,
-            modo_pergunta_recontratacao: company?.modo_pergunta_recontratacao as "GENERICO" | "COM_NOME" || "GENERICO",
-        },
+            modo_pergunta_recontratacao: (company?.modo_pergunta_recontratacao as "GENERICO" | "COM_NOME") || "GENERICO",
+        } as any,
     });
 
     async function onSubmit(values: FormValues) {

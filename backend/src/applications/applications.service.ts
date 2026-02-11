@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
+import { SubmitApplicationDto } from './dto/submit-application.dto';
 import { normalizePhone, phoneToE164, validatePhone } from '../common/validators/phone-validators';
 import { generateProtocol } from '../common/utils/protocol';
 import { generateToken, hashToken } from '../common/utils/tokens';
@@ -320,7 +321,9 @@ export class ApplicationsService {
         };
     }
 
-    async submitByToken(token: string, data: any) {
+
+
+    async submitByToken(token: string, data: SubmitApplicationDto) {
         // Valida token novamente
         const tokenHash = hashToken(token);
         const inviteToken = await this.prisma.inviteToken.findUnique({
