@@ -6,19 +6,36 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# Define o comando npm correto para Windows
-$npmCmd = "npm.cmd"
+# Funcao auxiliar para rodar npm cross-platform
+function Run-Npm {
+    param(
+        [string]$Path,
+        [string]$Args
+    )
+    if ($IsLinux -or $IsMacOS) {
+        Start-Process -NoNewWindow -FilePath "npm" -ArgumentList $Args -WorkingDirectory $Path
+    }
+    else {
+        Start-Process -NoNewWindow -FilePath "cmd.exe" -ArgumentList "/c npm $Args" -WorkingDirectory $Path
+    }
+}
+
+# Build do Backend (necessario para o dist/main)
+Write-Host "Construindo Backend..." -ForegroundColor Yellow
 if ($IsLinux -or $IsMacOS) {
-    $npmCmd = "npm"
+    Start-Process -Wait -FilePath "npm" -ArgumentList "run build" -WorkingDirectory "backend"
+}
+else {
+    Start-Process -Wait -FilePath "cmd.exe" -ArgumentList "/c npm run build" -WorkingDirectory "backend"
 }
 
 # Inicia o Backend (NestJS) em segundo plano
 Write-Host "Iniciando Backend..." -ForegroundColor Yellow
-Start-Process -NoNewWindow -FilePath $npmCmd -ArgumentList "run start:dev" -WorkingDirectory "backend"
+Run-Npm -Path "backend" -Args "run start:dev"
 
 # Inicia o Frontend (Next.js) em segundo plano
 Write-Host "Iniciando Frontend..." -ForegroundColor Yellow
-Start-Process -NoNewWindow -FilePath $npmCmd -ArgumentList "run dev" -WorkingDirectory "frontend"
+Run-Npm -Path "frontend" -Args "run dev"
 
 Write-Host "Sistema iniciado!" -ForegroundColor Green
 Write-Host "Backend: http://localhost:3000"
