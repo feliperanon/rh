@@ -377,7 +377,7 @@ export class ApplicationsService {
         const total = await this.prisma.application.count();
         const preCadastro = await this.prisma.application.count({ where: { status: ApplicationStatus.PRE_CADASTRO } });
         const linkGerado = await this.prisma.application.count({ where: { status: ApplicationStatus.LINK_GERADO } });
-        const whatsappAberto = await this.prisma.application.count({ where: { status: ApplicationStatus.WHATSAPP_ABERTO_PARA_ENVIO } });
+        const whatsappAberto = await this.prisma.application.count({ where: { status: ApplicationStatus.WHATSAPP_ABERTO } });
         const linkEnviado = await this.prisma.application.count({ where: { status: ApplicationStatus.LINK_ENVIADO } });
         const cadastroPreenchido = await this.prisma.application.count({ where: { status: ApplicationStatus.CADASTRO_PREENCHIDO } });
         const emContato = await this.prisma.application.count({ where: { status: ApplicationStatus.EM_CONTATO } });
