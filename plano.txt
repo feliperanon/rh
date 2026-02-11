@@ -1,0 +1,507 @@
+# Plano de Implementação: Sistema de Recrutamento Multiempresa
+
+Sistema web de recrutamento/triagem multiempresa com captação inicial via WhatsApp (sem integração com API do WhatsApp). Arquitetura API-first, responsivo (mobile + desktop), com segurança, auditoria completa e exportação Excel.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Decisão de Stack**: Escolhi a Opção A (monorepo Next.js) por simplicidade, custo e velocidade de MVP. Se preferir separar frontend/backend desde o início (Opção B: Next.js + NestJS), avise antes de prosseguir.
+
+> [!WARNING]
+> **Sigilo de Empresas**: Candidatos NUNCA verão o nome da empresa quando `sigilosa=true`. A pergunta de recontratação será genérica. Confirme se essa regra está correta.
+
+> [!IMPORTANT]
+> **Fluxo de Envio WhatsApp**: Como não há integração com WhatsApp API, o sistema:
+> 1. Abre `wa.me` com mensagem pré-preenchida (evento `WHATSAPP_ABERTO_PARA_ENVIO`)
+> 2. Psicóloga clica "Marcar como enviado" manualmente (evento `LINK_ENVIADO_CONFIRMADO`)
+> 
+> Isso exige disciplina da usuária. Confirme se esse fluxo é aceitável.
+
+---
+
+## Proposed Changes
+
+### Estrutura do Projeto
+
+```
+rh/
+├── prisma/
+│   ├── schema.prisma          # Modelagem completa do banco
+│   └── migrations/            # Migrações versionadas
+├── src/
+│   ├── app/                   # Next.js App Router
+│   │   ├── api/               # Route Handlers (backend)
+│   │   ├── (auth)/            # Grupo de rotas autenticadas
+│   │   ├── (public)/          # Grupo de rotas públicas
+│   │   └── layout.tsx         # Layout raiz
+│   ├── components/            # Componentes React (shadcn/ui)
+│   ├── lib/                   # Utilitários
+│   │   ├── prisma.ts          # Cliente Prisma
+│   │   ├── auth.ts            # NextAuth config
+│   │   ├── validators.ts      # CPF, telefone, etc.
+│   │   ├── tokens.ts          # Geração e hash de tokens
+│   │   ├── timezone.ts        # Conversão UTC ↔ BR
+│   │   └── protocol.ts        # Gerador de protocolo
+│   └── middleware.ts          # Auth + trace_id
+├── public/                    # Assets estáticos
+├── .env.local                 # Variáveis de ambiente (local)
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+---
+
+### Banco de Dados (Prisma Schema)
+
+#### [NEW] [schema.prisma](file:///c:/Projeto/rh/prisma/schema.prisma)
+
+**Tabelas principais:**
+
+1. **User** (psicólogas e admins)
+   - `id`, `name`, `email`, `password_hash`, `role` (ADMIN | PSICOLOGA)
+   
+2. **Company** (empresas clientes)
+   - `id`, `nome_interno`, `ativo`, `sigilosa`, `perguntar_recontratacao`, `modo_pergunta_recontratacao` (GENERICO | COM_NOME)
+   - **Regra**: `sigilosa=true` força `modo_pergunta_recontratacao=GENERICO`
+
+3. **Sector** (vagas/setores por empresa)
+   - `id`, `company_id`, `nome`, `ativo`
+
+4. **Candidate** (pessoa física, reutilizável)
+   - `id`, `phone_normalizado` (único), `phone_e164` (único), `name`, `cpf` (único quando não nulo), `birth_date`, `education`, `vt_value_cents`, `schedule_prefs` (array), `worked_here_before`
+
+5. **Application** (inscrição em processo seletivo)
+   - `id`, `candidate_id`, `company_id`, `sector_id`, `protocol` (único), `status` (enum com 11 estados)
+
+6. **InviteToken** (tokens de acesso ao formulário)
+   - `id`, `application_id`, `token_hash` (único), `expires_at`, `used_at`
+
+7. **Event** (auditoria completa)
+   - `id`, `application_id`, `candidate_id`, `user_id`, `type` (enum com 15 tipos), `occurred_at`, `notes`, `metadata` (jsonb)
+
+**Índices de performance:**
+- `candidates.phone_normalizado`, `candidates.cpf`
+- `applications.protocol`
+- `invite_tokens.token_hash`
+
+---
+
+### Autenticação e Autorização
+
+#### [NEW] [auth.ts](file:///c:/Projeto/rh/src/lib/auth.ts)
+
+- **NextAuth** com Credentials provider
+- Verificação de senha com `bcrypt`
+- Session com `role` (ADMIN | PSICOLOGA)
+- RBAC: rotas `/companies`, `/sectors` exigem autenticação
+
+#### [NEW] [middleware.ts](file:///c:/Projeto/rh/src/middleware.ts)
+
+- Proteção de rotas autenticadas
+- Geração de `trace_id` por request (header `X-Trace-Id`)
+- Redirecionamento para `/login` se não autenticado
+
+---
+
+### Utilitários e Validações
+
+#### [NEW] [validators.ts](file:///c:/Projeto/rh/src/lib/validators.ts)
+
+**Funções:**
+- `validateCPF(cpf: string): boolean` — Valida dígitos verificadores
+- `normalizeCPF(cpf: string): string` — Remove pontos/traços
+- `normalizePhone(phone: string): string` — Remove caracteres especiais
+- `phoneToE164(phone: string): string` — Converte para formato internacional (55DDDNXXXXXXXX)
+
+#### [NEW] [tokens.ts](file:///c:/Projeto/rh/src/lib/tokens.ts)
+
+**Funções:**
+- `generateToken(): string` — Gera token seguro (32 bytes, base64url)
+- `hashToken(token: string): string` — SHA-256 hash
+- `verifyToken(token: string, hash: string): boolean` — Compara token com hash
+
+#### [NEW] [timezone.ts](file:///c:/Projeto/rh/src/lib/timezone.ts)
+
+**Funções:**
+- `utcToBrasilia(date: Date): Date` — Converte UTC para America/Sao_Paulo
+- `brasiliaToUTC(date: Date): Date` — Converte America/Sao_Paulo para UTC
+- `formatBR(date: Date): string` — Formata em dd/MM/yyyy HH:mm
+
+#### [NEW] [protocol.ts](file:///c:/Projeto/rh/src/lib/protocol.ts)
+
+**Função:**
+- `generateProtocol(): string` — Gera protocolo único (ex: `RH-20260211-A3F9`)
+
+---
+
+### Backend - Route Handlers (APIs)
+
+Todas as APIs retornam JSON e seguem o padrão:
+
+**Sucesso:**
+```json
+{ "success": true, "data": {...} }
+```
+
+**Erro controlado:**
+```json
+{
+  "error": "Mensagem descritiva",
+  "context": "rh-system",
+  "trace_id": "abc123",
+  "hint": "Ver logs do servidor"
+}
+```
+
+#### [NEW] [api/companies/route.ts](file:///c:/Projeto/rh/src/app/api/companies/route.ts)
+
+- `GET /api/companies` — Lista empresas ativas
+- `POST /api/companies` — Cria empresa (valida regra: sigilosa → modo genérico)
+- `PATCH /api/companies/[id]` — Atualiza empresa
+- `DELETE /api/companies/[id]` — Desativa empresa
+
+#### [NEW] [api/sectors/route.ts](file:///c:/Projeto/rh/src/app/api/sectors/route.ts)
+
+- `GET /api/sectors?company_id=X` — Lista setores por empresa
+- `POST /api/sectors` — Cria setor
+- `PATCH /api/sectors/[id]` — Atualiza setor
+- `DELETE /api/sectors/[id]` — Desativa setor
+
+#### [NEW] [api/candidates/route.ts](file:///c:/Projeto/rh/src/app/api/candidates/route.ts)
+
+- `GET /api/candidates?search=X` — Busca por telefone/CPF/nome
+- `GET /api/candidates/[id]` — Detalhes + applications
+
+#### [NEW] [api/applications/route.ts](file:///c:/Projeto/rh/src/app/api/applications/route.ts)
+
+- `GET /api/applications` — Lista com filtros (status, empresa, setor)
+- `POST /api/applications` — Cria pré-cadastro (telefone + empresa + setor)
+  - Cria `Candidate` (só telefone)
+  - Cria `Application` com protocolo
+  - Gera `InviteToken` (hash)
+  - Registra eventos: `PRE_CADASTRO_CRIADO`, `EMPRESA_SETOR_DEFINIDOS`, `PROTOCOLO_GERADO`, `LINK_GERADO`
+- `GET /api/applications/[id]` — Detalhes + timeline (events)
+- `PATCH /api/applications/[id]/status` — Altera status
+- `POST /api/applications/[id]/whatsapp-opened` — Registra evento `WHATSAPP_ABERTO_PARA_ENVIO`
+- `POST /api/applications/[id]/mark-sent` — Registra evento `LINK_ENVIADO_CONFIRMADO`, altera status para `LINK_ENVIADO`
+- `POST /api/applications/[id]/contact` — Registra evento `CONTATO_REALIZADO` com notes
+
+#### [NEW] [api/cadastro/route.ts](file:///c:/Projeto/rh/src/app/api/cadastro/route.ts)
+
+- `GET /api/cadastro/validate-token?token=X` — Valida token (não usado, não expirado)
+- `POST /api/cadastro/submit` — Submete formulário público
+  - Valida token
+  - Valida CPF (dígitos + unicidade)
+  - Atualiza `Candidate` com dados completos
+  - Marca `InviteToken.used_at`
+  - Altera status para `CADASTRO_PREENCHIDO`
+  - Registra evento `CADASTRO_PREENCHIDO`
+  - **Rate limit**: 10 req/min por IP
+
+#### [NEW] [api/export/applications/route.ts](file:///c:/Projeto/rh/src/app/api/export/applications/route.ts)
+
+- `POST /api/export/applications` — Exporta XLSX
+  - Filtros: `company_id`, `sector_id`, `date_from`, `date_to`, `status`
+  - Aba 1: "Inscrições" (dados do candidato + status + datas principais)
+  - Aba 2: "Eventos" (timeline completa)
+  - Retorna arquivo binário (`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`)
+
+---
+
+### Frontend Admin
+
+#### [NEW] [app/(auth)/layout.tsx](file:///c:/Projeto/rh/src/app/(auth)/layout.tsx)
+
+Layout com:
+- Header com navegação (Dashboard, Empresas, Setores, Candidatos, Nova Inscrição)
+- Logout
+- Responsivo (menu hambúrguer em mobile)
+
+#### [NEW] [app/(auth)/dashboard/page.tsx](file:///c:/Projeto/rh/src/app/(auth)/dashboard/page.tsx)
+
+**Cards de status:**
+- Aguardando envio (`LINK_GERADO`)
+- Aguardando preenchimento (`LINK_ENVIADO`)
+- Cadastro completo (`CADASTRO_PREENCHIDO`)
+- Em contato (`EM_CONTATO`)
+- Entrevista marcada (`ENTREVISTA_MARCADA`)
+- Aprovados (`APROVADO`)
+- Reprovados (`REPROVADO`)
+
+**Filas:**
+- Lista de applications por status (últimas 10)
+
+#### [NEW] [app/(auth)/companies/page.tsx](file:///c:/Projeto/rh/src/app/(auth)/companies/page.tsx)
+
+- Tabela com empresas
+- Botão "Nova Empresa"
+- Modal de criação/edição
+- Campos: `nome_interno`, `ativo`, `sigilosa`, `perguntar_recontratacao`, `modo_pergunta_recontratacao`
+- **Validação**: Se `sigilosa=true`, `modo_pergunta_recontratacao` deve ser `GENERICO`
+
+#### [NEW] [app/(auth)/sectors/page.tsx](file:///c:/Projeto/rh/src/app/(auth)/sectors/page.tsx)
+
+- Select de empresa
+- Tabela de setores da empresa selecionada
+- Botão "Novo Setor"
+- Modal de criação/edição
+
+#### [NEW] [app/(auth)/candidates/page.tsx](file:///c:/Projeto/rh/src/app/(auth)/candidates/page.tsx)
+
+- Input de busca (telefone/CPF/nome)
+- Tabela de resultados
+- Ao clicar em candidato → lista de applications
+
+#### [NEW] [app/(auth)/applications/new/page.tsx](file:///c:/Projeto/rh/src/app/(auth)/applications/new/page.tsx)
+
+**Formulário:**
+1. Input telefone (validação E.164)
+2. Select empresa
+3. Select setor (filtrado por empresa)
+4. Botão "Criar Pré-cadastro"
+
+**Após criação:**
+- Exibe protocolo
+- Exibe link de cadastro
+- Botão "Abrir WhatsApp para enviar" (abre `wa.me` + registra evento)
+- Botão "Marcar como enviado" (registra evento + altera status)
+- Botão "Copiar mensagem" (copia texto para clipboard)
+
+**Mensagem WhatsApp:**
+```
+Olá! 😊 Tudo bem?
+Para concluir seu cadastro no processo seletivo, preencha este link: {LINK}
+Protocolo: {PROTOCOLO}
+Obrigado!
+```
+
+#### [NEW] [app/(auth)/applications/[id]/page.tsx](file:///c:/Projeto/rh/src/app/(auth)/applications/[id]/page.tsx)
+
+**Seções:**
+1. **Dados do Candidato** (nome, CPF, telefone, VT, escolaridade, data nascimento, horários, recontratação)
+2. **Dados da Inscrição** (empresa, setor, protocolo, status)
+3. **Linha do Tempo** (events ordenados por `occurred_at`)
+   - Ícone por tipo de evento
+   - Data/hora formatada (BR)
+   - Usuário responsável (se houver)
+   - Notas
+4. **Ações**
+   - Reenviar WhatsApp (gera novo token + evento `REENVIO_LINK`)
+   - Marcar como enviado
+   - Registrar contato (modal com textarea para notes)
+   - Alterar status (select)
+   - Editar candidato (modal, apenas ADMIN)
+
+---
+
+### Frontend Público
+
+#### [NEW] [app/(public)/cadastro/t/[token]/page.tsx](file:///c:/Projeto/rh/src/app/(public)/cadastro/t/[token]/page.tsx)
+
+**Validação inicial:**
+- Verifica se token existe e não foi usado
+- Se inválido/expirado → exibe erro
+
+**Formulário (sigilo total):**
+- Nome completo
+- CPF (validação + máscara)
+- Telefone (travado, exibido mas não editável)
+- Valor VT (R$, input numérico)
+- Escolaridade (select: Fundamental, Médio, Superior, Pós-graduação)
+- Data de Nascimento (date picker)
+- Preferência de horário (checkboxes: Manhã, Tarde, Noite)
+- **Pergunta condicional** (se `company.perguntar_recontratacao=true`):
+  - Se `sigilosa=false` e `modo=COM_NOME`: "Você já trabalhou na {NOME}?"
+  - Caso contrário: "Você já trabalhou nesta empresa anteriormente?"
+  - Resposta: SIM / NÃO
+
+**Submit:**
+- Valida todos os campos
+- Envia para `POST /api/cadastro/submit`
+- Exibe mensagem de sucesso: "Cadastro concluído! Protocolo: {PROTOCOLO}"
+
+---
+
+### WhatsApp Deep Link
+
+#### [NEW] [whatsapp.ts](file:///c:/Projeto/rh/src/lib/whatsapp.ts)
+
+**Função:**
+```typescript
+function generateWhatsAppLink(phone: string, protocol: string, link: string): string {
+  const phoneE164 = phoneToE164(phone); // 55DDDNXXXXXXXX
+  const message = `Olá! 😊 Tudo bem?\nPara concluir seu cadastro no processo seletivo, preencha este link: ${link}\nProtocolo: ${protocol}\nObrigado!`;
+  return `https://wa.me/${phoneE164}?text=${encodeURIComponent(message)}`;
+}
+```
+
+**Eventos:**
+- Ao clicar "Abrir WhatsApp" → `window.open(link)` + `POST /api/applications/[id]/whatsapp-opened`
+- Ao clicar "Marcar como enviado" → `POST /api/applications/[id]/mark-sent`
+
+---
+
+### Exportação Excel
+
+#### [NEW] [export.ts](file:///c:/Projeto/rh/src/lib/export.ts)
+
+**Biblioteca:** `xlsx` (SheetJS)
+
+**Aba 1: Inscrições**
+Colunas:
+- Protocolo
+- Nome
+- CPF
+- Telefone
+- Empresa
+- Setor
+- Status
+- Data Pré-cadastro
+- Data Link Gerado
+- Data Link Enviado
+- Data Cadastro Preenchido
+
+**Aba 2: Eventos**
+Colunas:
+- Protocolo
+- Tipo de Evento
+- Data/Hora
+- Usuário
+- Notas
+
+---
+
+## Verification Plan
+
+### Automated Tests
+
+1. **Validação de CPF**
+   ```bash
+   npm test -- validators.test.ts
+   ```
+   - CPF válido: `12345678909`
+   - CPF inválido: `11111111111`, `12345678900`
+
+2. **Normalização de telefone**
+   ```bash
+   npm test -- validators.test.ts
+   ```
+   - `(11) 98765-4321` → `11987654321` → `5511987654321`
+
+3. **Hash de tokens**
+   ```bash
+   npm test -- tokens.test.ts
+   ```
+   - Token gerado é único
+   - Hash é consistente
+
+4. **Sigilo de empresa**
+   ```bash
+   npm test -- cadastro.test.ts
+   ```
+   - Formulário público NUNCA exibe nome da empresa se `sigilosa=true`
+
+5. **Rate limiting**
+   ```bash
+   npm test -- rate-limit.test.ts
+   ```
+   - 11ª requisição em 1 minuto retorna 429
+
+### Manual Verification
+
+1. **Fluxo completo (happy path)**
+   - Login como psicóloga
+   - Criar empresa + setor
+   - Criar pré-cadastro (telefone + empresa + setor)
+   - Abrir WhatsApp (verificar mensagem)
+   - Marcar como enviado
+   - Acessar link público (outro navegador/anônimo)
+   - Preencher formulário
+   - Verificar timeline no admin
+   - Exportar Excel
+
+2. **Validações de negócio**
+   - Tentar criar empresa sigilosa com modo `COM_NOME` → deve forçar `GENERICO`
+   - Tentar cadastrar CPF duplicado → deve retornar erro
+   - Tentar usar token já usado → deve retornar erro
+
+3. **Responsividade**
+   - Testar todas as telas em mobile (Chrome DevTools)
+   - Verificar overflow horizontal
+   - Verificar botões acessíveis
+
+4. **Timezone**
+   - Criar application às 23:50 (horário local)
+   - Verificar se `occurred_at` está em UTC no banco
+   - Verificar se timeline exibe horário BR correto
+
+---
+
+## Medidas Preventivas
+
+### Anti-500 (Sistema Imunológico)
+
+1. **Middleware de trace_id** (obrigatório)
+2. **Handler global de exceções** em todas as Route Handlers:
+   ```typescript
+   try {
+     // lógica
+   } catch (error) {
+     logger.exception(error, { trace_id });
+     return NextResponse.json({
+       error: "Erro interno controlado",
+       context: "rh-system",
+       trace_id,
+       hint: "Ver logs do servidor"
+     }, { status: 500 });
+   }
+   ```
+
+### Anti-Cache (DEV)
+
+Headers em todas as rotas HTML:
+```typescript
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+```
+
+### Anti-Duplicidade
+
+- Índices únicos: `phone_normalizado`, `cpf`, `protocol`, `token_hash`
+- Validação antes de insert
+
+### Anti-Timezone
+
+- Armazenar sempre UTC
+- Converter para BR apenas na exibição
+- Usar `date-fns-tz` para conversões
+
+### Logs Estruturados
+
+```typescript
+logger.info('Application created', {
+  trace_id,
+  user_id,
+  application_id,
+  protocol
+});
+```
+
+---
+
+## Checklist de Validação Final
+
+- [ ] Login funciona (admin + psicóloga)
+- [ ] CRUD empresas/setores funciona
+- [ ] Pré-cadastro gera protocolo + token + link
+- [ ] Botão WhatsApp abre `wa.me` com mensagem correta
+- [ ] Eventos são registrados corretamente
+- [ ] Formulário público valida CPF
+- [ ] Formulário público respeita sigilo
+- [ ] Timeline exibe eventos em ordem cronológica (BR)
+- [ ] Exportação Excel gera 2 abas
+- [ ] Rate limiting funciona no endpoint público
+- [ ] Headers anti-cache em DEV
+- [ ] Nenhum erro 500 sem trace_id
+- [ ] README completo com instruções de deploy

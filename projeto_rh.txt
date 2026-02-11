@@ -1,0 +1,309 @@
+A seguir está a versão refeita e completa da especificação, já incluindo:
+
+* **Login** para a psicóloga (e futuro multiusuário).
+* No **cadastro da empresa**, uma configuração: **“perguntar se o candidato já trabalhou aqui?”**.
+* Algumas empresas **NÃO podem aparecer** para o candidato (sigilo), então a pergunta deve poder ser:
+
+  * **com o nome da empresa** (ex.: “Você já trabalhou na Othil?”) **OU**
+  * **genérica** (ex.: “Você já trabalhou nesta empresa anteriormente?”) sem revelar o nome.
+
+---
+
+# Projeto: Sistema de Captação e Triagem de Candidatos via WhatsApp (Multiempresa, Sigiloso, com Link e Histórico)
+
+## 1) Objetivo
+
+Sistema para recrutamento onde o primeiro contato ocorre pelo WhatsApp sem dados estruturados. O gestor cria um pré-cadastro apenas com o telefone, vincula internamente a uma empresa e setor/vaga, gera protocolo e link de cadastro, e o sistema abre automaticamente uma conversa no WhatsApp com mensagem pronta para envio.
+
+O sistema deve manter um histórico datado de todos os eventos (cadastro criado, link gerado, link enviado, cadastro preenchido, contatos e reenvios) e permitir exportação para Excel/CSV.
+
+**Regra crítica:** o candidato não pode saber qual empresa/cliente está por trás do processo quando a empresa estiver marcada como sigilosa.
+
+---
+
+## 2) Usuários e permissões
+
+### 2.1 Psicóloga/Gestora (Admin)
+
+* Acessa o sistema via login
+* Cadastra empresas e setores/vagas
+* Cria pré-cadastro por telefone
+* Define empresa e setor/vaga internamente
+* Gera protocolo e link do candidato
+* Dispara/abre WhatsApp com mensagem padrão (wa.me)
+* Marca como “enviado” e registra contatos
+* Visualiza e edita dados do candidato
+* Exporta dados para Excel/CSV
+
+### 2.2 Candidato (externo)
+
+* Acessa link e preenche dados
+* Não vê empresa/cliente (especialmente se a empresa for sigilosa)
+* Vê apenas textos neutros e campos necessários
+
+---
+
+## 3) Login (página obrigatória)
+
+### 3.1 Tela de Login
+
+* E-mail/usuário
+* Senha
+* “Entrar”
+* (Opcional) “Esqueci minha senha” (pode ficar para fase 2)
+
+### 3.2 Regras
+
+* Todas as páginas internas exigem autenticação
+* Registrar em log qual usuário realizou alterações e contatos (auditoria)
+
+---
+
+## 4) Cadastro de Empresa (com regras de sigilo e pergunta “já trabalhou aqui?”)
+
+### 4.1 Campos da Empresa (interno)
+
+* **nome_interno** (obrigatório) — exemplo: “Othil”, “Cliente A”
+* status (ativo/inativo)
+* observações internas
+
+### 4.2 Configurações importantes da Empresa (novas)
+
+1. **empresa_sigilosa** (boolean)
+
+* Se **true**: o nome não pode aparecer em nenhuma tela do candidato e nem em mensagens automáticas.
+* Se **false**: pode aparecer, se vocês quiserem (mas não é obrigatório).
+
+2. **perguntar_recontratacao** (boolean)
+
+* Se **true**: o formulário do candidato deve incluir a pergunta “já trabalhou aqui?”
+
+3. **modo_pergunta_recontratacao** (enum)
+
+* `COM_NOME` (apenas se empresa_sigilosa = false)
+
+  * Exemplo: “Você já trabalhou na Othil?”
+* `GENERICO` (compatível com empresa_sigilosa = true ou false)
+
+  * Exemplo: “Você já trabalhou nesta empresa anteriormente?”
+
+**Regra de validação:**
+
+* Se `empresa_sigilosa = true`, o sistema deve **forçar** `modo_pergunta_recontratacao = GENERICO`.
+
+---
+
+## 5) Cadastro de Setores/Vagas (por empresa)
+
+Campos:
+
+* empresa_id
+* nome do setor/vaga (ex.: Expedição, Call Center, Reposição)
+* status (ativo/inativo)
+* observações internas
+
+---
+
+## 6) Dados do candidato (o que ele preenche)
+
+Campos obrigatórios no formulário:
+
+* **Nome**
+* **CPF**
+* **Telefone** (travado ou validado para ser o mesmo do pré-cadastro)
+* **Valor de VT (ida e volta)** em R$
+* **Escolaridade**
+* **Data de nascimento**
+* **Preferência de horário** (multi-seleção):
+
+  * Manhã
+  * Tarde
+  * Noite
+    (permitir 1, 2 ou 3)
+
+Campo condicional (por empresa):
+
+* **Já trabalhou nesta empresa?** (SIM/NÃO)
+
+  * Aparece apenas se `perguntar_recontratacao = true`
+  * Texto depende do modo (com nome ou genérico)
+
+---
+
+## 7) Fluxo principal do sistema (com abertura automática do WhatsApp)
+
+### Passo A — Pré-cadastro por telefone
+
+1. Psicóloga entra no sistema (login).
+2. Cria pré-cadastro informando:
+
+* telefone (obrigatório)
+* seleciona empresa (obrigatório)
+* seleciona setor/vaga (obrigatório)
+
+**Regra:** telefone deve ser único (normalizado). Se já existir, o sistema não cria duplicado; abre o cadastro existente.
+
+### Passo B — Gerar protocolo e link do candidato
+
+3. Ao salvar o pré-cadastro, o sistema gera:
+
+* **protocolo único** (ex.: `NIO-20250512-0041`)
+* **link com token seguro**:
+
+  * `https://dominio.com/cadastro/t/<token>`
+
+O token deve mapear internamente:
+
+* candidate_id (ou process_id)
+* empresa_id
+* setor_id
+* created_at
+* status do link (gerado/enviado/usado)
+* expiração opcional
+
+### Passo C — Abrir conversa no WhatsApp com mensagem pronta
+
+4. O sistema deve mostrar um botão: **“Enviar no WhatsApp”**
+
+* Ao clicar, abre:
+
+  * `https://wa.me/<telefone>?text=<mensagem_url_encoded>`
+
+Conteúdo da mensagem (neutro, sem empresa):
+
+> Olá! 😊 Tudo bem?
+> Para eu concluir seu cadastro no processo seletivo, preencha este formulário rapidinho:
+> **Protocolo:** NIO-20250512-0041
+> Link: [https://dominio.com/cadastro/t/8F3KQ2](https://dominio.com/cadastro/t/8F3KQ2)
+> Obrigado!
+
+5. Ao clicar em “Enviar no WhatsApp”, registrar evento:
+
+* **WHATSAPP_ABERTO_PARA_ENVIO** (data/hora)
+
+6. Deve existir um botão **“Marcar como enviado”** (MVP)
+
+* Ao clicar, registrar:
+* **LINK_ENVIADO_CONFIRMADO** (data/hora)
+
+> Fase 2: integração com WhatsApp Business API para registrar envio automaticamente.
+
+### Passo D — Candidato preenche e sistema registra
+
+7. Quando o candidato envia o formulário:
+
+* valida CPF
+* valida telefone (igual ao pré-cadastro, ou checagem forte)
+* aplica campos condicionais da empresa (recontratação)
+
+8. Atualizar status e registrar:
+
+* **CADASTRO_PREENCHIDO** (data/hora)
+
+---
+
+## 8) Histórico datado (linha do tempo obrigatória)
+
+O sistema deve manter uma linha do tempo com eventos e datas, por exemplo:
+
+* 12/05 — Pré-cadastro criado
+* 12/05 — Empresa e setor definidos
+* 12/05 — Protocolo e link gerados
+* 14/05 — WhatsApp aberto para envio
+* 14/05 — Link enviado confirmado
+* 14/05 — Cadastro preenchido
+* 15/05 — Tentativa de contato / contato realizado / entrevista marcada
+
+### Estrutura de Evento (log)
+
+* id
+* candidate_id (ou process_id)
+* datetime
+* tipo_evento
+* descrição/observação
+* user_id (psicóloga)
+
+---
+
+## 9) Regras de duplicidade (bloqueios)
+
+* Telefone normalizado deve ser único no cadastro base
+* CPF, quando informado, não pode duplicar:
+
+  * se existir, bloquear ou sinalizar “duplicidade provável” para o admin
+* Ao tentar cadastrar novamente:
+
+  * o sistema deve direcionar para o registro existente
+
+---
+
+## 10) Telas (MVP)
+
+### Internas (com login)
+
+1. Login
+2. Dashboard (filas)
+
+* aguardando envio
+* aguardando preenchimento
+* cadastro completo
+* pendências
+
+3. Empresas (CRUD + configurações sigilo/recontratação)
+4. Setores/Vagas (CRUD)
+5. Candidatos (lista + busca por telefone/CPF/nome/protocolo)
+6. Detalhe do candidato/processo
+
+* dados
+* empresa/vaga (interno)
+* protocolo/link
+* botões: enviar WhatsApp, marcar enviado, reenviar link
+* linha do tempo
+* registrar contato (evento manual)
+
+7. Exportação
+
+* filtros por empresa/vaga/status/período
+* exportar XLSX/CSV
+
+### Externa (candidato)
+
+1. Página de cadastro via token (sem empresa)
+
+* formulário
+* pergunta condicional “já trabalhou aqui?” conforme configuração
+* confirmação final neutra
+
+---
+
+## 11) Exportação (Excel/CSV)
+
+Requisitos:
+
+* Exportar candidatos e/ou inscrições por filtros
+* Incluir:
+
+  * dados do candidato
+  * empresa/vaga (interno)
+  * status
+  * datas principais (criado, link gerado, enviado, preenchido)
+  * histórico (opcional: export separado ou aba “Eventos”)
+
+---
+
+## 12) Observações técnicas (para implementação)
+
+* Banco: PostgreSQL (ideal) / SQLite (MVP)
+* Backend: API com autenticação (sessions/JWT)
+* Frontend: painel web + página pública do candidato
+* Geração de token seguro para links
+* Normalização de telefone e validação de CPF
+* Logs/auditoria por usuário (login)
+
+---
+
+Se você quiser “amarrar” isso ainda mais para a IA programar, eu consigo te entregar também:
+
+* as tabelas já em SQL (CREATE TABLE),
+* os endpoints (rotas) da API,
+* e o layout mínimo das páginas (wireframe) — tudo consistente com esses requisitos.
