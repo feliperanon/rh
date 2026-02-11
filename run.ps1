@@ -11,6 +11,11 @@ if ($IsLinux -or $IsMacOS) {
     $npmCmd = "npm"
 }
 
+# Limpa cache de build antigo para evitar erros
+Write-Host "Limpando cache de build..." -ForegroundColor Yellow
+if (Test-Path "backend/tsconfig.build.tsbuildinfo") { Remove-Item "backend/tsconfig.build.tsbuildinfo" -Force }
+if (Test-Path "backend/tsconfig.tsbuildinfo") { Remove-Item "backend/tsconfig.tsbuildinfo" -Force }
+
 # Build do Backend (necessario para o dist/main)
 Write-Host "Construindo Backend..." -ForegroundColor Yellow
 Start-Process -Wait -NoNewWindow -FilePath $npmCmd -ArgumentList "install" -WorkingDirectory "backend"
