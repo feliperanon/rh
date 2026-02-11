@@ -88,6 +88,7 @@ export const api = {
     markSent: (id: string) => fetchWithAuth(`/applications/${id}/mark-sent`, {
         method: "POST",
     }),
+    getDashboardStats: () => fetchWithAuth("/applications/stats"),
 
     // Candidates
     getCandidates: (search: string) => fetchWithAuth(`/candidates?search=${search}`),

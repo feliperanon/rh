@@ -29,6 +29,12 @@ export class ApplicationsController {
         return this.applicationsService.create(createApplicationDto, user.id);
     }
 
+    @Get('stats')
+    @Roles(Role.ADMIN, Role.PSICOLOGA)
+    getStats() {
+        return this.applicationsService.getDashboardStats();
+    }
+
     @Get()
     @Roles(Role.ADMIN, Role.PSICOLOGA)
     findAll(

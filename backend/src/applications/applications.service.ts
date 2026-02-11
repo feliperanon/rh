@@ -328,49 +328,85 @@ export class ApplicationsService {
 
         return { message: 'Cadastro realizado com sucesso' };
     }
-}
+
 
     async exportApplications(res: any) {
-    const applications = await this.prisma.application.findMany({
-        include: {
-            candidate: true,
-            company: true,
-            sector: true,
-        },
-        orderBy: { created_at: 'desc' },
-    });
-
-    const Workbook = require('exceljs').Workbook;
-    const workbook = new Workbook();
-    const sheet = workbook.addWorksheet('Inscrições');
-
-    sheet.columns = [
-        { header: 'Data', key: 'date', width: 15 },
-        { header: 'Protocolo', key: 'protocol', width: 15 },
-        { header: 'Nome', key: 'name', width: 30 },
-        { header: 'Telefone', key: 'phone', width: 20 },
-        { header: 'CPF', key: 'cpf', width: 15 },
-        { header: 'Empresa', key: 'company', width: 20 },
-        { header: 'Setor', key: 'sector', width: 20 },
-        { header: 'Status', key: 'status', width: 15 },
-    ];
-
-    applications.forEach(app => {
-        sheet.addRow({
-            date: app.created_at,
-            protocol: app.protocol,
-            name: app.candidate.name,
-            phone: app.candidate.phone_normalizado,
-            cpf: app.candidate.cpf,
-            company: app.company.nome_interno,
-            sector: app.sector.nome,
-            status: app.status,
+        const applications = await this.prisma.application.findMany({
+            include: {
+                candidate: true,
+                company: true,
+                sector: true,
+            },
+            orderBy: { created_at: 'desc' },
         });
-    });
 
-    // Formatar data
-    sheet.getColumn('date').numFmt = 'dd/mm/yyyy';
+        const Workbook = require('exceljs').Workbook;
+        const workbook = new Workbook();
+        const sheet = workbook.addWorksheet('Inscrições');
 
-    await workbook.xlsx.write(res);
-}
+        sheet.columns = [
+            { header: 'Data', key: 'date', width: 15 },
+            { header: 'Protocolo', key: 'protocol', width: 15 },
+            { header: 'Nome', key: 'name', width: 30 },
+            { header: 'Telefone', key: 'phone', width: 20 },
+            { header: 'CPF', key: 'cpf', width: 15 },
+            { header: 'Empresa', key: 'company', width: 20 },
+            { header: 'Setor', key: 'sector', width: 20 },
+            { header: 'Status', key: 'status', width: 15 },
+        ];
+
+        applications.forEach(app => {
+            sheet.addRow({
+                date: app.created_at,
+                protocol: app.protocol,
+                name: app.candidate.name,
+                phone: app.candidate.phone_normalizado,
+                cpf: app.candidate.cpf,
+                company: app.company.nome_interno,
+                sector: app.sector.nome,
+                status: app.status,
+            });
+        });
+
+        // Formatar data
+        sheet.getColumn('date').numFmt = 'dd/mm/yyyy';
+
+        await workbook.xlsx.write(res);
+    }
+    async getDashboardStats() {
+        const total = await this.prisma.application.count();
+        const preCadastro = await this.prisma.application.count({ where: { status: ApplicationStatus.PRE_CADASTRO } });
+        const linkGerado = await this.prisma.application.count({ where: { status: ApplicationStatus.LINK_GERADO } });
+        const whatsappAberto = await this.prisma.application.count({ where: { status: ApplicationStatus.WHATSAPP_ABERTO_PARA_ENVIO } });
+        const linkEnviado = await this.prisma.application.count({ where: { status: ApplicationStatus.LINK_ENVIADO } });
+        const cadastroPreenchido = await this.prisma.application.count({ where: { status: ApplicationStatus.CADASTRO_PREENCHIDO } });
+        const emContato = await this.prisma.application.count({ where: { status: ApplicationStatus.EM_CONTATO } });
+        const entrevistaMarcada = await this.prisma.application.count({ where: { status: ApplicationStatus.ENTREVISTA_MARCADA } });
+        const encaminhado = await this.prisma.application.count({ where: { status: ApplicationStatus.ENCAMINHADO } });
+        const aprovado = await this.prisma.application.count({ where: { status: ApplicationStatus.APROVADO } });
+        const reprovado = await this.prisma.application.count({ where: { status: ApplicationStatus.REPROVADO } });
+        const desistiu = await this.prisma.application.count({ where: { status: ApplicationStatus.DESISTIU } });
+
+        const recent = await this.prisma.application.findMany({
+            take: 5,
+            orderBy: { created_at: 'desc' },
+            include: {
+                candidate: true,
+                company: true,
+                sector: true,
+            },
+        });
+
+        return {
+            counts: {
+                total,
+                aguardando_envio: preCadastro + linkGerado + whatsappAberto,
+                aguardando_preenchimento: linkEnviado,
+                cadastro_completo: cadastroPreenchido,
+                em_processo: emContato + entrevistaMarcada + encaminhado,
+                finalizados: aprovado + reprovado + desistiu,
+            },
+            recent,
+        };
+    }
 }
