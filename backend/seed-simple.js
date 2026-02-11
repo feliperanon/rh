@@ -1,0 +1,45 @@
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
+
+const prisma = new PrismaClient();
+
+async function seed() {
+    console.log('🌱 Iniciando seed...');
+
+    const hash = await bcrypt.hash('admin123', 10);
+
+    const admin = await prisma.user.upsert({
+        where: { email: 'admin@rh.com' },
+        update: {},
+        create: {
+            name: 'Administrador',
+            email: 'admin@rh.com',
+            password_hash: hash,
+            role: 'ADMIN'
+        }
+    });
+
+    console.log('✅ Admin criado:', admin.email);
+
+    const psicologa = await prisma.user.upsert({
+        where: { email: 'psicologa@rh.com' },
+        update: {},
+        create: {
+            name: 'Psicóloga',
+            email: 'psicologa@rh.com',
+            password_hash: hash,
+            role: 'PSICOLOGA'
+        }
+    });
+
+    console.log('✅ Psicóloga criada:', psicologa.email);
+    console.log('🎉 Seed concluído com sucesso!');
+
+    await prisma.$disconnect();
+}
+
+seed()
+    .catch((e) => {
+        console.error('❌ Erro no seed:', e);
+        process.exit(1);
+    });
