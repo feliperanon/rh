@@ -1,0 +1,210 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  ADMIN
+  PSICOLOGA
+}
+
+enum QuestionMode {
+  GENERICO
+  COM_NOME
+}
+
+enum ApplicationStatus {
+  PRE_CADASTRO
+  LINK_GERADO
+  WHATSAPP_ABERTO
+  LINK_ENVIADO
+  CADASTRO_PREENCHIDO
+  EM_CONTATO
+  ENTREVISTA_MARCADA
+  ENCAMINHADO
+  APROVADO
+  REPROVADO
+  DESISTIU
+}
+
+enum EventType {
+  PRE_CADASTRO_CRIADO
+  EMPRESA_SETOR_DEFINIDOS
+  PROTOCOLO_GERADO
+  LINK_GERADO
+  WHATSAPP_ABERTO_PARA_ENVIO
+  LINK_ENVIADO_CONFIRMADO
+  CADASTRO_PREENCHIDO
+  REENVIO_LINK
+  CONTATO_REALIZADO
+  SEM_RESPOSTA
+  ENTREVISTA_MARCADA
+  ENCAMINHADO
+  APROVADO
+  REPROVADO
+  DESISTIU
+}
+
+enum Education {
+  FUNDAMENTAL
+  MEDIO
+  SUPERIOR
+  POS_GRADUACAO
+}
+
+enum SchedulePref {
+  MANHA
+  TARDE
+  NOITE
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  password_hash String
+  role          Role     @default(PSICOLOGA)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  events Event[]
+
+  @@map("users")
+}
+
+model Company {
+  id                          String       @id @default(cuid())
+  nome_interno                String
+  ativo                       Boolean      @default(true)
+  sigilosa                    Boolean      @default(false)
+  perguntar_recontratacao     Boolean      @default(false)
+  modo_pergunta_recontratacao QuestionMode @default(GENERICO)
+  created_at                  DateTime     @default(now())
+  updated_at                  DateTime     @updatedAt
+
+  // Relations
+  sectors      Sector[]
+  applications Application[]
+
+  @@map("companies")
+}
+
+model Sector {
+  id         String   @id @default(cuid())
+  company_id String
+  nome       String
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  company      Company       @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@index([company_id])
+  @@map("sectors")
+}
+
+model Candidate {
+  id                 String         @id @default(cuid())
+  phone_normalizado  String         @unique
+  phone_e164         String         @unique
+  name               String?
+  cpf                String?        @unique
+  birth_date         DateTime?
+  education          Education?
+  vt_value_cents     Int?
+  schedule_prefs     SchedulePref[]
+  worked_here_before Boolean?
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+
+  // Relations
+  applications Application[]
+  events       Event[]
+
+  @@index([phone_normalizado])
+  @@index([cpf])
+  @@map("candidates")
+}
+
+model Application {
+  id           String            @id @default(cuid())
+  candidate_id String
+  company_id   String
+  sector_id    String
+  protocol     String            @unique
+  status       ApplicationStatus @default(PRE_CADASTRO)
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+
+  // Relations
+  candidate     Candidate      @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+  company       Company        @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  sector        Sector         @relation(fields: [sector_id], references: [id], onDelete: Cascade)
+  invite_tokens InviteToken[]
+  events        Event[]
+
+  @@index([candidate_id])
+  @@index([company_id])
+  @@index([sector_id])
+  @@index([status])
+  @@index([protocol])
+  @@map("applications")
+}
+
+model InviteToken {
+  id             String    @id @default(cuid())
+  application_id String
+  token_hash     String    @unique
+  expires_at     DateTime?
+  used_at        DateTime?
+  created_at     DateTime  @default(now())
+
+  // Relations
+  application Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
+
+  @@index([token_hash])
+  @@index([application_id])
+  @@map("invite_tokens")
+}
+
+model Event {
+  id             String    @id @default(cuid())
+  application_id String
+  candidate_id   String
+  user_id        String?
+  type           EventType
+  occurred_at    DateTime  @default(now())
+  notes          String?   @db.Text
+  metadata       Json?
+  created_at     DateTime  @default(now())
+
+  // Relations
+  application Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
+  candidate   Candidate   @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+  user        User?       @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([application_id])
+  @@index([candidate_id])
+  @@index([user_id])
+  @@index([type])
+  @@index([occurred_at])
+  @@map("events")
+}
