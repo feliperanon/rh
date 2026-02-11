@@ -1,0 +1,69 @@
+### 1. Health Check
+GET https://rh-gppm.onrender.com
+
+### 2. Login (Admin)
+POST https://rh-gppm.onrender.com/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@rh.com",
+  "password": "admin123"
+}
+
+### 3. Login (Psicóloga)
+POST https://rh-gppm.onrender.com/auth/login
+Content-Type: application/json
+
+{
+  "email": "psicologa@rh.com",
+  "password": "admin123"
+}
+
+### 4. Criar Empresa
+POST https://rh-gppm.onrender.com/companies
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
+
+{
+  "nome_interno": "Empresa Teste",
+  "sigilosa": false,
+  "perguntar_recontratacao": true,
+  "modo_pergunta_recontratacao": "COM_NOME"
+}
+
+### 5. Listar Empresas
+GET https://rh-gppm.onrender.com/companies
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
+
+### 6. Criar Setor
+POST https://rh-gppm.onrender.com/sectors
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
+
+{
+  "company_id": "COLE_ID_DA_EMPRESA_AQUI",
+  "nome": "Operacional"
+}
+
+### 7. Listar Setores
+GET https://rh-gppm.onrender.com/sectors
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
+
+### 8. Criar Pré-Cadastro (Application)
+POST https://rh-gppm.onrender.com/applications
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
+
+{
+  "phone": "(11) 98765-4321",
+  "company_id": "COLE_ID_DA_EMPRESA_AQUI",
+  "sector_id": "COLE_ID_DO_SETOR_AQUI"
+}
+
+### 9. Listar Applications
+GET https://rh-gppm.onrender.com/applications
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
+
+### 10. Buscar Candidatos
+GET https://rh-gppm.onrender.com/candidates?search=987654321
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbTVsOHZ6ZjcwMDAwMTJlNnBxcnN6YjJ6IiwiZW1haWwiOiJhZG1pbkByaC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MzkzMzQwMDAsImV4cCI6MTczOTkzODgwMH0.xxx
