@@ -5,6 +5,7 @@ import {
     Body,
     Patch,
     Param,
+    Delete,
     UseGuards,
     Query,
     Res,
@@ -41,8 +42,10 @@ export class ApplicationsController {
         @Query('status') status?: ApplicationStatus,
         @Query('company_id') companyId?: string,
         @Query('sector_id') sectorId?: string,
+        @Query('start_date') startDate?: string,
+        @Query('end_date') endDate?: string,
     ) {
-        return this.applicationsService.findAll(status, companyId, sectorId);
+        return this.applicationsService.findAll(status, companyId, sectorId, startDate, endDate);
     }
 
     @Get('export/all')
@@ -92,5 +95,11 @@ export class ApplicationsController {
     @Roles(Role.ADMIN, Role.PSICOLOGA)
     refreshLink(@Param('id') id: string, @CurrentUser() user: any) {
         return this.applicationsService.refreshInviteLink(id, user.id);
+    }
+
+    @Delete(':id')
+    @Roles(Role.ADMIN, Role.PSICOLOGA)
+    remove(@Param('id') id: string) {
+        return this.applicationsService.remove(id);
     }
 }

@@ -38,6 +38,26 @@ export class ApplicationsService {
             });
         }
 
+        // Evita duplicidade de inscrição na mesma empresa/setor enquanto existirem estados abertos
+        const existingApplication = await this.prisma.application.findFirst({
+            where: {
+                candidate_id: candidate.id,
+                company_id,
+                sector_id,
+                status: {
+                    notIn: [
+                        ApplicationStatus.REPROVADO,
+                        ApplicationStatus.DESISTIU,
+                        ApplicationStatus.APROVADO,
+                    ],
+                },
+            },
+        });
+
+        if (existingApplication) {
+            throw new BadRequestException("Já existe uma inscrição ativa para este candidato e vaga");
+        }
+
         // Gera protocolo e token
         const protocol = generateProtocol();
         const token = generateToken();
@@ -110,13 +130,29 @@ export class ApplicationsService {
         };
     }
 
-    async findAll(status?: ApplicationStatus, companyId?: string, sectorId?: string) {
+    async findAll(
+        status?: ApplicationStatus,
+        companyId?: string,
+        sectorId?: string,
+        startDate?: string,
+        endDate?: string,
+    ) {
+        const where: any = {};
+        if (status) where.status = status;
+        if (companyId) where.company_id = companyId;
+        if (sectorId) where.sector_id = sectorId;
+        if (startDate || endDate) {
+            where.created_at = {};
+            if (startDate) where.created_at.gte = new Date(startDate);
+            if (endDate) {
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+                where.created_at.lte = end;
+            }
+        }
+
         return this.prisma.application.findMany({
-            where: {
-                ...(status && { status }),
-                ...(companyId && { company_id: companyId }),
-                ...(sectorId && { sector_id: sectorId }),
-            },
+            where,
             include: {
                 candidate: true,
                 company: true,
@@ -124,6 +160,13 @@ export class ApplicationsService {
             },
             orderBy: { created_at: 'desc' },
         });
+    }
+
+    async remove(id: string) {
+        const app = await this.prisma.application.findUnique({ where: { id } });
+        if (!app) throw new NotFoundException(`Inscrição com ID ${id} não encontrada`);
+        await this.prisma.application.delete({ where: { id } });
+        return { message: 'Candidatura excluída com sucesso' };
     }
 
     async findOne(id: string) {
@@ -207,13 +250,23 @@ export class ApplicationsService {
             },
         });
 
+        // Mapeia status para tipo de evento
+        const statusToEvent: Partial<Record<ApplicationStatus, EventType>> = {
+            [ApplicationStatus.EM_CONTATO]: EventType.CONTATO_REALIZADO,
+            [ApplicationStatus.WHATSAPP_ABERTO]: EventType.WHATSAPP_ABERTO_PARA_ENVIO,
+            [ApplicationStatus.LINK_ENVIADO]: EventType.LINK_ENVIADO_CONFIRMADO,
+            [ApplicationStatus.PRE_CADASTRO]: EventType.PRE_CADASTRO_CRIADO,
+        };
+
+        const eventType = statusToEvent[updateApplicationDto.status] || (updateApplicationDto.status as unknown as EventType);
+
         // Registra evento de mudança de status
         await this.prisma.event.create({
             data: {
                 application_id: application.id,
                 candidate_id: application.candidate_id,
                 user_id: userId,
-                type: updateApplicationDto.status as unknown as EventType,
+                type: eventType,
             },
         });
 

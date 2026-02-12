@@ -46,23 +46,23 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
-            <Card className="w-full max-w-md">
+        <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
+            <Card className="w-full max-w-md border-slate-200 bg-white shadow-lg">
                 <CardHeader className="space-y-1 text-center">
-                    <div className="flex justify-center mb-4">
-                        <div className="bg-primary p-3 rounded-full">
-                            <Lock className="h-6 w-6 text-primary-foreground" />
+                    <div className="mb-4 flex justify-center">
+                        <div className="rounded-full bg-slate-900 p-3">
+                            <Lock className="h-6 w-6 text-white" />
                         </div>
                     </div>
-                    <CardTitle className="text-2xl font-bold">RH Admin</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-xl font-semibold text-slate-900">RH Admin</CardTitle>
+                    <CardDescription className="text-slate-600">
                         Entre com suas credenciais para acessar o painel
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="text-slate-700">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -70,21 +70,27 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                className="border-slate-300 bg-white text-slate-900"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Senha</Label>
+                            <Label htmlFor="password" className="text-slate-700">Senha</Label>
                             <Input
                                 id="password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                className="border-slate-300 bg-white text-slate-900"
                             />
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full" type="submit" disabled={loading}>
+                        <Button
+                            className="w-full bg-slate-900 text-white hover:bg-slate-800"
+                            type="submit"
+                            disabled={loading}
+                        >
                             {loading ? "Entrando..." : "Entrar"}
                         </Button>
                     </CardFooter>

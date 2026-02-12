@@ -6,13 +6,23 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { useState } from "react";
 
-export function ExportButton() {
+interface ExportButtonProps {
+    filters?: {
+        status?: string;
+        companyId?: string;
+        sectorId?: string;
+        startDate?: string;
+        endDate?: string;
+    };
+}
+
+export function ExportButton({ filters }: ExportButtonProps = {}) {
     const [loading, setLoading] = useState(false);
 
     const handleExport = async () => {
         setLoading(true);
         try {
-            const blob = await api.exportApplications();
+            const blob = await api.exportApplications(filters || undefined);
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -31,9 +41,15 @@ export function ExportButton() {
     };
 
     return (
-        <Button variant="outline" onClick={handleExport} disabled={loading}>
-            <Download className="mr-2 h-4 w-4" />
-            {loading ? "Exportando..." : "Exportar Excel"}
+        <Button
+            variant="outline"
+            size="sm"
+            className="h-9 border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800 hover:text-white"
+            onClick={handleExport}
+            disabled={loading}
+        >
+            <Download className="h-4 w-4" />
+            {loading ? "Exportando…" : "Exportar"}
         </Button>
     );
 }

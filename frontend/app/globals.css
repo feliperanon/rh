@@ -96,16 +96,17 @@
 
 @layer utilities {
   .bg-rh-gradient {
-    background-image:
-      radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.35), transparent 40%),
-      radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.25), transparent 45%),
-      linear-gradient(180deg, rgb(2 6 23) 0%, rgb(15 23 42) 60%, rgb(2 6 23) 100%);
+    background: rgb(2 6 23);
   }
 
   .glass-panel {
-    background-color: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    box-shadow: 0 25px 55px rgba(2, 6, 23, 0.55);
-    backdrop-filter: blur(26px);
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    backdrop-filter: blur(12px);
+  }
+
+  .card-panel {
+    background-color: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(51, 65, 85, 0.5);
   }
 }

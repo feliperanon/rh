@@ -72,7 +72,24 @@ export const api = {
     }),
 
     // Applications
-    getApplications: () => fetchWithAuth("/applications"),
+    getApplications: (filters?: {
+        status?: string;
+        companyId?: string;
+        sectorId?: string;
+        startDate?: string;
+        endDate?: string;
+    }) => {
+        const params = new URLSearchParams();
+        if (filters?.status) params.append("status", filters.status);
+        if (filters?.companyId) params.append("company_id", filters.companyId);
+        if (filters?.sectorId) params.append("sector_id", filters.sectorId);
+        if (filters?.startDate) params.append("start_date", filters.startDate);
+        if (filters?.endDate) params.append("end_date", filters.endDate);
+        const query = params.toString() ? `?${params.toString()}` : "";
+        return fetchWithAuth(`/applications${query}`);
+    },
+    deleteApplication: (id: string) =>
+        fetchWithAuth(`/applications/${id}`, { method: "DELETE" }),
     createApplication: (data: any) => fetchWithAuth("/applications", {
         method: "POST",
         body: JSON.stringify(data),
@@ -91,8 +108,21 @@ export const api = {
     getDashboardStats: () => fetchWithAuth("/applications/stats"),
 
     // Candidates
-    getCandidates: (search: string) => fetchWithAuth(`/candidates?search=${search}`),
+    getCandidates: (filters?: { search?: string; protocol?: string }) => {
+        const params = new URLSearchParams();
+        if (filters?.search) params.append("search", filters.search);
+        if (filters?.protocol) params.append("protocol", filters.protocol);
+        const query = params.toString() ? `?${params.toString()}` : "";
+        return fetchWithAuth(`/candidates${query}`);
+    },
     getCandidate: (id: string) => fetchWithAuth(`/candidates/${id}`),
+    updateCandidate: (id: string, data: any) => fetchWithAuth(`/candidates/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+    }),
+    deleteCandidate: (id: string) => fetchWithAuth(`/candidates/${id}`, {
+        method: "DELETE",
+    }),
 
     // Public
     getApplicationByToken: (token: string) => fetchPublic(`/invite/${token}`),

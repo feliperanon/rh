@@ -10,7 +10,8 @@ import {
     FileText,
     LayoutDashboard,
     LogOut,
-    Menu
+    Menu,
+    Columns
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -36,6 +37,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
     const navItems = [
         { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/kanban", label: "Board (Funil)", icon: Columns },
         { href: "/companies", label: "Empresas", icon: Building2 },
         { href: "/sectors", label: "Setores", icon: FileText },
         { href: "/candidates", label: "Candidatos", icon: Users },
@@ -43,13 +45,16 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     ];
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white">
+        <div className="dark min-h-screen bg-slate-950 text-white">
             <div className="flex min-h-screen">
-                <aside className="hidden w-72 flex-col border-r border-white/10 bg-slate-900 p-6 md:flex">
-                    <Link href="/dashboard" className="mb-6 text-2xl font-semibold tracking-tight text-white">
-                        RH System
+                <aside className="hidden w-64 flex-col border-r border-slate-800/80 bg-slate-950 p-5 md:flex">
+                    <Link
+                        href="/dashboard"
+                        className="mb-8 text-lg font-medium tracking-tight text-white"
+                    >
+                        RH
                     </Link>
-                    <nav className="flex-1 space-y-2">
+                    <nav className="flex-1 space-y-0.5">
                         {navItems.map((item) => {
                             const Icon = item.icon;
                             const isActive = pathname.startsWith(item.href);
@@ -57,44 +62,55 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${isActive
-                                            ? "bg-white/10 text-white"
-                                            : "text-slate-300 hover:bg-white/5"
+                                    className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive
+                                        ? "bg-slate-800 text-white"
+                                        : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
                                         }`}
                                 >
-                                    <Icon className="h-4 w-4" />
+                                    <Icon className="h-4 w-4 shrink-0 opacity-80" />
                                     {item.label}
                                 </Link>
                             );
                         })}
                     </nav>
-                    <div className="mt-6 space-y-2 rounded-2xl border border-white/10 p-4">
-                        <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-slate-800 text-white flex items-center justify-center text-sm font-bold">
+                    <div className="mt-auto border-t border-slate-800/80 pt-4">
+                        <div className="flex items-center gap-3 px-1 py-2">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-800 text-xs font-medium text-slate-300">
                                 {session.user?.name?.[0] || "U"}
                             </div>
-                            <div>
-                                <p className="text-sm font-semibold">{session.user?.name}</p>
-                                <p className="text-xs text-slate-500">{session.user?.email}</p>
+                            <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-medium text-slate-200">
+                                    {session.user?.name}
+                                </p>
+                                <p className="truncate text-xs text-slate-500">
+                                    {session.user?.email}
+                                </p>
                             </div>
                         </div>
-                        <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => signOut()}>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="mt-1 w-full justify-start gap-2 text-slate-400 hover:text-slate-200"
+                            onClick={() => signOut()}
+                        >
                             <LogOut className="h-4 w-4" />
                             Sair
                         </Button>
                     </div>
                 </aside>
 
-                <div className="flex flex-1 flex-col">
-                    <header className="flex h-16 items-center justify-between border-b border-white/5 bg-slate-900 px-4 text-white md:hidden">
+                <div className="flex min-w-0 flex-1 flex-col">
+                    <header className="flex h-14 items-center justify-between border-b border-slate-800/80 px-4 md:hidden">
                         <Button variant="ghost" size="icon">
-                            <Menu className="h-6 w-6" />
+                            <Menu className="h-5 w-5" />
                         </Button>
-                        <span className="text-lg font-semibold">RH System</span>
+                        <span className="text-base font-medium">RH</span>
                     </header>
 
-                    <main className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 py-10">
-                        {children}
+                    <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
+                        <div className="mx-auto max-w-4xl">
+                            {children}
+                        </div>
                     </main>
                 </div>
             </div>

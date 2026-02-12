@@ -91,10 +91,10 @@ export function SectorForm({ sector, companyId, onSuccess }: SectorFormProps) {
                     control={form.control}
                     name="ativo"
                     render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
                             <div className="space-y-0.5">
-                                <FormLabel>Ativo</FormLabel>
-                                <FormDescription>
+                                <FormLabel className="text-slate-700">Ativo</FormLabel>
+                                <FormDescription className="text-slate-500">
                                     Disponível para seleção
                                 </FormDescription>
                             </div>

@@ -31,12 +31,21 @@ export default function DashboardPage() {
     if (!stats) return <div className="flex h-60 items-center justify-center">Erro ao carregar dados.</div>;
 
     const actions = (
-        <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => router.push("/applications")}>
+        <div className="flex items-center gap-2">
+            <Button
+                variant="outline"
+                size="sm"
+                className="border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800 hover:text-white"
+                onClick={() => router.push("/applications")}
+            >
                 Ver candidaturas
             </Button>
-            <Button onClick={() => router.push("/applications/new")}>
-                <Send className="mr-2 h-4 w-4" />
+            <Button
+                size="sm"
+                className="h-9 bg-white text-slate-900 hover:bg-slate-100"
+                onClick={() => router.push("/applications/new")}
+            >
+                <Send className="h-4 w-4" />
                 Nova Candidatura
             </Button>
         </div>
@@ -44,87 +53,110 @@ export default function DashboardPage() {
 
     return (
         <MainLayout title="Dashboard" description="Visão geral do processo seletivo" actions={actions}>
-            <div className="space-y-8">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    <Card className="glass-panel border border-white/10">
+            <div className="space-y-6">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <Card className="card-panel rounded-xl">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-white">Aguardando Envio</CardTitle>
-                            <Clock className="h-4 w-4 text-white/60" />
+                            <CardTitle className="text-xs font-medium text-slate-400">Aguardando Envio</CardTitle>
+                            <Clock className="h-4 w-4 text-slate-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">{stats.counts.aguardando_envio}</div>
-                            <p className="text-xs text-white/60">Protocolos gerados, não enviados</p>
+                            <div className="text-xl font-semibold text-white">{stats.counts.aguardando_envio}</div>
+                            <p className="text-xs text-slate-500">Protocolos gerados</p>
                         </CardContent>
                     </Card>
-                    <Card className="glass-panel border border-white/10">
+                    <Card className="card-panel rounded-xl">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-white">Aguardando Preenchimento</CardTitle>
-                            <Send className="h-4 w-4 text-white/60" />
+                            <CardTitle className="text-xs font-medium text-slate-400">Aguardando Preenchimento</CardTitle>
+                            <Send className="h-4 w-4 text-slate-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">{stats.counts.aguardando_preenchimento}</div>
-                            <p className="text-xs text-white/60">Links enviados</p>
+                            <div className="text-xl font-semibold text-white">{stats.counts.aguardando_preenchimento}</div>
+                            <p className="text-xs text-slate-500">Links enviados</p>
                         </CardContent>
                     </Card>
-                    <Card className="glass-panel border border-white/10">
+                    <Card className="card-panel rounded-xl">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-white">Cadastros Completos</CardTitle>
-                            <FileText className="h-4 w-4 text-white/60" />
+                            <CardTitle className="text-xs font-medium text-slate-400">Cadastros Completos</CardTitle>
+                            <FileText className="h-4 w-4 text-slate-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">{stats.counts.cadastro_completo}</div>
-                            <p className="text-xs text-white/60">Prontos para triagem</p>
+                            <div className="text-xl font-semibold text-white">{stats.counts.cadastro_completo}</div>
+                            <p className="text-xs text-slate-500">Prontos para triagem</p>
                         </CardContent>
                     </Card>
-                    <Card className="glass-panel border border-white/10">
+                    <Card className="card-panel rounded-xl">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-white">Total Candidatos</CardTitle>
-                            <Users className="h-4 w-4 text-white/60" />
+                            <CardTitle className="text-xs font-medium text-slate-400">Total Candidatos</CardTitle>
+                            <Users className="h-4 w-4 text-slate-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-white">{stats.counts.total}</div>
-                            <p className="text-xs text-white/60">Em todas as etapas</p>
+                            <div className="text-xl font-semibold text-white">{stats.counts.total}</div>
+                            <p className="text-xs text-slate-500">Em todas as etapas</p>
                         </CardContent>
                     </Card>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                    <Card className="col-span-4 glass-panel border border-white/5">
+                <div className="grid gap-6 lg:grid-cols-7">
+                    <Card className="card-panel rounded-xl lg:col-span-4">
                         <CardHeader>
-                            <CardTitle className="text-white">Inscrições Recentes</CardTitle>
+                            <CardTitle className="text-sm font-medium text-white">Inscrições Recentes</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 {stats.recent.map((app: any) => (
-                                    <div key={app.id} className="flex items-center justify-between border-b border-white/5 pb-2 last:border-0 last:pb-0">
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-medium leading-none text-white">{app.candidate.name || "Pré-cadastro"}</p>
-                                            <p className="text-sm text-white/60">
-                                                {app.company.nome_interno} - {app.sector.nome}
+                                    <div
+                                        key={app.id}
+                                        className="flex items-center justify-between border-b border-slate-800/80 pb-3 last:border-0 last:pb-0"
+                                    >
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium text-slate-200">
+                                                {app.candidate.name || "Pré-cadastro"}
+                                            </p>
+                                            <p className="truncate text-xs text-slate-500">
+                                                {app.company.nome_interno} · {app.sector.nome}
                                             </p>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant="secondary">{app.status}</Badge>
-                                            <p className="text-xs text-white/60">{format(new Date(app.created_at), "dd/MM")}</p>
+                                        <div className="flex shrink-0 items-center gap-2 pl-3">
+                                            <span className="rounded px-2 py-0.5 text-xs text-slate-400">
+                                                {app.status}
+                                            </span>
+                                            <span className="text-xs text-slate-500">
+                                                {format(new Date(app.created_at), "dd/MM")}
+                                            </span>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-                            <Button className="w-full mt-4" variant="outline" onClick={() => router.push('/applications')}>
-                                Ver todas as inscrições <ArrowRight className="ml-2 h-4 w-4" />
+                            <Button
+                                className="mt-4 w-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => router.push("/applications")}
+                            >
+                                Ver todas <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </CardContent>
                     </Card>
 
-                    <Card className="col-span-3 glass-panel border border-white/5">
+                    <Card className="card-panel rounded-xl lg:col-span-3">
                         <CardHeader>
-                            <CardTitle className="text-white">Ações Rápidas</CardTitle>
+                            <CardTitle className="text-sm font-medium text-white">Ações Rápidas</CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-col gap-4">
-                            <Button onClick={() => router.push('/applications/new')} className="w-full justify-start" size="lg">
+                        <CardContent className="space-y-2">
+                            <Button
+                                size="sm"
+                                className="w-full justify-start bg-white text-slate-900 hover:bg-slate-100"
+                                onClick={() => router.push("/applications/new")}
+                            >
                                 <Send className="mr-2 h-4 w-4" /> Nova Candidatura
                             </Button>
-                            <Button onClick={() => router.push('/candidates')} variant="outline" className="w-full justify-start" size="lg">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="w-full justify-start border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+                                onClick={() => router.push("/candidates")}
+                            >
                                 <Users className="mr-2 h-4 w-4" /> Buscar Candidato
                             </Button>
                             <ExportModal />

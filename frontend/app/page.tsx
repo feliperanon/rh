@@ -28,24 +28,18 @@ export default function Home() {
     if (stored) {
       try {
         const payload = JSON.parse(stored);
-        if (payload?.email) {
-          setEmail(payload.email);
-        }
-        if (payload?.password) {
-          setPassword(payload.password);
-        }
-        setRemember(true);
-      } catch (error) {
+        if (payload?.email) setEmail(payload.email);
+        if (payload?.password) setPassword(payload.password);
+        if (payload?.email || payload?.password) setRemember(true);
+      } catch {
         window.localStorage.removeItem(STORAGE_KEY);
-        console.error("Erro ao ler credenciais salvas", error);
       }
     }
   }, []);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setLoading(true);
-
     try {
       const result = await signIn("credentials", {
         email,
@@ -59,16 +53,10 @@ export default function Home() {
         });
       } else {
         if (typeof window !== "undefined") {
-          if (remember) {
-            window.localStorage.setItem(
-              STORAGE_KEY,
-              JSON.stringify({ email, password })
-            );
-          } else {
-            window.localStorage.removeItem(STORAGE_KEY);
-          }
+          remember
+            ? window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, password }))
+            : window.localStorage.removeItem(STORAGE_KEY);
         }
-
         toast.success("Login realizado com sucesso!");
         router.push("/dashboard");
       }
@@ -83,14 +71,14 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-900">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-2">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-dashed border-primary/40 bg-primary/10">
-            <Lock className="h-6 w-6 text-primary-foreground" />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-100 px-4 py-8">
+      <Card className="w-full max-w-md border-slate-200 bg-white shadow-lg">
+        <CardHeader className="space-y-2 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-900">
+            <Lock className="h-6 w-6 text-white" />
           </div>
-          <CardTitle className="text-2xl font-semibold">RH Admin</CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <CardTitle className="text-xl font-semibold text-slate-900">RH Admin</CardTitle>
+          <p className="text-sm text-slate-600">
             Faça login para gerenciar o painel
           </p>
         </CardHeader>
@@ -98,39 +86,36 @@ export default function Home() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-slate-700">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="administrador@rh.com"
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 required
+                className="border-slate-300 bg-white text-slate-900"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password" className="text-slate-700">Senha</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pr-12"
+                  className="border-slate-300 bg-white pr-12 text-slate-900"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 mr-3 flex items-center text-sm text-muted-foreground"
-                  onClick={() => setShowPassword((state) => !state)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-slate-700"
+                  onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -140,29 +125,36 @@ export default function Home() {
                 <Checkbox
                   id="remember"
                   checked={remember}
-                  onCheckedChange={(value) => setRemember(Boolean(value))}
+                  onCheckedChange={(v) => setRemember(Boolean(v))}
                 />
-                <Label htmlFor="remember" className="text-sm font-medium">
+                <Label htmlFor="remember" className="text-sm font-medium text-slate-600">
                   Salvar usuário e senha
                 </Label>
               </div>
-              <Link href="/recuperar-senha" className="text-sm font-medium text-primary hover:underline">
+              <Link
+                href="/recuperar-senha"
+                className="text-sm font-medium text-slate-600 hover:text-slate-900 hover:underline"
+              >
                 Recuperar senha
               </Link>
             </div>
           </CardContent>
 
-          <CardFooter>
-            <Button className="w-full" type="submit" disabled={loading}>
+          <CardFooter className="flex flex-col gap-4">
+            <Button
+              className="w-full bg-slate-900 text-white hover:bg-slate-800"
+              type="submit"
+              disabled={loading}
+            >
               {loading ? "Validando..." : "Entrar"}
             </Button>
           </CardFooter>
         </form>
 
-        <div className="border-t border-muted/40 px-6 py-4 text-center text-sm text-muted-foreground">
+        <div className="border-t border-slate-200 px-6 py-4 text-center text-sm text-slate-600">
           <p>
             Não consegue acessar?{" "}
-            <Link href="/recuperar-senha" className="text-primary font-medium hover:underline">
+            <Link href="/recuperar-senha" className="font-medium text-slate-900 hover:underline">
               Solicite ajuda rápida
             </Link>
           </p>

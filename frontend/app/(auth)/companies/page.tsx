@@ -99,8 +99,13 @@ export default function CompaniesPage() {
     const dialogAction = (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button onClick={handleCreate}>
-                    <Plus className="mr-2 h-4 w-4" /> Nova Empresa
+                <Button
+                    size="sm"
+                    className="h-9 bg-white text-slate-900 hover:bg-slate-100"
+                    onClick={handleCreate}
+                >
+                    <Plus className="h-4 w-4" />
+                    Nova Empresa
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -122,57 +127,64 @@ export default function CompaniesPage() {
             actions={dialogAction}
         >
             <div className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-3">
                     {stats.map((stat) => (
-                        <Card key={stat.label} className="glass-panel border border-white/10">
+                        <Card key={stat.label} className="card-panel rounded-xl">
                             <CardContent className="space-y-1 p-4">
-                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-foreground/70">
-                                    {stat.label}
-                                </p>
-                                <p className="text-3xl font-semibold">{stat.value}</p>
-                                <p className="text-sm text-muted-foreground">{stat.caption}</p>
+                                <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+                                <p className="text-xl font-semibold text-white">{stat.value}</p>
+                                <p className="text-xs text-slate-500">{stat.caption}</p>
                             </CardContent>
                         </Card>
                     ))}
                 </div>
 
-                <Card className="glass-panel border border-white/5">
+                <Card className="card-panel rounded-xl">
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Nome Interno</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Sigilosa</TableHead>
-                                        <TableHead>Modo Recontratação</TableHead>
-                                        <TableHead>Criado em</TableHead>
-                                        <TableHead className="w-[70px]"></TableHead>
+                                    <TableRow className="border-slate-800/80 hover:bg-transparent">
+                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Nome</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Status</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Sigilosa</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Recontratação</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Criado em</TableHead>
+                                        <TableHead className="h-11 w-[60px]"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {loading ? (
-                                        <TableRow>
-                                            <TableCell colSpan={6} className="text-center h-24">
-                                                Carregando...
+                                        <TableRow className="border-slate-800/80">
+                                            <TableCell colSpan={6} className="h-24 text-center text-sm text-slate-500">
+                                                Carregando…
                                             </TableCell>
                                         </TableRow>
                                     ) : companies.length === 0 ? (
-                                        <TableRow>
-                                            <TableCell colSpan={6} className="text-center h-24">
+                                        <TableRow className="border-slate-800/80">
+                                            <TableCell colSpan={6} className="h-24 text-center text-sm text-slate-500">
                                                 Nenhuma empresa encontrada.
                                             </TableCell>
                                         </TableRow>
                                     ) : (
                                         companies.map((company) => (
-                                            <TableRow key={company.id}>
+                                            <TableRow
+                                                key={company.id}
+                                                className="border-slate-800/80 text-slate-200 transition-colors hover:bg-slate-800/30"
+                                            >
                                                 <TableCell className="font-medium">
                                                     {company.nome_interno}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant={company.ativo ? "default" : "secondary"}>
+                                                    <span
+                                                        className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
+                                                            company.ativo
+                                                                ? "bg-emerald-500/20 text-emerald-400"
+                                                                : "bg-slate-700/50 text-slate-500"
+                                                        }`}
+                                                    >
                                                         {company.ativo ? "Ativo" : "Inativo"}
-                                                    </Badge>
+                                                    </span>
                                                 </TableCell>
                                                 <TableCell>
                                                     {company.sigilosa ? (
@@ -180,7 +192,7 @@ export default function CompaniesPage() {
                                                             Sim
                                                         </Badge>
                                                     ) : (
-                                                        <span className="text-muted-foreground text-sm">Não</span>
+                                                        <span className="text-sm text-slate-500">Não</span>
                                                     )}
                                                 </TableCell>
                                                 <TableCell>
@@ -192,7 +204,7 @@ export default function CompaniesPage() {
                                                         "-"
                                                     )}
                                                 </TableCell>
-                                                <TableCell className="text-muted-foreground text-sm">
+                                                <TableCell className="text-sm text-slate-500">
                                                     {formatCompanyDate(
                                                         company.createdAt ?? (company as Company & { created_at?: string }).created_at
                                                     )}

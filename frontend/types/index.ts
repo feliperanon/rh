@@ -40,12 +40,39 @@ export interface Sector {
     updatedAt: string;
 }
 
+export interface CandidateEvent {
+    id: string;
+    type: string;
+    occurred_at: string;
+    notes?: string;
+    user?: {
+        id?: string;
+        name?: string;
+    };
+}
+
 export interface Candidate {
     id: string;
     name?: string;
     phone_normalizado: string;
     cpf?: string;
+    _count?: {
+        applications: number;
+    };
+    applications?: Application[];
+    events?: CandidateEvent[];
     // ... outros campos
+}
+
+export interface ApplicationEvent {
+    id: string;
+    type: string;
+    occurred_at: string;
+    notes?: string;
+    user?: {
+        id?: string;
+        name?: string;
+    };
 }
 
 export interface Application {
@@ -56,5 +83,5 @@ export interface Application {
     company: Company;
     sector: Sector;
     createdAt: string;
-    // ... events
+    events?: ApplicationEvent[];
 }

@@ -18,7 +18,6 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import {
     Select,
     SelectContent,
@@ -30,8 +29,15 @@ import { Plus } from "lucide-react";
 import { api } from "@/lib/api";
 import { Company, Sector } from "@/types";
 import { SectorForm } from "@/components/forms/SectorForm";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { MainLayout } from "@/components/layout/MainLayout";
+
+const formatSectorDate = (value?: string | Date | null) => {
+    if (value == null) return "—";
+    const date = value instanceof Date ? value : new Date(value);
+    if (!isValid(date)) return "—";
+    return format(date, "dd/MM/yyyy");
+};
 
 export default function SectorsPage() {
     const [companies, setCompanies] = useState<Company[]>([]);
@@ -80,10 +86,10 @@ export default function SectorsPage() {
     };
 
     const headerActions = useMemo(() => (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
             <Select value={selectedCompanyId} onValueChange={setSelectedCompanyId}>
-                <SelectTrigger className="w-[240px]">
-                    <SelectValue placeholder="Selecione uma empresa" />
+                <SelectTrigger className="h-9 w-[200px] border-slate-700 bg-slate-900/50 text-slate-200 hover:bg-slate-800/50 sm:w-[220px]">
+                    <SelectValue placeholder="Empresa" />
                 </SelectTrigger>
                 <SelectContent>
                     {companies.map((company) => (
@@ -95,18 +101,25 @@ export default function SectorsPage() {
             </Select>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button disabled={!selectedCompanyId}>
-                        <Plus className="mr-2 h-4 w-4" /> Novo Setor
+                    <Button
+                        size="sm"
+                        disabled={!selectedCompanyId}
+                        className="h-9 bg-white text-slate-900 hover:bg-slate-100"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Novo setor
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[400px]">
                     <DialogHeader>
                         <DialogTitle>Novo Setor</DialogTitle>
                         <DialogDescription>
                             Adicione um setor ou vaga para a empresa selecionada.
                         </DialogDescription>
                     </DialogHeader>
-                    {selectedCompanyId && <SectorForm companyId={selectedCompanyId} onSuccess={onSuccess} />}
+                    {selectedCompanyId && (
+                        <SectorForm companyId={selectedCompanyId} onSuccess={onSuccess} />
+                    )}
                 </DialogContent>
             </Dialog>
         </div>
@@ -115,44 +128,68 @@ export default function SectorsPage() {
     return (
         <MainLayout
             title="Setores"
-            description="Gerencie vagas e sub-áreas por empresa."
+            description="Vagas e sub-áreas por empresa."
             actions={headerActions}
         >
-            <div className="glass-panel border border-white/5">
+            <div className="rounded-xl border border-slate-800/80 bg-slate-900/30">
                 <Table>
                     <TableHeader>
-                        <TableRow>
-                            <TableHead>Nome</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Criado em</TableHead>
+                        <TableRow className="border-slate-800/80 hover:bg-transparent">
+                            <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                Nome
+                            </TableHead>
+                            <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                Status
+                            </TableHead>
+                            <TableHead className="h-11 text-right text-xs font-medium text-slate-400">
+                                Criado em
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {loading ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center h-24">
-                                    Carregando...
+                            <TableRow className="border-slate-800/80">
+                                <TableCell
+                                    colSpan={3}
+                                    className="h-32 text-center text-sm text-slate-500"
+                                >
+                                    Carregando…
                                 </TableCell>
                             </TableRow>
                         ) : sectors.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={3} className="text-center h-24">
-                                    Nenhum setor encontrado para esta empresa.
+                            <TableRow className="border-slate-800/80">
+                                <TableCell
+                                    colSpan={3}
+                                    className="h-32 text-center text-sm text-slate-500"
+                                >
+                                    Nenhum setor para esta empresa.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             sectors.map((sector) => (
-                                <TableRow key={sector.id}>
+                                <TableRow
+                                    key={sector.id}
+                                    className="border-slate-800/80 text-slate-200 transition-colors hover:bg-slate-800/30"
+                                >
                                     <TableCell className="font-medium">
                                         {sector.nome}
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={sector.ativo ? "default" : "secondary"}>
+                                        <span
+                                            className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
+                                                sector.ativo
+                                                    ? "bg-emerald-500/20 text-emerald-400"
+                                                    : "bg-slate-700/50 text-slate-500"
+                                            }`}
+                                        >
                                             {sector.ativo ? "Ativo" : "Inativo"}
-                                        </Badge>
+                                        </span>
                                     </TableCell>
-                                    <TableCell className="text-muted-foreground text-sm">
-                                        {format(new Date(sector.createdAt), "dd/MM/yyyy")}
+                                    <TableCell className="text-right text-sm text-slate-500">
+                                        {formatSectorDate(
+                                            sector.createdAt ??
+                                            (sector as Sector & { created_at?: string }).created_at
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))
