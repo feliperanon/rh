@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea
 import { MainLayout } from "@/components/layout/MainLayout";
 import { api } from "@/lib/api";
 import { Application, ApplicationStatus, Company, Sector } from "@/types";
+import { STATUS_LABELS } from "@/lib/status-labels";
 import { toast } from "sonner";
 import {
     Select,
@@ -19,14 +20,15 @@ import { useRouter } from "next/navigation";
 
 const ALL_VALUE = "__all__";
 
+/** Colunas do board: mesmo rótulo de STATUS_LABELS (Kanban = Avaliação = select de status). */
 const COLUMNS = [
-    { id: ApplicationStatus.CADASTRO_PREENCHIDO, title: "Triagem", color: "bg-blue-500" },
-    { id: ApplicationStatus.EM_CONTATO, title: "Em Contato", color: "bg-yellow-500" },
-    { id: ApplicationStatus.ENTREVISTA_MARCADA, title: "Entrevista", color: "bg-purple-500" },
-    { id: ApplicationStatus.ENCAMINHADO, title: "Encaminhado", color: "bg-indigo-500" },
-    { id: ApplicationStatus.APROVADO, title: "Aprovado", color: "bg-emerald-500" },
-    { id: ApplicationStatus.REPROVADO, title: "Reprovado", color: "bg-rose-500" },
-    { id: ApplicationStatus.DESISTIU, title: "Desistiu", color: "bg-slate-500" },
+    { id: ApplicationStatus.CADASTRO_PREENCHIDO, color: "bg-blue-500" },
+    { id: ApplicationStatus.EM_CONTATO, color: "bg-yellow-500" },
+    { id: ApplicationStatus.ENTREVISTA_MARCADA, color: "bg-purple-500" },
+    { id: ApplicationStatus.ENCAMINHADO, color: "bg-indigo-500" },
+    { id: ApplicationStatus.APROVADO, color: "bg-emerald-500" },
+    { id: ApplicationStatus.REPROVADO, color: "bg-rose-500" },
+    { id: ApplicationStatus.DESISTIU, color: "bg-slate-500" },
 ];
 
 export default function KanbanPage() {
@@ -182,7 +184,7 @@ export default function KanbanPage() {
                                     <div className="mb-3 flex items-center justify-between px-1">
                                         <div className="flex min-w-0 items-center gap-2">
                                             <div className={`h-2 w-2 shrink-0 rounded-full ${column.color}`} />
-                                            <h3 className="truncate text-sm font-semibold app-text">{column.title}</h3>
+                                            <h3 className="truncate text-sm font-semibold app-text">{STATUS_LABELS[column.id] ?? column.id}</h3>
                                             <span className="rounded bg-[hsl(var(--app-border))] px-1.5 py-0.5 text-xs app-text-muted shrink-0">
                                                 {boardData[column.id]?.length || 0}
                                             </span>

@@ -2,13 +2,14 @@
  * Rótulos de status padronizados (igual ao Kanban).
  * Use em listagens, selects e avaliação.
  */
+/** Rótulos únicos para Kanban, Avaliação e select de status (igual em todas as páginas). */
 export const STATUS_LABELS: Record<string, string> = {
     PRE_CADASTRO: "Pré-cadastro",
     LINK_GERADO: "Link gerado",
     WHATSAPP_ABERTO: "WhatsApp aberto",
     LINK_ENVIADO: "Link enviado",
     CADASTRO_PREENCHIDO: "Triagem",
-    EM_CONTATO: "Em contato",
+    EM_CONTATO: "Em Contato",
     ENTREVISTA_MARCADA: "Entrevista",
     ENCAMINHADO: "Encaminhado",
     APROVADO: "Aprovado",
@@ -16,14 +17,14 @@ export const STATUS_LABELS: Record<string, string> = {
     DESISTIU: "Desistiu",
 };
 
-/** Opções para select de status (valor + label padrão Kanban) */
+/** Opções para select de status (mesmo texto do Kanban e da página Avaliação). */
 export const STATUS_OPTIONS = [
     { value: "PRE_CADASTRO", label: "Pré-cadastro" },
     { value: "LINK_GERADO", label: "Link gerado" },
     { value: "WHATSAPP_ABERTO", label: "WhatsApp aberto" },
     { value: "LINK_ENVIADO", label: "Link enviado" },
     { value: "CADASTRO_PREENCHIDO", label: "Triagem" },
-    { value: "EM_CONTATO", label: "Em contato" },
+    { value: "EM_CONTATO", label: "Em Contato" },
     { value: "ENTREVISTA_MARCADA", label: "Entrevista" },
     { value: "ENCAMINHADO", label: "Encaminhado" },
     { value: "APROVADO", label: "Aprovado" },
@@ -49,7 +50,7 @@ export const FUNNEL_STAGE_IDS = [
 export const FUNNEL_STAGE_LABELS: Record<string, string> = {
     PRE_CADASTRO: "Pré-cadastro",
     TRIAGEM: "Triagem",
-    EM_CONTATO: "Em contato",
+    EM_CONTATO: "Em Contato",
     ENTREVISTA_MARCADA: "Entrevista",
     ENCAMINHADO: "Encaminhado",
     APROVADO: "Aprovado",
