@@ -14,6 +14,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { CurrencyInputBR } from "@/components/ui/CurrencyInputBR";
 import {
     Select,
     SelectContent,
@@ -59,7 +60,7 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
             cpf: initialData.candidate.cpf || "",
             birth_date: initialData.candidate.birth_date ? format(new Date(initialData.candidate.birth_date), "yyyy-MM-dd") : "",
             education: initialData.candidate.education || undefined,
-            vt_value_cents: initialData.candidate.vt_value_cents || 0,
+            vt_value_cents: (initialData.candidate.vt_value_cents || 0) / 100,
             schedule_prefs: initialData.candidate.schedule_prefs || [],
             worked_here_before: initialData.candidate.worked_here_before || false,
         },
@@ -68,7 +69,8 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
     async function onSubmit(values: FormValues) {
         setLoading(true);
         try {
-            await api.submitApplicationByToken(token, values);
+            const payload = { ...values, vt_value_cents: Math.round(values.vt_value_cents * 100) };
+            await api.submitApplicationByToken(token, payload);
             toast.success("Cadastro enviado com sucesso!");
             onSuccess();
         } catch (error: any) {
@@ -167,9 +169,13 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                         <FormItem>
                             <FormLabel>Valor do Vale Transporte (Diário)</FormLabel>
                             <FormControl>
-                                <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                                <CurrencyInputBR
+                                    placeholder="0,00"
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                />
                             </FormControl>
-                            <FormDescription>Se não utilizar, deixe 0.</FormDescription>
+                            <FormDescription>Se não utilizar, deixe 0,00. Padrão brasileiro (vírgula e ponto automático).</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}

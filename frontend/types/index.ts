@@ -57,6 +57,7 @@ export interface Candidate {
     phone_normalizado: string;
     cpf?: string;
     birth_date?: string | null;
+    vt_value_cents?: number | null;
     worked_here_before?: boolean | null;
     _count?: {
         applications: number;

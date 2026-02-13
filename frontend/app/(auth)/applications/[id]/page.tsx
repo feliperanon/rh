@@ -13,6 +13,29 @@ import { Badge } from "@/components/ui/badge";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const STATUS_OPTIONS: { value: string; label: string }[] = [
+    { value: "PRE_CADASTRO", label: "Pré-cadastro" },
+    { value: "LINK_GERADO", label: "Link gerado" },
+    { value: "WHATSAPP_ABERTO", label: "WhatsApp aberto" },
+    { value: "LINK_ENVIADO", label: "Link enviado" },
+    { value: "CADASTRO_PREENCHIDO", label: "Cadastro preenchido" },
+    { value: "EM_CONTATO", label: "Em contato" },
+    { value: "ENTREVISTA_MARCADA", label: "Entrevista marcada" },
+    { value: "ENCAMINHADO", label: "Encaminhado" },
+    { value: "APROVADO", label: "Aprovado" },
+    { value: "REPROVADO", label: "Reprovado" },
+    { value: "DESISTIU", label: "Desistiu" },
+];
+
+function getStatusBadgeClass(status: string): string {
+    if (status === "APROVADO") return "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30";
+    if (status === "REPROVADO" || status === "DESISTIU") return "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20";
+    if (status === "ENTREVISTA_MARCADA" || status === "ENCAMINHADO") return "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20";
+    if (status === "LINK_ENVIADO" || status === "CADASTRO_PREENCHIDO" || status === "EM_CONTATO") return "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20";
+    return "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20";
+}
 
 export default function ApplicationDetailsPage() {
     const params = useParams();
@@ -27,6 +50,7 @@ export default function ApplicationDetailsPage() {
         phone_e164: string;
     } | null>(null);
     const [whatsappLinkLoading, setWhatsappLinkLoading] = useState(false);
+    const [statusUpdating, setStatusUpdating] = useState(false);
 
     const fetchApplication = async () => {
         try {
@@ -126,6 +150,20 @@ export default function ApplicationDetailsPage() {
         }
     };
 
+    const handleStatusChange = async (newStatus: string) => {
+        if (!application || newStatus === application.status) return;
+        setStatusUpdating(true);
+        try {
+            await api.updateApplicationStatus(application.id, newStatus);
+            toast.success("Status atualizado");
+            setApplication((prev) => (prev ? { ...prev, status: newStatus as Application["status"] } : null));
+        } catch (e: any) {
+            toast.error("Erro ao atualizar status", { description: e.message });
+        } finally {
+            setStatusUpdating(false);
+        }
+    };
+
     const actions = useMemo(() => (
         <Button variant="ghost" size="icon" onClick={() => router.back()} aria-label="Voltar">
             <ArrowLeft className="h-4 w-4 app-text" />
@@ -178,6 +216,14 @@ export default function ApplicationDetailsPage() {
                                             : "-"}
                                 </p>
                             </div>
+                            <div>
+                                <p className="text-sm font-medium app-text-muted">Vale transporte (diário)</p>
+                                <p className="app-text">
+                                    {application.candidate.vt_value_cents != null
+                                        ? `R$ ${(application.candidate.vt_value_cents / 100).toFixed(2).replace(".", ",")}`
+                                        : "-"}
+                                </p>
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -192,7 +238,25 @@ export default function ApplicationDetailsPage() {
                             </div>
                             <div>
                                 <p className="text-sm font-medium app-text-muted">Status</p>
-                                <Badge className="mt-1">{application.status}</Badge>
+                                <Select
+                                    value={application.status}
+                                    onValueChange={handleStatusChange}
+                                    disabled={statusUpdating}
+                                >
+                                    <SelectTrigger className="mt-1.5 h-10 w-full app-border-color bg-[hsl(var(--app-input-bg))]">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {STATUS_OPTIONS.map((o) => (
+                                            <SelectItem key={o.value} value={o.value}>
+                                                {o.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Badge variant="outline" className={`mt-2 ${getStatusBadgeClass(application.status)}`}>
+                                    {STATUS_OPTIONS.find((o) => o.value === application.status)?.label ?? application.status}
+                                </Badge>
                             </div>
 
                             <div className="flex flex-col gap-2 pt-4">

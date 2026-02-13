@@ -12,6 +12,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { CurrencyInputBR } from "@/components/ui/CurrencyInputBR";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -262,12 +263,11 @@ export default function CandidateDetailsPage() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-slate-700">Valor VT (R$)</Label>
-                                    <Input
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.vt_value_cents}
-                                        onChange={(e) =>
-                                            setFormData((p) => ({ ...p, vt_value_cents: e.target.value }))
+                                    <CurrencyInputBR
+                                        placeholder="0,00"
+                                        value={formData.vt_value_cents === "" ? 0 : parseFloat(String(formData.vt_value_cents)) || 0}
+                                        onChange={(n) =>
+                                            setFormData((p) => ({ ...p, vt_value_cents: n === 0 ? "" : String(n) }))
                                         }
                                         className="border-slate-300"
                                     />
