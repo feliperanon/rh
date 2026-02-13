@@ -21,15 +21,18 @@ import { useRouter } from "next/navigation";
 const ALL_VALUE = "__all__";
 
 /** Colunas do board: mesmo rótulo de STATUS_LABELS (Kanban = Avaliação = select de status). */
-const COLUMNS = [
+const COLUMNS_EM_ANDAMENTO = [
     { id: ApplicationStatus.CADASTRO_PREENCHIDO, color: "bg-blue-500" },
     { id: ApplicationStatus.EM_CONTATO, color: "bg-yellow-500" },
     { id: ApplicationStatus.ENTREVISTA_MARCADA, color: "bg-purple-500" },
     { id: ApplicationStatus.ENCAMINHADO, color: "bg-indigo-500" },
+];
+const COLUMNS_RESULTADO = [
     { id: ApplicationStatus.APROVADO, color: "bg-emerald-500" },
     { id: ApplicationStatus.REPROVADO, color: "bg-rose-500" },
     { id: ApplicationStatus.DESISTIU, color: "bg-slate-500" },
 ];
+const ALL_COLUMNS = [...COLUMNS_EM_ANDAMENTO, ...COLUMNS_RESULTADO];
 
 export default function KanbanPage() {
     const [applications, setApplications] = useState<Application[]>([]);
@@ -86,7 +89,7 @@ export default function KanbanPage() {
     const boardData = useMemo(() => {
         const groups: Record<string, Application[]> = {};
 
-        COLUMNS.forEach(col => {
+        ALL_COLUMNS.forEach(col => {
             groups[col.id] = [];
         });
 
@@ -175,81 +178,162 @@ export default function KanbanPage() {
                     </div>
                 </div>
 
-                {/* Kanban Board — grid que quebra em várias linhas, sem scroll horizontal */}
-                <div className="w-full">
+                {/* Kanban Board — dois grids: Em andamento + Resultado */}
+                <div className="w-full space-y-8">
                     <DragDropContext onDragEnd={onDragEnd}>
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-                            {COLUMNS.map(column => (
-                                <div key={column.id} className="flex min-w-0 flex-col">
-                                    <div className="mb-3 flex items-center justify-between px-1">
-                                        <div className="flex min-w-0 items-center gap-2">
-                                            <div className={`h-2 w-2 shrink-0 rounded-full ${column.color}`} />
-                                            <h3 className="truncate text-sm font-semibold app-text">{STATUS_LABELS[column.id] ?? column.id}</h3>
-                                            <span className="rounded bg-[hsl(var(--app-border))] px-1.5 py-0.5 text-xs app-text-muted shrink-0">
-                                                {boardData[column.id]?.length || 0}
-                                            </span>
+                        {/* Em andamento: 4 colunas */}
+                        <section>
+                            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider app-text-muted">
+                                Em andamento
+                            </h2>
+                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                                {COLUMNS_EM_ANDAMENTO.map(column => (
+                                    <div key={column.id} className="flex min-w-0 flex-col">
+                                        <div className="mb-3 flex items-center justify-between px-1">
+                                            <div className="flex min-w-0 items-center gap-2">
+                                                <div className={`h-2 w-2 shrink-0 rounded-full ${column.color}`} />
+                                                <h3 className="truncate text-sm font-semibold app-text">{STATUS_LABELS[column.id] ?? column.id}</h3>
+                                                <span className="rounded bg-[hsl(var(--app-border))] px-1.5 py-0.5 text-xs app-text-muted shrink-0">
+                                                    {boardData[column.id]?.length || 0}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <Droppable droppableId={column.id}>
-                                        {(provided, snapshot) => (
-                                            <div
-                                                {...provided.droppableProps}
-                                                ref={provided.innerRef}
-                                                className={`min-h-[320px] flex-1 rounded-xl border border-dashed p-2 transition-colors ${snapshot.isDraggingOver
-                                                        ? "border-primary/50 bg-primary/5"
-                                                        : "app-border-color opacity-90"
-                                                    }`}
-                                            >
-                                                {boardData[column.id].map((app, index) => (
-                                                    <Draggable key={app.id} draggableId={app.id} index={index}>
-                                                        {(provided, snapshot) => (
-                                                            <div
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                {...provided.dragHandleProps}
-                                                                className={`mb-3 select-none rounded-lg border app-border-color glass-panel p-3 shadow-sm transition-all hover:app-border-color ${snapshot.isDragging ? "rotate-2 scale-105 shadow-xl border-primary" : ""
-                                                                    }`}
-                                                                onClick={() => router.push(`/applications/${app.id}`)}
-                                                            >
-                                                                <div className="space-y-2">
-                                                                    <div className="flex items-start justify-between gap-2">
-                                                                        <p className="font-medium app-text text-sm">
-                                                                            {app.candidate.name || "Sem Nome"}
-                                                                        </p>
-                                                                        <span className="text-[10px] font-mono app-text-muted uppercase">
-                                                                            {app.protocol}
-                                                                        </span>
-                                                                    </div>
-
-                                                                    <div className="space-y-1">
-                                                                        <div className="flex items-center gap-1.5 text-xs app-text-muted">
-                                                                            <Building2 className="h-3 w-3" />
-                                                                            <span className="truncate">{app.company.nome_interno}</span>
+                                        <Droppable droppableId={column.id}>
+                                            {(provided, snapshot) => (
+                                                <div
+                                                    {...provided.droppableProps}
+                                                    ref={provided.innerRef}
+                                                    className={`min-h-[280px] flex-1 rounded-xl border border-dashed p-2 transition-colors ${snapshot.isDraggingOver
+                                                            ? "border-primary/50 bg-primary/5"
+                                                            : "app-border-color opacity-90"
+                                                        }`}
+                                                >
+                                                    {boardData[column.id].map((app, index) => (
+                                                        <Draggable key={app.id} draggableId={app.id} index={index}>
+                                                            {(provided, snapshot) => (
+                                                                <div
+                                                                    ref={provided.innerRef}
+                                                                    {...provided.draggableProps}
+                                                                    {...provided.dragHandleProps}
+                                                                    className={`mb-3 select-none rounded-lg border app-border-color glass-panel p-3 shadow-sm transition-all hover:app-border-color ${snapshot.isDragging ? "rotate-2 scale-105 shadow-xl border-primary" : ""
+                                                                        }`}
+                                                                    onClick={() => router.push(`/applications/${app.id}`)}
+                                                                >
+                                                                    <div className="space-y-2">
+                                                                        <div className="flex items-start justify-between gap-2">
+                                                                            <p className="font-medium app-text text-sm">
+                                                                                {app.candidate.name || "Sem Nome"}
+                                                                            </p>
+                                                                            <span className="text-[10px] font-mono app-text-muted uppercase">
+                                                                                {app.protocol}
+                                                                            </span>
                                                                         </div>
-                                                                        <div className="flex items-center gap-1.5 text-xs app-text-muted">
-                                                                            <Briefcase className="h-3 w-3" />
-                                                                            <span className="truncate">{app.sector.nome}</span>
-                                                                        </div>
-                                                                        {app.candidate.phone_normalizado && (
+                                                                        <div className="space-y-1">
                                                                             <div className="flex items-center gap-1.5 text-xs app-text-muted">
-                                                                                <Phone className="h-3 w-3" />
-                                                                                <span className="font-mono">{app.candidate.phone_normalizado}</span>
+                                                                                <Building2 className="h-3 w-3" />
+                                                                                <span className="truncate">{app.company.nome_interno}</span>
                                                                             </div>
-                                                                        )}
+                                                                            <div className="flex items-center gap-1.5 text-xs app-text-muted">
+                                                                                <Briefcase className="h-3 w-3" />
+                                                                                <span className="truncate">{app.sector.nome}</span>
+                                                                            </div>
+                                                                            {app.candidate.phone_normalizado && (
+                                                                                <div className="flex items-center gap-1.5 text-xs app-text-muted">
+                                                                                    <Phone className="h-3 w-3" />
+                                                                                    <span className="font-mono">{app.candidate.phone_normalizado}</span>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
-                                                ))}
-                                                {provided.placeholder}
+                                                            )}
+                                                        </Draggable>
+                                                    ))}
+                                                    {provided.placeholder}
+                                                </div>
+                                            )}
+                                        </Droppable>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Resultado: 3 colunas */}
+                        <section>
+                            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider app-text-muted">
+                                Resultado
+                            </h2>
+                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                                {COLUMNS_RESULTADO.map(column => (
+                                    <div key={column.id} className="flex min-w-0 flex-col">
+                                        <div className="mb-3 flex items-center justify-between px-1">
+                                            <div className="flex min-w-0 items-center gap-2">
+                                                <div className={`h-2 w-2 shrink-0 rounded-full ${column.color}`} />
+                                                <h3 className="truncate text-sm font-semibold app-text">{STATUS_LABELS[column.id] ?? column.id}</h3>
+                                                <span className="rounded bg-[hsl(var(--app-border))] px-1.5 py-0.5 text-xs app-text-muted shrink-0">
+                                                    {boardData[column.id]?.length || 0}
+                                                </span>
                                             </div>
-                                        )}
-                                    </Droppable>
-                                </div>
-                            ))}
-                        </div>
+                                        </div>
+                                        <Droppable droppableId={column.id}>
+                                            {(provided, snapshot) => (
+                                                <div
+                                                    {...provided.droppableProps}
+                                                    ref={provided.innerRef}
+                                                    className={`min-h-[280px] flex-1 rounded-xl border border-dashed p-2 transition-colors ${snapshot.isDraggingOver
+                                                            ? "border-primary/50 bg-primary/5"
+                                                            : "app-border-color opacity-90"
+                                                        }`}
+                                                >
+                                                    {boardData[column.id].map((app, index) => (
+                                                        <Draggable key={app.id} draggableId={app.id} index={index}>
+                                                            {(provided, snapshot) => (
+                                                                <div
+                                                                    ref={provided.innerRef}
+                                                                    {...provided.draggableProps}
+                                                                    {...provided.dragHandleProps}
+                                                                    className={`mb-3 select-none rounded-lg border app-border-color glass-panel p-3 shadow-sm transition-all hover:app-border-color ${snapshot.isDragging ? "rotate-2 scale-105 shadow-xl border-primary" : ""
+                                                                        }`}
+                                                                    onClick={() => router.push(`/applications/${app.id}`)}
+                                                                >
+                                                                    <div className="space-y-2">
+                                                                        <div className="flex items-start justify-between gap-2">
+                                                                            <p className="font-medium app-text text-sm">
+                                                                                {app.candidate.name || "Sem Nome"}
+                                                                            </p>
+                                                                            <span className="text-[10px] font-mono app-text-muted uppercase">
+                                                                                {app.protocol}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="space-y-1">
+                                                                            <div className="flex items-center gap-1.5 text-xs app-text-muted">
+                                                                                <Building2 className="h-3 w-3" />
+                                                                                <span className="truncate">{app.company.nome_interno}</span>
+                                                                            </div>
+                                                                            <div className="flex items-center gap-1.5 text-xs app-text-muted">
+                                                                                <Briefcase className="h-3 w-3" />
+                                                                                <span className="truncate">{app.sector.nome}</span>
+                                                                            </div>
+                                                                            {app.candidate.phone_normalizado && (
+                                                                                <div className="flex items-center gap-1.5 text-xs app-text-muted">
+                                                                                    <Phone className="h-3 w-3" />
+                                                                                    <span className="font-mono">{app.candidate.phone_normalizado}</span>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </Draggable>
+                                                    ))}
+                                                    {provided.placeholder}
+                                                </div>
+                                            )}
+                                        </Droppable>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
                     </DragDropContext>
                 </div>
             </div>
