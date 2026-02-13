@@ -23,6 +23,14 @@ import { Candidate } from "@/types";
 import { useRouter } from "next/navigation";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { toast } from "sonner";
+import { format, isValid } from "date-fns";
+
+const EDUCATION_LABELS: Record<string, string> = {
+    FUNDAMENTAL: "Ensino Fundamental",
+    MEDIO: "Ensino Médio",
+    SUPERIOR: "Ensino Superior",
+    POS_GRADUACAO: "Pós-Graduação",
+};
 
 export default function CandidatesPage() {
     const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -75,11 +83,21 @@ export default function CandidatesPage() {
         return phone;
     };
 
-    const formatCPF = (cpf?: string) => {
-        if (!cpf) return "—";
-        const d = cpf.replace(/\D/g, "");
-        if (d.length !== 11) return cpf;
-        return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+    const formatBirthDate = (date?: string | null) => {
+        if (!date) return "—";
+        const d = new Date(date);
+        return isValid(d) ? format(d, "dd/MM/yyyy") : "—";
+    };
+
+    const getAge = (birthDate?: string | null): string => {
+        if (!birthDate) return "—";
+        const d = new Date(birthDate);
+        if (!isValid(d)) return "—";
+        const today = new Date();
+        let age = today.getFullYear() - d.getFullYear();
+        const m = today.getMonth() - d.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+        return age >= 0 ? `${age} anos` : "—";
     };
 
     return (
@@ -130,7 +148,13 @@ export default function CandidatesPage() {
                                     Telefone
                                 </TableHead>
                                 <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
-                                    CPF
+                                    Escolaridade
+                                </TableHead>
+                                <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
+                                    Data nasc.
+                                </TableHead>
+                                <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
+                                    Idade
                                 </TableHead>
                                 <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
                                     Processos
@@ -142,7 +166,7 @@ export default function CandidatesPage() {
                             {loading ? (
                                 <TableRow className="app-border-color">
                                     <TableCell
-                                        colSpan={5}
+                                        colSpan={7}
                                         className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Carregando…
@@ -151,7 +175,7 @@ export default function CandidatesPage() {
                             ) : candidates.length === 0 ? (
                                 <TableRow className="app-border-color">
                                     <TableCell
-                                        colSpan={5}
+                                        colSpan={7}
                                         className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Nenhum candidato encontrado. Use a busca acima.
@@ -176,7 +200,13 @@ export default function CandidatesPage() {
                                             {formatPhone(candidate.phone_normalizado)}
                                         </TableCell>
                                         <TableCell className="text-sm app-text-muted">
-                                            {formatCPF(candidate.cpf)}
+                                            {EDUCATION_LABELS[candidate.education ?? ""] ?? "-"}
+                                        </TableCell>
+                                        <TableCell className="text-sm app-text-muted">
+                                            {formatBirthDate(candidate.birth_date)}
+                                        </TableCell>
+                                        <TableCell className="text-sm app-text-muted">
+                                            {getAge(candidate.birth_date)}
                                         </TableCell>
                                         <TableCell>
                                             <span className="inline-flex items-center rounded-md border border-[hsl(var(--app-border))] bg-[hsl(214_32%_98%)] px-2 py-0.5 text-xs font-medium app-text">
