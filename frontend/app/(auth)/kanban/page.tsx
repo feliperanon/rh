@@ -25,7 +25,8 @@ const COLUMNS = [
     { id: ApplicationStatus.ENTREVISTA_MARCADA, title: "Entrevista", color: "bg-purple-500" },
     { id: ApplicationStatus.ENCAMINHADO, title: "Encaminhado", color: "bg-indigo-500" },
     { id: ApplicationStatus.APROVADO, title: "Aprovado", color: "bg-emerald-500" },
-    { id: "FINALIZADOS", title: "Reprovado/Desistiu", color: "bg-slate-500" },
+    { id: ApplicationStatus.REPROVADO, title: "Reprovado", color: "bg-rose-500" },
+    { id: ApplicationStatus.DESISTIU, title: "Desistiu", color: "bg-slate-500" },
 ];
 
 export default function KanbanPage() {
@@ -88,11 +89,7 @@ export default function KanbanPage() {
         });
 
         applications.forEach(app => {
-            let columnId = app.status as string;
-            if (app.status === ApplicationStatus.REPROVADO || app.status === ApplicationStatus.DESISTIU) {
-                columnId = "FINALIZADOS";
-            }
-
+            const columnId = app.status as string;
             if (groups[columnId]) {
                 groups[columnId].push(app);
             }
@@ -108,12 +105,7 @@ export default function KanbanPage() {
         if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
         const applicationId = draggableId;
-        let newStatus = destination.droppableId as ApplicationStatus;
-
-        // Se mover para "FINALIZADOS", por padrão coloca como REPROVADO
-        if (destination.droppableId === "FINALIZADOS") {
-            newStatus = ApplicationStatus.REPROVADO;
-        }
+        const newStatus = destination.droppableId as ApplicationStatus;
 
         // Atualização Otimista
         const oldApps = [...applications];
@@ -184,7 +176,7 @@ export default function KanbanPage() {
                 {/* Kanban Board — grid que quebra em várias linhas, sem scroll horizontal */}
                 <div className="w-full">
                     <DragDropContext onDragEnd={onDragEnd}>
-                        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
                             {COLUMNS.map(column => (
                                 <div key={column.id} className="flex min-w-0 flex-col">
                                     <div className="mb-3 flex items-center justify-between px-1">
