@@ -51,14 +51,17 @@ export const authOptions: NextAuthOptions = {
             return token;
         },
         async session({ session, token }) {
-            session.user.role = token.role;
-            session.user.id = token.id;
-            session.accessToken = token.accessToken;
+            if (session?.user) {
+                session.user.role = (token.role as string) ?? "";
+                session.user.id = (token.id as string) ?? "";
+            }
+            session.accessToken = (token.accessToken as string) ?? "";
             return session;
         },
     },
     pages: {
         signIn: "/",
+        error: "/erro-auth",
     },
     session: {
         strategy: "jwt",
