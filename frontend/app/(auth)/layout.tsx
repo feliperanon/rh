@@ -65,7 +65,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                         className="mb-8 shrink-0 flex flex-col items-center"
                         style={{ color: "hsl(var(--app-text))" }}
                     >
-                        <Logo height={48} showSlogan={false} />
+                        <Logo height={52} showSlogan={false} />
                     </Link>
                     <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
                         {navItems.map((item) => {
@@ -145,7 +145,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                                     style={{ color: "hsl(var(--app-text))" }}
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    <Logo height={48} showSlogan={false} />
+                                    <Logo height={52} showSlogan={false} />
                                 </Link>
                                 <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3">
                                     {navItems.map((item) => {

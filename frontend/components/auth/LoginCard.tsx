@@ -100,7 +100,7 @@ export function LoginCard({
     >
       <CardHeader className="space-y-2 text-center pb-2">
         <div className="mx-auto flex justify-center" aria-hidden>
-          <Logo height={80} showSlogan={true} lightBackground />
+          <Logo height={120} showSlogan={true} lightBackground />
         </div>
         <CardTitle className="text-xl font-semibold text-[hsl(var(--login-text))]">
           Painel Administrativo
