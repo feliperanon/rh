@@ -41,8 +41,10 @@ export default function CandidatesPage() {
     const fetchCandidates = async () => {
         setLoading(true);
         try {
+            const term = search.trim() || undefined;
             const data = await api.getCandidates({
-                search: search.trim() || undefined,
+                search: term,
+                protocol: term,
             });
             setCandidates(data);
         } catch (error) {
@@ -101,7 +103,7 @@ export default function CandidatesPage() {
     return (
         <MainLayout
             title="Candidatos"
-            description="Busque por nome, CPF ou telefone."
+            description="Busque por nome, CPF, telefone ou protocolo."
         >
             <div className="space-y-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -111,7 +113,7 @@ export default function CandidatesPage() {
                     >
                         <Input
                             type="text"
-                            placeholder="Nome, CPF ou telefone"
+                            placeholder="Nome, CPF, telefone ou protocolo"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="h-9 flex-1 app-border-color bg-[hsl(var(--app-input-bg))] app-text placeholder:app-text-muted"

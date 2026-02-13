@@ -281,9 +281,6 @@ export default function ApplicationsPage() {
                         <TableHeader>
                             <TableRow className="app-border-color hover:bg-transparent">
                                 <TableHead className="h-11 text-xs font-medium app-text-muted">
-                                    Protocolo
-                                </TableHead>
-                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Candidato
                                 </TableHead>
                                 <TableHead className="h-11 text-xs font-medium app-text-muted">
@@ -307,7 +304,7 @@ export default function ApplicationsPage() {
                             {loading ? (
                                 <TableRow className="app-border-color">
                                     <TableCell
-                                        colSpan={7}
+                                        colSpan={6}
                                         className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Carregando…
@@ -316,7 +313,7 @@ export default function ApplicationsPage() {
                             ) : applications.length === 0 ? (
                                 <TableRow className="app-border-color">
                                     <TableCell
-                                        colSpan={7}
+                                        colSpan={6}
                                         className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Nenhuma candidatura encontrada.
@@ -330,9 +327,6 @@ export default function ApplicationsPage() {
                                         className="group cursor-pointer app-border-color app-text transition-colors hover:bg-[hsl(214_32%_94%)]"
                                         onClick={() => router.push(`/applications/${app.id}`)}
                                     >
-                                        <TableCell className="font-mono text-sm">
-                                            {(app as { protocol?: string }).protocol ?? "—"}
-                                        </TableCell>
                                         <TableCell>{app.candidate?.name || "—"}</TableCell>
                                         <TableCell>{app.candidate?.phone_normalizado}</TableCell>
                                         <TableCell>{app.company?.nome_interno}</TableCell>
