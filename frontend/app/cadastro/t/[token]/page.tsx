@@ -79,13 +79,10 @@ export default function PublicRegistrationPage() {
             <div className="max-w-xl mx-auto space-y-6">
                 <div className="text-center space-y-4">
                     <Logo height={150} showSlogan={true} className="mb-4" />
-                    <h1 className="text-2xl font-bold text-gray-900">Finalizar Cadastro</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Cadastro do Candidato</h1>
                     <p className="text-gray-500">
-                        {data.company.sigilosa ? "Processo Seletivo Confidencial" : data.company.nome}
+                        {data.company.sigilosa ? "Processo Seletivo Confidencial" : (data.company.nome_interno || data.company.nome)} - Protocolo: {data.protocol}
                     </p>
-                    <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                        Protocolo: {data.protocol}
-                    </div>
                 </div>
 
                 <Card>

@@ -10,14 +10,13 @@ type LogoProps = {
 };
 
 /**
- * Exibe a logo da marca. PNG com fundo transparente: o container não impõe fundo,
- * para a transparência ser respeitada e não aparecer preto.
+ * Exibe a logo da marca. Fundo branco no container para PNG com transparência não aparecer preta.
  */
 export function Logo({ height = 100, showSlogan = true, className = "" }: LogoProps) {
     return (
         <div className={`flex flex-col items-center justify-center ${className}`}>
             <div
-                className="flex items-center justify-center overflow-hidden"
+                className="flex items-center justify-center overflow-hidden rounded-xl bg-white px-4 py-3 shadow-sm border border-gray-100"
                 style={{ minHeight: height }}
             >
                 <img
@@ -28,6 +27,7 @@ export function Logo({ height = 100, showSlogan = true, className = "" }: LogoPr
                         width: "auto",
                         maxWidth: "min(100%, 280px)",
                         display: "block",
+                        backgroundColor: "white",
                     }}
                     className="object-contain object-center"
                 />
