@@ -17,7 +17,6 @@ function getAuthPath(url: string): string | null {
     }
 }
 
-/** Quando NEXTAUTH_SECRET/NEXTAUTH_URL faltam, responde sem chamar o NextAuth (evita "Server error" em HTML). */
 function responseWhenConfigMissing(req: Request): Response | null {
     if (!isConfigMissing || !req.url) return null;
     const path = getAuthPath(req.url);
@@ -34,16 +33,22 @@ function responseWhenConfigMissing(req: Request): Response | null {
     if (path === "providers") return json({});
     if (path === "getcsrf") return json({ csrfToken: "" });
 
-    console.warn(
-        "[NextAuth] NEXTAUTH_SECRET ou NEXTAUTH_URL não definidos. Defina no Environment do Render (rh-gppm)."
-    );
-    return json({ error: "ConfigurationMissing", message: "Configure NEXTAUTH_SECRET e NEXTAUTH_URL no Render." });
+    return json({
+        error: "ConfigurationMissing",
+        message: "Configure NEXTAUTH_SECRET e NEXTAUTH_URL no Render.",
+    });
 }
 
-async function wrappedHandler(req: Request, context: { params: Promise<{ nextauth?: string[] }> }) {
+type RouteContext = { params: Promise<{ nextauth?: string[] }> };
+
+async function wrappedHandler(req: Request, context: RouteContext): Promise<Response> {
     const safe = responseWhenConfigMissing(req);
     if (safe) return safe;
-    return handler(req, context as any);
+    const params = await context.params;
+    return (handler as (req: Request, ctx: { params: { nextauth?: string[] } }) => Promise<Response>)(
+        req,
+        { params }
+    );
 }
 
 export const GET = wrappedHandler;
