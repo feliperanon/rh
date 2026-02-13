@@ -11,12 +11,20 @@ import { ArrowLeft, MessageCircle, Check } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 export default function ApplicationDetailsPage() {
     const params = useParams();
     const router = useRouter();
     const [application, setApplication] = useState<Application | null>(null);
     const [loading, setLoading] = useState(true);
+    const [whatsappDialog, setWhatsappDialog] = useState<{
+        open: boolean;
+        message: string;
+        phone_e164: string;
+    } | null>(null);
+    const [whatsappLinkLoading, setWhatsappLinkLoading] = useState(false);
 
     const fetchApplication = async () => {
         try {
@@ -36,18 +44,42 @@ export default function ApplicationDetailsPage() {
         }
     }, [params.id]);
 
-    const handleWhatsApp = async () => {
+    const handleOpenWhatsAppDialog = async () => {
         if (!application) return;
-
+        setWhatsappLinkLoading(true);
         try {
-            const { whatsapp_link } = await api.refreshInviteLink(application.id);
-            window.open(whatsapp_link, "_blank");
-            await api.whatsappOpened(application.id);
-            fetchApplication();
+            const res = await api.refreshInviteLink(application.id);
+            const message = res.message ?? res.whatsapp_link;
+            const phone_e164 = res.phone_e164 ?? "";
+            if (!phone_e164) {
+                toast.error("Telefone não disponível para WhatsApp");
+                return;
+            }
+            setWhatsappDialog({
+                open: true,
+                message: typeof message === "string" ? message : "",
+                phone_e164,
+            });
         } catch (e) {
             console.error(e);
             toast.error("Erro ao gerar link do WhatsApp");
+        } finally {
+            setWhatsappLinkLoading(false);
         }
+    };
+
+    const handleWhatsAppOpen = async () => {
+        if (!application || !whatsappDialog) return;
+        const text = whatsappDialog.message.trim();
+        const link = `https://wa.me/${whatsappDialog.phone_e164}?text=${encodeURIComponent(text)}`;
+        window.open(link, "_blank");
+        try {
+            await api.whatsappOpened(application.id);
+        } catch (e) {
+            console.error("Falha ao registrar abertura do WhatsApp", e);
+        }
+        setWhatsappDialog(null);
+        fetchApplication();
     };
 
     const handleMarkSent = async () => {
@@ -131,8 +163,8 @@ export default function ApplicationDetailsPage() {
                             </div>
 
                             <div className="flex flex-col gap-2 pt-4">
-                                <Button onClick={handleWhatsApp} className="w-full bg-green-600 hover:bg-green-700 text-white">
-                                    <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                                <Button onClick={handleOpenWhatsAppDialog} disabled={whatsappLinkLoading} className="w-full bg-green-600 hover:bg-green-700 text-white">
+                                    <MessageCircle className="mr-2 h-4 w-4" /> {whatsappLinkLoading ? "Gerando link..." : "WhatsApp"}
                                 </Button>
                                 <Button onClick={handleMarkSent} variant="secondary" className="w-full">
                                     <Check className="mr-2 h-4 w-4" /> Marcar Enviado
@@ -141,6 +173,38 @@ export default function ApplicationDetailsPage() {
                         </CardContent>
                     </Card>
                 </div>
+
+                <Dialog open={!!whatsappDialog} onOpenChange={(open) => !open && setWhatsappDialog(null)}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Enviar mensagem no WhatsApp</DialogTitle>
+                            <DialogDescription>
+                                Edite a mensagem abaixo se quiser. O link de cadastro e o protocolo já estão incluídos.
+                            </DialogDescription>
+                        </DialogHeader>
+                        {whatsappDialog && (
+                            <div className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                    <Label className="text-slate-300">Mensagem (editável)</Label>
+                                    <textarea
+                                        className="flex min-h-[140px] w-full rounded-md border border-slate-700 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                        value={whatsappDialog.message}
+                                        onChange={(e) => setWhatsappDialog({ ...whatsappDialog, message: e.target.value })}
+                                        placeholder="Mensagem que o candidato verá"
+                                    />
+                                </div>
+                                <DialogFooter className="sm:justify-end">
+                                    <Button type="button" variant="outline" onClick={() => setWhatsappDialog(null)}>
+                                        Cancelar
+                                    </Button>
+                                    <Button type="button" className="bg-green-600 hover:bg-green-700" onClick={handleWhatsAppOpen}>
+                                        <MessageCircle className="mr-2 h-4 w-4" /> Abrir WhatsApp
+                                    </Button>
+                                </DialogFooter>
+                            </div>
+                        )}
+                    </DialogContent>
+                </Dialog>
             </div>
         </MainLayout>
     );

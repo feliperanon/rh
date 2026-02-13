@@ -28,8 +28,11 @@ export default function NewApplicationPage() {
         protocol: string;
         link: string;
         whatsapp_link: string;
+        message: string;
+        phone_e164: string;
         id: string;
     } | null>(null);
+    const [whatsappMessage, setWhatsappMessage] = useState("");
 
     useEffect(() => {
         api.getCompanies().then(setCompanies).catch(console.error);
@@ -78,12 +81,16 @@ export default function NewApplicationPage() {
                 sector_id: sectorId,
             });
 
+            const defaultMessage = result.message ?? `Olá! 😊 Tudo bem?\nPara concluir seu cadastro no processo seletivo, preencha este link: ${result.cadastro_link}\nProtocolo: ${result.protocol}\nObrigado!`;
             setSuccessData({
                 protocol: result.protocol,
                 link: result.cadastro_link,
                 whatsapp_link: result.whatsapp_link,
+                message: defaultMessage,
+                phone_e164: result.phone_e164 ?? "",
                 id: result.id,
             });
+            setWhatsappMessage(defaultMessage);
             toast.success("Pré-cadastro criado com sucesso!");
         } catch (error: any) {
             console.error(error);
@@ -96,9 +103,10 @@ export default function NewApplicationPage() {
     };
 
     const handleWhatsApp = async () => {
-        if (!successData?.whatsapp_link) return;
+        if (!successData?.id || !successData?.phone_e164) return;
 
-        window.open(successData.whatsapp_link, "_blank");
+        const link = `https://wa.me/${successData.phone_e164}?text=${encodeURIComponent(whatsappMessage.trim() || successData.message)}`;
+        window.open(link, "_blank");
 
         try {
             await api.whatsappOpened(successData.id);
@@ -119,9 +127,9 @@ export default function NewApplicationPage() {
     };
 
     const handleCopyMessage = () => {
-        if (!successData) return;
-        const message = `Olá! 😊 Tudo bem?\nPara concluir seu cadastro no processo seletivo, preencha este link: ${successData.link}\nProtocolo: ${successData.protocol}\nObrigado!`;
-        navigator.clipboard.writeText(message);
+        const text = whatsappMessage.trim() || successData?.message;
+        if (!text) return;
+        navigator.clipboard.writeText(text);
         toast.success("Mensagem copiada!");
     };
 
@@ -205,6 +213,16 @@ export default function NewApplicationPage() {
                         <div className="flex flex-col gap-4 py-4">
                             <div className="p-4 bg-muted rounded-md text-sm break-all font-mono">
                                 {successData?.link}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label className="text-slate-300">Mensagem do WhatsApp (você pode editar antes de enviar)</Label>
+                                <textarea
+                                    className="flex min-h-[120px] w-full rounded-md border border-slate-700 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    value={whatsappMessage}
+                                    onChange={(e) => setWhatsappMessage(e.target.value)}
+                                    placeholder="Mensagem que o candidato verá ao abrir o WhatsApp"
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-2">
