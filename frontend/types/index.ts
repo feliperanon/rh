@@ -56,12 +56,13 @@ export interface Candidate {
     name?: string;
     phone_normalizado: string;
     cpf?: string;
+    birth_date?: string | null;
+    worked_here_before?: boolean | null;
     _count?: {
         applications: number;
     };
     applications?: Application[];
     events?: CandidateEvent[];
-    // ... outros campos
 }
 
 export interface ApplicationEvent {

@@ -6,7 +6,7 @@ import { SubmitApplicationDto } from './dto/submit-application.dto';
 import { normalizePhone, phoneToE164, validatePhone } from '../common/validators/phone-validators';
 import { generateProtocol } from '../common/utils/protocol';
 import { generateToken, hashToken } from '../common/utils/tokens';
-import { generateWhatsAppLink } from '../common/utils/whatsapp';
+import { generateWhatsAppLink, getDefaultWhatsAppMessage } from '../common/utils/whatsapp';
 import { ApplicationStatus, EventType } from '@prisma/client';
 
 @Injectable()
@@ -121,11 +121,14 @@ export class ApplicationsService {
         // Gera link de cadastro e WhatsApp
         const cadastroLink = `${process.env.FRONTEND_URL || 'http://localhost:3001'}/cadastro/t/${token}`;
         const whatsappLink = generateWhatsAppLink(phoneE164, protocol, cadastroLink);
+        const message = getDefaultWhatsAppMessage(protocol, cadastroLink);
 
         return {
             ...application,
             cadastro_link: cadastroLink,
             whatsapp_link: whatsappLink,
+            message,
+            phone_e164: phoneE164,
             token, // Retorna token apenas na criação
         };
     }
@@ -232,8 +235,9 @@ export class ApplicationsService {
 
         const cadastroLink = `${process.env.FRONTEND_URL || 'http://localhost:3001'}/cadastro/t/${token}`;
         const whatsappLink = generateWhatsAppLink(phone_e164, application.protocol, cadastroLink);
+        const message = getDefaultWhatsAppMessage(application.protocol, cadastroLink);
 
-        return { whatsapp_link: whatsappLink, cadastro_link: cadastroLink };
+        return { whatsapp_link: whatsappLink, cadastro_link: cadastroLink, message, phone_e164: phone_e164 };
     }
 
 

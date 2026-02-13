@@ -95,6 +95,24 @@ export default function ApplicationDetailsPage() {
                                 <p className="text-sm font-medium text-white/70">CPF</p>
                                 <p className="text-white">{application.candidate.cpf || "-"}</p>
                             </div>
+                            <div>
+                                <p className="text-sm font-medium text-white/70">Data de nascimento</p>
+                                <p className="text-white">
+                                    {application.candidate.birth_date
+                                        ? format(new Date(application.candidate.birth_date), "dd/MM/yyyy")
+                                        : "-"}
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-white/70">Já trabalhou na empresa?</p>
+                                <p className="text-white">
+                                    {application.candidate.worked_here_before === true
+                                        ? "Sim"
+                                        : application.candidate.worked_here_before === false
+                                            ? "Não"
+                                            : "-"}
+                                </p>
+                            </div>
                         </CardContent>
                     </Card>
 
