@@ -12,6 +12,20 @@ import { Badge } from "@/components/ui/badge";
 import { ExportModal } from "@/components/ExportModal";
 import { MainLayout } from "@/components/layout/MainLayout";
 
+const STATUS_LABELS: Record<string, string> = {
+    PRE_CADASTRO: "Pré-cadastro",
+    LINK_GERADO: "Link gerado",
+    WHATSAPP_ABERTO: "WhatsApp aberto",
+    LINK_ENVIADO: "Link enviado",
+    CADASTRO_PREENCHIDO: "Cadastro preenchido",
+    EM_CONTATO: "Em contato",
+    ENTREVISTA_MARCADA: "Entrevista marcada",
+    ENCAMINHADO: "Encaminhado",
+    APROVADO: "Aprovado",
+    REPROVADO: "Reprovado",
+    DESISTIU: "Desistiu",
+};
+
 export default function DashboardPage() {
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -55,7 +69,10 @@ export default function DashboardPage() {
         <MainLayout title="Dashboard" description="Visão geral do processo seletivo" actions={actions}>
             <div className="space-y-6">
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    <Card className="card-panel rounded-xl">
+                    <Card
+                        className="card-panel cursor-pointer rounded-xl transition-colors hover:bg-[hsl(214_32%_96%)]"
+                        onClick={() => router.push("/applications")}
+                    >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-xs font-medium app-text-muted">Aguardando Envio</CardTitle>
                             <Clock className="h-4 w-4 app-text-muted" />
@@ -65,7 +82,10 @@ export default function DashboardPage() {
                             <p className="text-xs app-text-muted">Protocolos gerados</p>
                         </CardContent>
                     </Card>
-                    <Card className="card-panel rounded-xl">
+                    <Card
+                        className="card-panel cursor-pointer rounded-xl transition-colors hover:bg-[hsl(214_32%_96%)]"
+                        onClick={() => router.push("/applications")}
+                    >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-xs font-medium app-text-muted">Aguardando Preenchimento</CardTitle>
                             <Send className="h-4 w-4 app-text-muted" />
@@ -75,7 +95,10 @@ export default function DashboardPage() {
                             <p className="text-xs app-text-muted">Links enviados</p>
                         </CardContent>
                     </Card>
-                    <Card className="card-panel rounded-xl">
+                    <Card
+                        className="card-panel cursor-pointer rounded-xl transition-colors hover:bg-[hsl(214_32%_96%)]"
+                        onClick={() => router.push("/applications")}
+                    >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-xs font-medium app-text-muted">Cadastros Completos</CardTitle>
                             <FileText className="h-4 w-4 app-text-muted" />
@@ -85,7 +108,10 @@ export default function DashboardPage() {
                             <p className="text-xs app-text-muted">Prontos para triagem</p>
                         </CardContent>
                     </Card>
-                    <Card className="card-panel rounded-xl">
+                    <Card
+                        className="card-panel cursor-pointer rounded-xl transition-colors hover:bg-[hsl(214_32%_96%)]"
+                        onClick={() => router.push("/candidates")}
+                    >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-xs font-medium app-text-muted">Total Candidatos</CardTitle>
                             <Users className="h-4 w-4 app-text-muted" />
@@ -105,9 +131,11 @@ export default function DashboardPage() {
                         <CardContent>
                             <div className="space-y-3">
                                 {stats.recent.map((app: any) => (
-                                    <div
+                                    <button
                                         key={app.id}
-                                        className="flex items-center justify-between border-b app-border-color pb-3 last:border-0 last:pb-0"
+                                        type="button"
+                                        onClick={() => router.push(`/applications/${app.id}`)}
+                                        className="flex w-full cursor-pointer items-center justify-between rounded-lg border-b app-border-color pb-3 text-left transition-colors hover:bg-[hsl(214_32%_96%)] last:border-0 last:pb-0"
                                     >
                                         <div className="min-w-0 flex-1">
                                             <p className="truncate text-sm font-medium app-text">
@@ -119,13 +147,13 @@ export default function DashboardPage() {
                                         </div>
                                         <div className="flex shrink-0 items-center gap-2 pl-3">
                                             <span className="rounded px-2 py-0.5 text-xs app-text-muted">
-                                                {app.status}
+                                                {STATUS_LABELS[app.status] ?? app.status}
                                             </span>
                                             <span className="text-xs app-text-muted">
                                                 {format(new Date(app.created_at), "dd/MM")}
                                             </span>
                                         </div>
-                                    </div>
+                                    </button>
                                 ))}
                             </div>
                             <Button
