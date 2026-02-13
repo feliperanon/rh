@@ -2,8 +2,9 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetHeader } from "@/components/ui/sheet";
 import {
     Building2,
     Users,
@@ -22,6 +23,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     const { data: session, status } = useSession();
     const router = useRouter();
     const pathname = usePathname();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -120,11 +122,76 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                         className="flex h-14 items-center justify-between border-b px-4 md:hidden"
                         style={{ borderColor: "hsl(var(--app-border))", background: "hsl(var(--app-surface))" }}
                     >
-                        <Button variant="ghost" size="icon">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setMobileMenuOpen(true)}
+                            aria-label="Abrir menu"
+                        >
                             <Menu className="h-5 w-5" />
                         </Button>
                         <span className="text-base font-medium" style={{ color: "hsl(var(--app-text))" }}>RH</span>
                     </header>
+
+                    <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                        <SheetContent side="left" className="w-64 p-0 flex flex-col" style={{ background: "hsl(var(--app-surface))", borderColor: "hsl(var(--app-border))" }}>
+                            <SheetHeader className="sr-only">
+                                <SheetTitle>Menu</SheetTitle>
+                            </SheetHeader>
+                            <div className="flex flex-1 flex-col overflow-hidden pt-6 pb-4">
+                                <Link
+                                    href="/dashboard"
+                                    className="mb-6 flex shrink-0 flex-col items-center px-4"
+                                    style={{ color: "hsl(var(--app-text))" }}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    <Logo height={48} showSlogan={false} />
+                                </Link>
+                                <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3">
+                                    {navItems.map((item) => {
+                                        const Icon = item.icon;
+                                        const isActive = pathname.startsWith(item.href);
+                                        return (
+                                            <Link
+                                                key={item.href}
+                                                href={item.href}
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive ? "text-white" : "hover:bg-[hsl(214_32%_94%)]"}`}
+                                                style={isActive ? { background: "hsl(var(--app-primary))", color: "white" } : { color: "hsl(var(--app-text-muted))" }}
+                                            >
+                                                <Icon className="h-4 w-4 shrink-0 opacity-80" />
+                                                {item.label}
+                                            </Link>
+                                        );
+                                    })}
+                                </nav>
+                                <div className="mt-auto shrink-0 border-t px-4 pt-4" style={{ borderColor: "hsl(var(--app-border))" }}>
+                                    <div className="flex items-center gap-3 py-2">
+                                        <div
+                                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-medium"
+                                            style={{ background: "hsl(var(--app-primary))", color: "white" }}
+                                        >
+                                            {session.user?.name?.[0] || "U"}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium" style={{ color: "hsl(var(--app-text))" }}>{session.user?.name}</p>
+                                            <p className="truncate text-xs" style={{ color: "hsl(var(--app-text-muted))" }}>{session.user?.email}</p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="mt-1 w-full justify-start gap-2"
+                                        style={{ color: "hsl(var(--app-text-muted))" }}
+                                        onClick={() => { setMobileMenuOpen(false); signOut(); }}
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                        Sair
+                                    </Button>
+                                </div>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
 
                     <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
                         <div className="mx-auto max-w-4xl">
