@@ -98,41 +98,41 @@ export default function CandidatesPage() {
                             placeholder="Nome, CPF ou telefone"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="h-9 flex-1 border-slate-700 bg-slate-900/50 text-slate-200 placeholder:text-slate-500"
+                            className="h-9 flex-1 app-border-color bg-[hsl(var(--app-input-bg))] app-text placeholder:app-text-muted"
                         />
                         <Input
                             type="text"
                             placeholder="Protocolo (RH-...)"
                             value={protocolSearch}
                             onChange={(e) => setProtocolSearch(e.target.value)}
-                            className="h-9 flex-1 border-slate-700 bg-slate-900/50 text-slate-200 placeholder:text-slate-500"
+                            className="h-9 flex-1 app-border-color bg-[hsl(var(--app-input-bg))] app-text placeholder:app-text-muted"
                         />
                     </div>
                     <Button
                         type="submit"
                         size="sm"
                         disabled={loading}
-                        className="h-9 shrink-0 bg-white text-slate-900 hover:bg-slate-100"
+                        className="h-9 shrink-0 bg-[hsl(var(--app-primary))] text-white hover:opacity-90"
                     >
                         <Search className="h-4 w-4" />
                         Buscar
                     </Button>
                 </form>
 
-                <div className="rounded-xl border border-slate-800/80 bg-slate-900/30">
+                <div className="rounded-xl border app-border-color bg-slate-900/30">
                     <Table>
                         <TableHeader>
-                            <TableRow className="border-slate-800/80 hover:bg-transparent">
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                            <TableRow className="app-border-color hover:bg-transparent">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Nome
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Telefone
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     CPF
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Processos
                                 </TableHead>
                                 <TableHead className="h-11 w-[60px]"></TableHead>
@@ -140,19 +140,19 @@ export default function CandidatesPage() {
                         </TableHeader>
                         <TableBody>
                             {loading ? (
-                                <TableRow className="border-slate-800/80">
+                                <TableRow className="app-border-color">
                                     <TableCell
                                         colSpan={5}
-                                        className="h-32 text-center text-sm text-slate-500"
+                                        className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Carregando…
                                     </TableCell>
                                 </TableRow>
                             ) : candidates.length === 0 ? (
-                                <TableRow className="border-slate-800/80">
+                                <TableRow className="app-border-color">
                                     <TableCell
                                         colSpan={5}
-                                        className="h-32 text-center text-sm text-slate-500"
+                                        className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Nenhum candidato encontrado. Use a busca acima.
                                     </TableCell>
@@ -161,13 +161,13 @@ export default function CandidatesPage() {
                                 candidates.map((candidate) => (
                                     <TableRow
                                         key={candidate.id}
-                                        className="group cursor-pointer border-slate-800/80 text-slate-200 transition-colors hover:bg-slate-800/30"
+                                        className="group cursor-pointer app-border-color app-text transition-colors hover:opacity-90"
                                         onClick={() => router.push(`/candidates/${candidate.id}`)}
                                     >
                                         <TableCell className="font-medium">
                                             <div className="flex items-center gap-2">
-                                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-800">
-                                                    <User className="h-4 w-4 text-slate-400" />
+                                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--app-border))]">
+                                                    <User className="h-4 w-4 app-text-muted" />
                                                 </div>
                                                 {candidate.name || "Sem nome"}
                                             </div>
@@ -175,11 +175,11 @@ export default function CandidatesPage() {
                                         <TableCell className="font-mono text-sm">
                                             {formatPhone(candidate.phone_normalizado)}
                                         </TableCell>
-                                        <TableCell className="text-sm text-slate-500">
+                                        <TableCell className="text-sm app-text-muted">
                                             {formatCPF(candidate.cpf)}
                                         </TableCell>
                                         <TableCell>
-                                            <span className="inline-flex items-center rounded-md bg-slate-700/50 px-2 py-0.5 text-xs text-slate-400">
+                                            <span className="inline-flex items-center rounded-md bg-[hsl(var(--app-border))] px-2 py-0.5 text-xs app-text-muted">
                                                 {candidate._count?.applications ?? 0} processo(s)
                                             </span>
                                         </TableCell>
@@ -192,7 +192,7 @@ export default function CandidatesPage() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-8 w-8 text-slate-500 opacity-60 hover:opacity-100"
+                                                        className="h-8 w-8 app-text-muted opacity-60 hover:opacity-100"
                                                     >
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>

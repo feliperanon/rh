@@ -67,7 +67,7 @@ export default function Home() {
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center px-4 py-8"
-      style={{ background: "hsl(var(--login-bg))" }}
+      style={{ background: "hsl(var(--app-bg))" }}
     >
       <LoginCard
         onLogin={handleLogin}

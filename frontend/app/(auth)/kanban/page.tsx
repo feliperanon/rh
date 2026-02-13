@@ -136,18 +136,18 @@ export default function KanbanPage() {
         >
             <div className="space-y-6">
                 {/* Filtros */}
-                <div className="rounded-xl border border-slate-800/80 bg-slate-900/30 p-4">
-                    <div className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-400">
+                <div className="rounded-xl border app-border-color glass-panel p-4">
+                    <div className="mb-3 flex items-center gap-2 text-sm font-medium app-text-muted">
                         <Filter className="h-4 w-4" /> Filtros do Board
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-slate-500">Empresa</Label>
+                            <Label className="text-xs app-text-muted">Empresa</Label>
                             <Select
                                 value={filters.companyId}
                                 onValueChange={(v) => setFilters(p => ({ ...p, companyId: v, sectorId: "" }))}
                             >
-                                <SelectTrigger className="h-9 border-slate-700 bg-slate-900/50">
+                                <SelectTrigger className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]">
                                     <SelectValue placeholder="Todas" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -159,13 +159,13 @@ export default function KanbanPage() {
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-slate-500">Setor</Label>
+                            <Label className="text-xs app-text-muted">Setor</Label>
                             <Select
                                 value={filters.sectorId}
                                 onValueChange={(v) => setFilters(p => ({ ...p, sectorId: v }))}
                                 disabled={!filters.companyId}
                             >
-                                <SelectTrigger className="h-9 border-slate-700 bg-slate-900/50">
+                                <SelectTrigger className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]">
                                     <SelectValue placeholder="Todos" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -188,8 +188,8 @@ export default function KanbanPage() {
                                     <div className="mb-3 flex items-center justify-between px-1">
                                         <div className="flex items-center gap-2">
                                             <div className={`h-2 w-2 rounded-full ${column.color}`} />
-                                            <h3 className="text-sm font-semibold text-slate-200">{column.title}</h3>
-                                            <span className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-slate-400">
+                                            <h3 className="text-sm font-semibold app-text">{column.title}</h3>
+                                            <span className="rounded bg-[hsl(var(--app-border))] px-1.5 py-0.5 text-xs app-text-muted">
                                                 {boardData[column.id]?.length || 0}
                                             </span>
                                         </div>
@@ -202,7 +202,7 @@ export default function KanbanPage() {
                                                 ref={provided.innerRef}
                                                 className={`flex-1 min-h-[500px] rounded-xl border border-dashed p-2 transition-colors ${snapshot.isDraggingOver
                                                         ? "border-primary/50 bg-primary/5"
-                                                        : "border-slate-800/50 bg-slate-900/20"
+                                                        : "app-border-color opacity-90"
                                                     }`}
                                             >
                                                 {boardData[column.id].map((app, index) => (
@@ -212,31 +212,31 @@ export default function KanbanPage() {
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}
-                                                                className={`mb-3 select-none rounded-lg border border-slate-800 bg-slate-900 p-3 shadow-sm transition-all hover:border-slate-700 ${snapshot.isDragging ? "rotate-2 scale-105 shadow-xl border-primary" : ""
+                                                                className={`mb-3 select-none rounded-lg border app-border-color glass-panel p-3 shadow-sm transition-all hover:app-border-color ${snapshot.isDragging ? "rotate-2 scale-105 shadow-xl border-primary" : ""
                                                                     }`}
                                                                 onClick={() => router.push(`/applications/${app.id}`)}
                                                             >
                                                                 <div className="space-y-2">
                                                                     <div className="flex items-start justify-between gap-2">
-                                                                        <p className="font-medium text-slate-200 text-sm">
+                                                                        <p className="font-medium app-text text-sm">
                                                                             {app.candidate.name || "Sem Nome"}
                                                                         </p>
-                                                                        <span className="text-[10px] font-mono text-slate-500 uppercase">
+                                                                        <span className="text-[10px] font-mono app-text-muted uppercase">
                                                                             {app.protocol}
                                                                         </span>
                                                                     </div>
 
                                                                     <div className="space-y-1">
-                                                                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                                                        <div className="flex items-center gap-1.5 text-xs app-text-muted">
                                                                             <Building2 className="h-3 w-3" />
                                                                             <span className="truncate">{app.company.nome_interno}</span>
                                                                         </div>
-                                                                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                                                        <div className="flex items-center gap-1.5 text-xs app-text-muted">
                                                                             <Briefcase className="h-3 w-3" />
                                                                             <span className="truncate">{app.sector.nome}</span>
                                                                         </div>
                                                                         {app.candidate.phone_normalizado && (
-                                                                            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                                                            <div className="flex items-center gap-1.5 text-xs app-text-muted">
                                                                                 <Phone className="h-3 w-3" />
                                                                                 <span className="font-mono">{app.candidate.phone_normalizado}</span>
                                                                             </div>

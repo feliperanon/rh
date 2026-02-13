@@ -31,21 +31,37 @@
   --ring: 222.2 84% 4.9%;
   --radius: 0.5rem;
 
-  /* Login page design tokens (clean, light, acessível) */
-  --login-bg: 210 20% 98%;
-  --login-surface: 0 0% 100%;
-  --login-text: 222 47% 11%;
-  --login-text-muted: 215 16% 47%;
-  --login-primary: 221 83% 53%;
-  --login-primary-hover: 221 83% 48%;
-  --login-border: 214 32% 91%;
-  --login-input-bg: 0 0% 100%;
-  --login-radius: 1rem;
-  --login-radius-lg: 1.5rem;
-  --login-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
-  --login-shadow-focus: 0 0 0 3px hsl(221 83% 53% / 0.2);
-  --login-spacing-card: 1.5rem;
-  --login-input-height: 2.75rem;
+  /* Design do projeto (login + área logada) — mesmo visual em todo o app */
+  --app-bg: 210 20% 98%;
+  --app-surface: 0 0% 100%;
+  --app-text: 222 47% 11%;
+  --app-text-muted: 215 16% 47%;
+  --app-primary: 221 83% 53%;
+  --app-primary-hover: 221 83% 48%;
+  --app-border: 214 32% 91%;
+  --app-input-bg: 0 0% 100%;
+  --app-radius: 1rem;
+  --app-radius-lg: 1.5rem;
+  --app-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --app-shadow-focus: 0 0 0 3px hsl(221 83% 53% / 0.2);
+  --app-spacing-card: 1.5rem;
+  --app-input-height: 2.75rem;
+
+  /* Compatibilidade com LoginCard (usa os mesmos valores) */
+  --login-bg: var(--app-bg);
+  --login-surface: var(--app-surface);
+  --login-text: var(--app-text);
+  --login-text-muted: var(--app-text-muted);
+  --login-primary: var(--app-primary);
+  --login-primary-hover: var(--app-primary-hover);
+  --login-border: var(--app-border);
+  --login-input-bg: var(--app-input-bg);
+  --login-radius: var(--app-radius);
+  --login-radius-lg: var(--app-radius-lg);
+  --login-shadow: var(--app-shadow);
+  --login-shadow-focus: var(--app-shadow-focus);
+  --login-spacing-card: var(--app-spacing-card);
+  --login-input-height: var(--app-input-height);
 }
 
 .dark {
@@ -106,23 +122,45 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    background: hsl(var(--app-bg));
+    color: hsl(var(--app-text));
   }
 }
 
 @layer utilities {
   .bg-rh-gradient {
-    background: rgb(2 6 23);
+    background: hsl(var(--app-bg));
   }
 
+  /* Painéis/cards no mesmo estilo do login (todo o projeto) */
   .glass-panel {
-    background-color: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(51, 65, 85, 0.5);
-    backdrop-filter: blur(12px);
+    background: hsl(var(--app-surface));
+    border: 1px solid hsl(var(--app-border));
+    border-radius: var(--app-radius-lg);
+    box-shadow: var(--app-shadow);
   }
 
   .card-panel {
-    background-color: rgba(30, 41, 59, 0.4);
-    border: 1px solid rgba(51, 65, 85, 0.5);
+    background: hsl(var(--app-surface));
+    border: 1px solid hsl(var(--app-border));
+    border-radius: var(--app-radius);
+    box-shadow: var(--app-shadow);
+  }
+
+  .app-surface {
+    background: hsl(var(--app-surface));
+    color: hsl(var(--app-text));
+  }
+
+  .app-text {
+    color: hsl(var(--app-text));
+  }
+
+  .app-text-muted {
+    color: hsl(var(--app-text-muted));
+  }
+
+  .app-border-color {
+    border-color: hsl(var(--app-border));
   }
 }

@@ -101,7 +101,7 @@ export default function CompaniesPage() {
             <DialogTrigger asChild>
                 <Button
                     size="sm"
-                    className="h-9 bg-white text-slate-900 hover:bg-slate-100"
+                    className="h-9 bg-[hsl(var(--app-primary))] app-text hover:opacity-90"
                     onClick={handleCreate}
                 >
                     <Plus className="h-4 w-4" />
@@ -131,9 +131,9 @@ export default function CompaniesPage() {
                     {stats.map((stat) => (
                         <Card key={stat.label} className="card-panel rounded-xl">
                             <CardContent className="space-y-1 p-4">
-                                <p className="text-xs font-medium text-slate-500">{stat.label}</p>
-                                <p className="text-xl font-semibold text-white">{stat.value}</p>
-                                <p className="text-xs text-slate-500">{stat.caption}</p>
+                                <p className="text-xs font-medium app-text-muted">{stat.label}</p>
+                                <p className="text-xl font-semibold app-text">{stat.value}</p>
+                                <p className="text-xs app-text-muted">{stat.caption}</p>
                             </CardContent>
                         </Card>
                     ))}
@@ -144,25 +144,25 @@ export default function CompaniesPage() {
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
-                                    <TableRow className="border-slate-800/80 hover:bg-transparent">
-                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Nome</TableHead>
-                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Status</TableHead>
-                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Sigilosa</TableHead>
-                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Recontratação</TableHead>
-                                        <TableHead className="h-11 text-xs font-medium text-slate-400">Criado em</TableHead>
+                                    <TableRow className="app-border-color hover:bg-transparent">
+                                        <TableHead className="h-11 text-xs font-medium app-text-muted">Nome</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium app-text-muted">Status</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium app-text-muted">Sigilosa</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium app-text-muted">Recontratação</TableHead>
+                                        <TableHead className="h-11 text-xs font-medium app-text-muted">Criado em</TableHead>
                                         <TableHead className="h-11 w-[60px]"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {loading ? (
-                                        <TableRow className="border-slate-800/80">
-                                            <TableCell colSpan={6} className="h-24 text-center text-sm text-slate-500">
+                                        <TableRow className="app-border-color">
+                                            <TableCell colSpan={6} className="h-24 text-center text-sm app-text-muted">
                                                 Carregando…
                                             </TableCell>
                                         </TableRow>
                                     ) : companies.length === 0 ? (
-                                        <TableRow className="border-slate-800/80">
-                                            <TableCell colSpan={6} className="h-24 text-center text-sm text-slate-500">
+                                        <TableRow className="app-border-color">
+                                            <TableCell colSpan={6} className="h-24 text-center text-sm app-text-muted">
                                                 Nenhuma empresa encontrada.
                                             </TableCell>
                                         </TableRow>
@@ -170,7 +170,7 @@ export default function CompaniesPage() {
                                         companies.map((company) => (
                                             <TableRow
                                                 key={company.id}
-                                                className="border-slate-800/80 text-slate-200 transition-colors hover:bg-slate-800/30"
+                                                className="app-border-color app-text transition-colors hover:bg-slate-800/30"
                                             >
                                                 <TableCell className="font-medium">
                                                     {company.nome_interno}
@@ -180,7 +180,7 @@ export default function CompaniesPage() {
                                                         className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
                                                             company.ativo
                                                                 ? "bg-emerald-500/20 text-emerald-400"
-                                                                : "bg-slate-700/50 text-slate-500"
+                                                                : "bg-[hsl(var(--app-border))] app-text-muted"
                                                         }`}
                                                     >
                                                         {company.ativo ? "Ativo" : "Inativo"}
@@ -192,7 +192,7 @@ export default function CompaniesPage() {
                                                             Sim
                                                         </Badge>
                                                     ) : (
-                                                        <span className="text-sm text-slate-500">Não</span>
+                                                        <span className="text-sm app-text-muted">Não</span>
                                                     )}
                                                 </TableCell>
                                                 <TableCell>
@@ -204,7 +204,7 @@ export default function CompaniesPage() {
                                                         "-"
                                                     )}
                                                 </TableCell>
-                                                <TableCell className="text-sm text-slate-500">
+                                                <TableCell className="text-sm app-text-muted">
                                                     {formatCompanyDate(
                                                         company.createdAt ?? (company as Company & { created_at?: string }).created_at
                                                     )}

@@ -142,7 +142,7 @@ export default function NewApplicationPage() {
     return (
         <MainLayout title="Novo Pré-cadastro" description="Gere protocolos e encaminhe o WhatsApp rapidamente." actions={actions}>
             <div className="space-y-6 max-w-2xl">
-                <Card className="glass-panel border border-white/5">
+                <Card className="glass-panel app-border-color">
                     <CardHeader>
                         <CardTitle>Dados Iniciais</CardTitle>
                         <CardDescription>
@@ -216,9 +216,9 @@ export default function NewApplicationPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-slate-300">Mensagem do WhatsApp (você pode editar antes de enviar)</Label>
+                                <Label className="app-text-muted">Mensagem do WhatsApp (você pode editar antes de enviar)</Label>
                                 <textarea
-                                    className="flex min-h-[120px] w-full rounded-md border border-slate-700 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    className="flex min-h-[120px] w-full rounded-md border px-3 py-2 text-sm app-text placeholder:app-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring app-border-color bg-[hsl(var(--app-input-bg))]"
                                     value={whatsappMessage}
                                     onChange={(e) => setWhatsappMessage(e.target.value)}
                                     placeholder="Mensagem que o candidato verá ao abrir o WhatsApp"

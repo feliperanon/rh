@@ -28,7 +28,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     }, [status, router]);
 
     if (status === "loading") {
-        return <div className="flex h-screen items-center justify-center">Carregando...</div>;
+        return (
+            <div className="flex h-screen items-center justify-center" style={{ background: "hsl(var(--app-bg))", color: "hsl(var(--app-text))" }}>
+                Carregando...
+            </div>
+        );
     }
 
     if (!session) {
@@ -45,12 +49,16 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     ];
 
     return (
-        <div className="dark min-h-screen bg-slate-950 text-white">
+        <div className="min-h-screen" style={{ background: "hsl(var(--app-bg))", color: "hsl(var(--app-text))" }}>
             <div className="flex min-h-screen">
-                <aside className="hidden w-64 flex-col border-r border-slate-800/80 bg-slate-950 p-5 md:flex">
+                <aside
+                    className="hidden w-64 flex-col border-r p-5 md:flex"
+                    style={{ borderColor: "hsl(var(--app-border))", background: "hsl(var(--app-surface))", boxShadow: "var(--app-shadow)" }}
+                >
                     <Link
                         href="/dashboard"
-                        className="mb-8 text-lg font-medium tracking-tight text-white"
+                        className="mb-8 text-lg font-medium tracking-tight"
+                        style={{ color: "hsl(var(--app-text))" }}
                     >
                         RH
                     </Link>
@@ -63,9 +71,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                                     key={item.href}
                                     href={item.href}
                                     className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive
-                                        ? "bg-slate-800 text-white"
-                                        : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+                                        ? "text-white"
+                                        : "hover:opacity-90"
                                         }`}
+                                    style={isActive ? { background: "hsl(var(--app-primary))", color: "white" } : { color: "hsl(var(--app-text-muted))" }}
                                 >
                                     <Icon className="h-4 w-4 shrink-0 opacity-80" />
                                     {item.label}
@@ -73,16 +82,19 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                             );
                         })}
                     </nav>
-                    <div className="mt-auto border-t border-slate-800/80 pt-4">
+                    <div className="mt-auto border-t pt-4" style={{ borderColor: "hsl(var(--app-border))" }}>
                         <div className="flex items-center gap-3 px-1 py-2">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-800 text-xs font-medium text-slate-300">
+                            <div
+                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-medium"
+                                style={{ background: "hsl(var(--app-primary))", color: "white" }}
+                            >
                                 {session.user?.name?.[0] || "U"}
                             </div>
                             <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm font-medium text-slate-200">
+                                <p className="truncate text-sm font-medium" style={{ color: "hsl(var(--app-text))" }}>
                                     {session.user?.name}
                                 </p>
-                                <p className="truncate text-xs text-slate-500">
+                                <p className="truncate text-xs" style={{ color: "hsl(var(--app-text-muted))" }}>
                                     {session.user?.email}
                                 </p>
                             </div>
@@ -90,7 +102,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="mt-1 w-full justify-start gap-2 text-slate-400 hover:text-slate-200"
+                            className="mt-1 w-full justify-start gap-2"
+                            style={{ color: "hsl(var(--app-text-muted))" }}
                             onClick={() => signOut()}
                         >
                             <LogOut className="h-4 w-4" />
@@ -100,11 +113,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 </aside>
 
                 <div className="flex min-w-0 flex-1 flex-col">
-                    <header className="flex h-14 items-center justify-between border-b border-slate-800/80 px-4 md:hidden">
+                    <header
+                        className="flex h-14 items-center justify-between border-b px-4 md:hidden"
+                        style={{ borderColor: "hsl(var(--app-border))", background: "hsl(var(--app-surface))" }}
+                    >
                         <Button variant="ghost" size="icon">
                             <Menu className="h-5 w-5" />
                         </Button>
-                        <span className="text-base font-medium">RH</span>
+                        <span className="text-base font-medium" style={{ color: "hsl(var(--app-text))" }}>RH</span>
                     </header>
 
                     <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">

@@ -115,8 +115,8 @@ export default function ApplicationsPage() {
             status === "APROVADO"
                 ? "bg-emerald-500/20 text-emerald-400"
                 : status === "REPROVADO" || status === "DESISTIU"
-                  ? "bg-slate-700/50 text-slate-500"
-                  : "bg-slate-700/50 text-slate-400";
+                  ? "bg-[hsl(var(--app-border))] app-text-muted"
+                  : "bg-[hsl(var(--app-border))] app-text-muted";
         const label = STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
         return (
             <span className={`rounded px-2 py-0.5 text-xs font-medium ${style}`}>{label}</span>
@@ -163,7 +163,7 @@ export default function ApplicationsPage() {
                 />
                 <Button
                     size="sm"
-                    className="h-9 bg-white text-slate-900 hover:bg-slate-100"
+                    className="h-9 bg-[hsl(var(--app-primary))] text-white hover:opacity-90"
                     onClick={() => router.push("/applications/new")}
                 >
                     <Plus className="h-4 w-4" />
@@ -181,9 +181,9 @@ export default function ApplicationsPage() {
             actions={actions}
         >
             <div className="space-y-4">
-                <div className="rounded-xl border border-slate-800/80 bg-slate-900/30 p-4">
+                <div className="rounded-xl border app-border-color glass-panel p-4">
                     <div className="mb-3 flex items-center justify-between">
-                        <h3 className="flex items-center gap-2 text-sm font-medium text-slate-400">
+                        <h3 className="flex items-center gap-2 text-sm font-medium app-text-muted">
                             <Filter className="h-4 w-4" />
                             Filtros
                         </h3>
@@ -191,7 +191,7 @@ export default function ApplicationsPage() {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="text-slate-500 hover:text-white"
+                                className="app-text-muted hover:opacity-100"
                                 onClick={clearFilters}
                             >
                                 Limpar filtros
@@ -200,12 +200,12 @@ export default function ApplicationsPage() {
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-slate-500">Status</Label>
+                            <Label className="text-xs app-text-muted">Status</Label>
                             <Select
                                 value={filters.status}
                                 onValueChange={(v) => setFilters((p) => ({ ...p, status: v }))}
                             >
-                                <SelectTrigger className="h-9 border-slate-700 bg-slate-900/50">
+                                <SelectTrigger className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]">
                                     <SelectValue placeholder="Todos" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -219,14 +219,14 @@ export default function ApplicationsPage() {
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-slate-500">Empresa</Label>
+                            <Label className="text-xs app-text-muted">Empresa</Label>
                             <Select
                                 value={filters.companyId}
                                 onValueChange={(v) =>
                                     setFilters((p) => ({ ...p, companyId: v, sectorId: ALL_VALUE }))
                                 }
                             >
-                                <SelectTrigger className="h-9 border-slate-700 bg-slate-900/50">
+                                <SelectTrigger className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]">
                                     <SelectValue placeholder="Todas" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -240,13 +240,13 @@ export default function ApplicationsPage() {
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-slate-500">Setor</Label>
+                            <Label className="text-xs app-text-muted">Setor</Label>
                             <Select
                                 value={filters.sectorId}
                                 onValueChange={(v) => setFilters((p) => ({ ...p, sectorId: v }))}
                                 disabled={!filters.companyId || filters.companyId === ALL_VALUE}
                             >
-                                <SelectTrigger className="h-9 border-slate-700 bg-slate-900/50">
+                                <SelectTrigger className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]">
                                     <SelectValue placeholder="Todos" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -260,75 +260,75 @@ export default function ApplicationsPage() {
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-slate-500">Data inicial</Label>
+                            <Label className="text-xs app-text-muted">Data inicial</Label>
                             <Input
                                 type="date"
                                 value={filters.startDate}
                                 onChange={(e) =>
                                     setFilters((p) => ({ ...p, startDate: e.target.value }))
                                 }
-                                className="h-9 border-slate-700 bg-slate-900/50"
+                                className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]"
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-slate-500">Data final</Label>
+                            <Label className="text-xs app-text-muted">Data final</Label>
                             <Input
                                 type="date"
                                 value={filters.endDate}
                                 onChange={(e) =>
                                     setFilters((p) => ({ ...p, endDate: e.target.value }))
                                 }
-                                className="h-9 border-slate-700 bg-slate-900/50"
+                                className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-800/80 bg-slate-900/30">
+                <div className="rounded-xl border app-border-color glass-panel">
                     <Table>
                         <TableHeader>
-                            <TableRow className="border-slate-800/80 hover:bg-transparent">
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                            <TableRow className="app-border-color hover:bg-transparent">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Protocolo
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Candidato
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Telefone
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Empresa
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Setor
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Status
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Data
                                 </TableHead>
-                                <TableHead className="h-11 w-[70px] text-xs font-medium text-slate-400">
+                                <TableHead className="h-11 w-[70px] text-xs font-medium app-text-muted">
                                     Ações
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {loading ? (
-                                <TableRow className="border-slate-800/80">
+                                <TableRow className="app-border-color">
                                     <TableCell
                                         colSpan={8}
-                                        className="h-32 text-center text-sm text-slate-500"
+                                        className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Carregando…
                                     </TableCell>
                                 </TableRow>
                             ) : applications.length === 0 ? (
-                                <TableRow className="border-slate-800/80">
+                                <TableRow className="app-border-color">
                                     <TableCell
                                         colSpan={8}
-                                        className="h-32 text-center text-sm text-slate-500"
+                                        className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Nenhuma candidatura encontrada.
                                         {hasActiveFilters && " Tente ajustar os filtros."}
@@ -338,7 +338,7 @@ export default function ApplicationsPage() {
                                 applications.map((app) => (
                                     <TableRow
                                         key={app.id}
-                                        className="group cursor-pointer border-slate-800/80 text-slate-200 transition-colors hover:bg-slate-800/30"
+                                        className="group cursor-pointer app-border-color app-text transition-colors hover:opacity-90"
                                         onClick={() => router.push(`/applications/${app.id}`)}
                                     >
                                         <TableCell className="font-mono text-sm">
@@ -349,7 +349,7 @@ export default function ApplicationsPage() {
                                         <TableCell>{app.company?.nome_interno}</TableCell>
                                         <TableCell>{app.sector?.nome}</TableCell>
                                         <TableCell>{getStatusBadge(app.status)}</TableCell>
-                                        <TableCell className="text-sm text-slate-500">
+                                        <TableCell className="text-sm app-text-muted">
                                             {formatAppDate(app)}
                                         </TableCell>
                                         <TableCell
@@ -361,7 +361,7 @@ export default function ApplicationsPage() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-8 w-8 text-slate-500 opacity-60 hover:opacity-100"
+                                                        className="h-8 w-8 app-text-muted opacity-60 hover:opacity-100"
                                                     >
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>

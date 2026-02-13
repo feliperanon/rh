@@ -95,7 +95,7 @@ export default function ApplicationDetailsPage() {
 
     const actions = useMemo(() => (
         <Button variant="ghost" size="icon" onClick={() => router.back()} aria-label="Voltar">
-            <ArrowLeft className="h-4 w-4 text-white" />
+            <ArrowLeft className="h-4 w-4 app-text" />
         </Button>
     ), [router]);
 
@@ -106,38 +106,38 @@ export default function ApplicationDetailsPage() {
         <MainLayout title="Detalhes da Candidatura" description="Controle o protocolo, status e ações rápidas" actions={actions}>
             <div className="space-y-6 max-w-4xl">
                 <div className="grid gap-6 md:grid-cols-2">
-                    <Card className="glass-panel border border-white/5">
+                    <Card className="glass-panel app-border-color">
                         <CardHeader>
-                            <CardTitle className="text-white">Candidato</CardTitle>
+                            <CardTitle className="app-text">Candidato</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm font-medium text-white/70">Nome</p>
-                                <p className="text-lg text-white">{application.candidate.name || "Não informado"}</p>
+                                <p className="text-sm font-medium app-text-muted">Nome</p>
+                                <p className="text-lg app-text">{application.candidate.name || "Não informado"}</p>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white/70">Telefone</p>
-                                <p className="text-lg font-mono text-white">{application.candidate.phone_normalizado}</p>
+                                <p className="text-sm font-medium app-text-muted">Telefone</p>
+                                <p className="text-lg font-mono app-text">{application.candidate.phone_normalizado}</p>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white/70">Protocolo</p>
-                                <p className="text-lg font-mono font-bold text-white">{application.protocol}</p>
+                                <p className="text-sm font-medium app-text-muted">Protocolo</p>
+                                <p className="text-lg font-mono font-bold app-text">{application.protocol}</p>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white/70">CPF</p>
-                                <p className="text-white">{application.candidate.cpf || "-"}</p>
+                                <p className="text-sm font-medium app-text-muted">CPF</p>
+                                <p className="app-text">{application.candidate.cpf || "-"}</p>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white/70">Data de nascimento</p>
-                                <p className="text-white">
+                                <p className="text-sm font-medium app-text-muted">Data de nascimento</p>
+                                <p className="app-text">
                                     {application.candidate.birth_date
                                         ? format(new Date(application.candidate.birth_date), "dd/MM/yyyy")
                                         : "-"}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white/70">Já trabalhou na empresa?</p>
-                                <p className="text-white">
+                                <p className="text-sm font-medium app-text-muted">Já trabalhou na empresa?</p>
+                                <p className="app-text">
                                     {application.candidate.worked_here_before === true
                                         ? "Sim"
                                         : application.candidate.worked_here_before === false
@@ -148,17 +148,17 @@ export default function ApplicationDetailsPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="glass-panel border border-white/5">
+                    <Card className="glass-panel app-border-color">
                         <CardHeader>
-                            <CardTitle className="text-white">Status</CardTitle>
+                            <CardTitle className="app-text">Status</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm font-medium text-white/70">Vaga</p>
-                                <p className="text-white">{application.company.nome_interno} - {application.sector.nome}</p>
+                                <p className="text-sm font-medium app-text-muted">Vaga</p>
+                                <p className="app-text">{application.company.nome_interno} - {application.sector.nome}</p>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white/70">Status</p>
+                                <p className="text-sm font-medium app-text-muted">Status</p>
                                 <Badge className="mt-1">{application.status}</Badge>
                             </div>
 
@@ -185,9 +185,9 @@ export default function ApplicationDetailsPage() {
                         {whatsappDialog && (
                             <div className="space-y-4 py-4">
                                 <div className="space-y-2">
-                                    <Label className="text-slate-300">Mensagem (editável)</Label>
+                                    <Label className="app-text-muted">Mensagem (editável)</Label>
                                     <textarea
-                                        className="flex min-h-[140px] w-full rounded-md border border-slate-700 bg-slate-900/50 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                        className="flex min-h-[140px] w-full rounded-md border px-3 py-2 text-sm app-text placeholder:app-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring app-border-color bg-[hsl(var(--app-input-bg))]"
                                         value={whatsappDialog.message}
                                         onChange={(e) => setWhatsappDialog({ ...whatsappDialog, message: e.target.value })}
                                         placeholder="Mensagem que o candidato verá"

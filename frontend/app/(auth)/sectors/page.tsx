@@ -88,7 +88,7 @@ export default function SectorsPage() {
     const headerActions = useMemo(() => (
         <div className="flex flex-wrap items-center gap-2">
             <Select value={selectedCompanyId} onValueChange={setSelectedCompanyId}>
-                <SelectTrigger className="h-9 w-[200px] border-slate-700 bg-slate-900/50 text-slate-200 hover:bg-slate-800/50 sm:w-[220px]">
+                <SelectTrigger className="h-9 w-[200px] app-border-color bg-[hsl(var(--app-input-bg))] app-text hover:opacity-90 sm:w-[220px]">
                     <SelectValue placeholder="Empresa" />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +104,7 @@ export default function SectorsPage() {
                     <Button
                         size="sm"
                         disabled={!selectedCompanyId}
-                        className="h-9 bg-white text-slate-900 hover:bg-slate-100"
+                        className="h-9 bg-[hsl(var(--app-primary))] text-white hover:opacity-90"
                     >
                         <Plus className="h-4 w-4" />
                         Novo setor
@@ -131,36 +131,36 @@ export default function SectorsPage() {
             description="Vagas e sub-áreas por empresa."
             actions={headerActions}
         >
-            <div className="rounded-xl border border-slate-800/80 bg-slate-900/30">
+            <div className="rounded-xl border app-border-color glass-panel bg-slate-900/30">
                 <Table>
                     <TableHeader>
-                        <TableRow className="border-slate-800/80 hover:bg-transparent">
-                            <TableHead className="h-11 text-xs font-medium text-slate-400">
+                        <TableRow className="app-border-color hover:bg-transparent">
+                            <TableHead className="h-11 text-xs font-medium app-text-muted">
                                 Nome
                             </TableHead>
-                            <TableHead className="h-11 text-xs font-medium text-slate-400">
+                            <TableHead className="h-11 text-xs font-medium app-text-muted">
                                 Status
                             </TableHead>
-                            <TableHead className="h-11 text-right text-xs font-medium text-slate-400">
+                            <TableHead className="h-11 text-right text-xs font-medium app-text-muted">
                                 Criado em
                             </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {loading ? (
-                            <TableRow className="border-slate-800/80">
+                            <TableRow className="app-border-color">
                                 <TableCell
                                     colSpan={3}
-                                    className="h-32 text-center text-sm text-slate-500"
+                                    className="h-32 text-center text-sm app-text-muted"
                                 >
                                     Carregando…
                                 </TableCell>
                             </TableRow>
                         ) : sectors.length === 0 ? (
-                            <TableRow className="border-slate-800/80">
+                            <TableRow className="app-border-color">
                                 <TableCell
                                     colSpan={3}
-                                    className="h-32 text-center text-sm text-slate-500"
+                                    className="h-32 text-center text-sm app-text-muted"
                                 >
                                     Nenhum setor para esta empresa.
                                 </TableCell>
@@ -169,7 +169,7 @@ export default function SectorsPage() {
                             sectors.map((sector) => (
                                 <TableRow
                                     key={sector.id}
-                                    className="border-slate-800/80 text-slate-200 transition-colors hover:bg-slate-800/30"
+                                    className="app-border-color app-text transition-colors hover:bg-slate-800/30"
                                 >
                                     <TableCell className="font-medium">
                                         {sector.nome}
@@ -179,13 +179,13 @@ export default function SectorsPage() {
                                             className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
                                                 sector.ativo
                                                     ? "bg-emerald-500/20 text-emerald-400"
-                                                    : "bg-slate-700/50 text-slate-500"
+                                                    : "bg-[hsl(var(--app-border))] app-text-muted"
                                             }`}
                                         >
                                             {sector.ativo ? "Ativo" : "Inativo"}
                                         </span>
                                     </TableCell>
-                                    <TableCell className="text-right text-sm text-slate-500">
+                                    <TableCell className="text-right text-sm app-text-muted">
                                         {formatSectorDate(
                                             sector.createdAt ??
                                             (sector as Sector & { created_at?: string }).created_at

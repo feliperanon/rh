@@ -14,11 +14,11 @@ export function MainLayout({ title, description, actions, children }: MainLayout
         <div className="space-y-8">
             <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
                 <div>
-                    <h1 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                    <h1 className="text-xl font-semibold tracking-tight sm:text-2xl" style={{ color: "hsl(var(--app-text))" }}>
                         {title}
                     </h1>
                     {description && (
-                        <p className="mt-0.5 text-sm text-slate-400">
+                        <p className="mt-0.5 text-sm app-text-muted">
                             {description}
                         </p>
                     )}
