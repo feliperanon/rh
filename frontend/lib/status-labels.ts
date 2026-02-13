@@ -32,7 +32,7 @@ export const STATUS_OPTIONS = [
 ] as const;
 
 /**
- * Funil da Avaliação: 7 etapas (igual títulos do Kanban).
+ * Funil da Avaliação: 8 etapas (Reprovado e Desistiu separados).
  * Agrupa status do backend nessas etapas.
  */
 export const FUNNEL_STAGE_IDS = [
@@ -42,7 +42,8 @@ export const FUNNEL_STAGE_IDS = [
     "ENTREVISTA_MARCADA",
     "ENCAMINHADO",
     "APROVADO",
-    "REPROVADO_DESISTIU",
+    "REPROVADO",
+    "DESISTIU",
 ] as const;
 
 export const FUNNEL_STAGE_LABELS: Record<string, string> = {
@@ -52,14 +53,14 @@ export const FUNNEL_STAGE_LABELS: Record<string, string> = {
     ENTREVISTA_MARCADA: "Entrevista",
     ENCAMINHADO: "Encaminhado",
     APROVADO: "Aprovado",
-    REPROVADO_DESISTIU: "Reprovado/Desistiu",
+    REPROVADO: "Reprovado",
+    DESISTIU: "Desistiu",
 };
 
 /** Pré-cadastro: todo o processo de envio do link pelo colaborador (até o candidato preencher) */
 const PRE_CADASTRO_STATUSES = ["PRE_CADASTRO", "LINK_GERADO", "WHATSAPP_ABERTO", "LINK_ENVIADO"];
 /** Triagem: cadastro preenchido pelo candidato, pronto para triagem */
 const TRIAGEM_STATUSES = ["CADASTRO_PREENCHIDO"];
-const REPROVADO_DESISTIU_STATUSES = ["REPROVADO", "DESISTIU"];
 
 export function groupByStatusIntoFunnel(byStatus: { status: string; total: number }[]): { stageId: string; title: string; total: number }[] {
     const map = new Map<string, number>();
@@ -76,8 +77,10 @@ export function groupByStatusIntoFunnel(byStatus: { status: string; total: numbe
             map.set("ENCAMINHADO", (map.get("ENCAMINHADO") ?? 0) + total);
         } else if (status === "APROVADO") {
             map.set("APROVADO", (map.get("APROVADO") ?? 0) + total);
-        } else if (REPROVADO_DESISTIU_STATUSES.includes(status)) {
-            map.set("REPROVADO_DESISTIU", (map.get("REPROVADO_DESISTIU") ?? 0) + total);
+        } else if (status === "REPROVADO") {
+            map.set("REPROVADO", (map.get("REPROVADO") ?? 0) + total);
+        } else if (status === "DESISTIU") {
+            map.set("DESISTIU", (map.get("DESISTIU") ?? 0) + total);
         }
     });
 

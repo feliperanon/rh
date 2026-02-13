@@ -235,7 +235,7 @@ export default function AvaliacaoPage() {
                         <CardTitle className="flex items-center gap-2 text-sm font-medium app-text">
                             <TrendingDown className="h-4 w-4" /> Funil por etapa (desde o primeiro contato)
                         </CardTitle>
-                        <p className="text-xs app-text-muted">Pré-cadastro → Triagem → Em contato → Entrevista → Encaminhado → Aprovado / Reprovado/Desistiu</p>
+                        <p className="text-xs app-text-muted">Pré-cadastro → Triagem → Em contato → Entrevista → Encaminhado → Aprovado → Reprovado → Desistiu</p>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         {funnelStages.map((item) => (
