@@ -1,6 +1,6 @@
 import { getSession, signOut } from "next-auth/react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:10000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     const session = await getSession();

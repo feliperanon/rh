@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateCandidateDto } from './dto/update-candidate.dto';
 
@@ -92,7 +92,7 @@ export class CandidatesService {
                 },
             });
         } catch (error: any) {
-            if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
                 throw new BadRequestException('Dados únicos já utilizados (CPF/tel).');
             }
             throw error;

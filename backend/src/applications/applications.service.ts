@@ -258,17 +258,21 @@ export class ApplicationsService {
             [ApplicationStatus.PRE_CADASTRO]: EventType.PRE_CADASTRO_CRIADO,
         };
 
-        const eventType = statusToEvent[updateApplicationDto.status] || (updateApplicationDto.status as unknown as EventType);
+        const status = updateApplicationDto.status;
+        const eventType = status != null
+            ? (statusToEvent[status] ?? (status as unknown as EventType))
+            : undefined;
 
-        // Registra evento de mudança de status
-        await this.prisma.event.create({
-            data: {
-                application_id: application.id,
-                candidate_id: application.candidate_id,
-                user_id: userId,
-                type: eventType,
-            },
-        });
+        if (eventType != null) {
+            await this.prisma.event.create({
+                data: {
+                    application_id: application.id,
+                    candidate_id: application.candidate_id,
+                    user_id: userId,
+                    type: eventType,
+                },
+            });
+        }
 
         return updated;
     }

@@ -37,5 +37,5 @@ Na pasta raiz do projeto, execute o script:
 ```
 *Ele vai instalar dependências do Frontend, construir o Backend e iniciar ambos.*
 
-- **Backend**: http://localhost:3000
-- **Frontend**: http://localhost:3000 (Redirecionado pelo Next)
+- **Frontend (sua aplicação)**: http://localhost:3000
+- **Backend (API)**: http://localhost:3001

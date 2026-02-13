@@ -32,8 +32,9 @@ try {
     Pop-Location
 }
 
-# Inicia o Backend (NestJS) em segundo plano
+# Inicia o Backend (NestJS) na porta 3001 em segundo plano
 Write-Host "Iniciando Backend..." -ForegroundColor Yellow
+$env:PORT = 3001
 Start-Process -NoNewWindow -FilePath $npmCmd -ArgumentList "run start:dev" -WorkingDirectory $backendPath
 
 # Inicia o Frontend (Next.js) em segundo plano
@@ -41,7 +42,7 @@ Write-Host "Iniciando Frontend..." -ForegroundColor Yellow
 Start-Process -NoNewWindow -FilePath $npmCmd -ArgumentList "run dev" -WorkingDirectory "frontend"
 
 Write-Host "Sistema iniciado!" -ForegroundColor Green
-Write-Host "Backend: http://localhost:3000"
-Write-Host "Frontend: http://localhost:3001"
+Write-Host "Frontend (sua aplicacao): http://localhost:3000"
+Write-Host "Backend (API): http://localhost:3001"
 Write-Host "Pressione qualquer tecla para sair..."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

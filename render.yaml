@@ -1,10 +1,13 @@
+# Blueprint para deploy no Render (backend NestJS + frontend Next.js)
+# Após conectar o repositório, configure DATABASE_URL no serviço rh-backend (Environment).
+
 services:
   - type: web
     name: rh-backend
     env: node
     region: oregon
     plan: free
-    buildCommand: cd backend && npm install --production=false && npx prisma generate && npx prisma migrate deploy && npm run build
+    buildCommand: cd backend && npm ci && npx prisma generate && npx prisma migrate deploy && npm run build
     startCommand: cd backend && npm run start:prod
     envVars:
       - key: DATABASE_URL
@@ -15,19 +18,22 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: NPM_CONFIG_PRODUCTION
-        value: false
       - key: FRONTEND_URL
         value: https://rh-gppm.onrender.com
 
+  # Frontend Next.js - deve mostrar a tela de login em https://rh-gppm.onrender.com
   - type: web
     name: rh-gppm
     env: node
     region: oregon
     plan: free
-    buildCommand: cd frontend && npm install && npm run build
+    buildCommand: cd frontend && npm ci && npm run build
     startCommand: cd frontend && npm run start
     envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
       - key: NEXT_PUBLIC_API_URL
         value: https://rh-backend.onrender.com
       - key: NEXTAUTH_URL
