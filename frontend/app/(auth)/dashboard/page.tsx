@@ -93,7 +93,12 @@ export default function DashboardPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-xl font-semibold app-text">{stats.counts.cadastro_completo}</div>
-                            <p className="text-xs app-text-muted">Prontos para triagem</p>
+                            <p className="text-xs app-text-muted">Prontos para triagem (nome e dados preenchidos)</p>
+                            {stats.counts.cadastro_dados_incompletos > 0 && (
+                                <p className="mt-1 text-xs text-amber-600">
+                                    {stats.counts.cadastro_dados_incompletos} com dados incompletos
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
                     <Card

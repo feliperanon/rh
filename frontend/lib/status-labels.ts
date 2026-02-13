@@ -58,6 +58,17 @@ export const FUNNEL_STAGE_LABELS: Record<string, string> = {
     DESISTIU: "Desistiu",
 };
 
+/** Etapas exibidas no funil da página Avaliação (somente estas 7, sem Pré-cadastro). */
+export const FUNNEL_DISPLAY_IDS = [
+    "TRIAGEM",
+    "EM_CONTATO",
+    "ENTREVISTA_MARCADA",
+    "ENCAMINHADO",
+    "APROVADO",
+    "REPROVADO",
+    "DESISTIU",
+] as const;
+
 /** Pré-cadastro: todo o processo de envio do link pelo colaborador (até o candidato preencher) */
 const PRE_CADASTRO_STATUSES = ["PRE_CADASTRO", "LINK_GERADO", "WHATSAPP_ABERTO", "LINK_ENVIADO"];
 /** Triagem: cadastro preenchido pelo candidato, pronto para triagem */

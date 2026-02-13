@@ -27,7 +27,7 @@ import {
     UserCog,
     Filter,
 } from "lucide-react";
-import { STATUS_LABELS, groupByStatusIntoFunnel } from "@/lib/status-labels";
+import { STATUS_LABELS, groupByStatusIntoFunnel, FUNNEL_DISPLAY_IDS, FUNNEL_STAGE_LABELS } from "@/lib/status-labels";
 
 type AnalyticsData = {
     total: number;
@@ -90,7 +90,8 @@ export default function AvaliacaoPage() {
         );
     }
 
-    const funnelStages = groupByStatusIntoFunnel(data.by_status);
+    const funnelRaw = groupByStatusIntoFunnel(data.by_status);
+    const funnelStages = funnelRaw.filter((f) => FUNNEL_DISPLAY_IDS.includes(f.stageId as any));
     const maxFunnel = Math.max(...funnelStages.map((f) => f.total), 1);
 
     return (
@@ -229,29 +230,29 @@ export default function AvaliacaoPage() {
                     </Card>
                 </div>
 
-                {/* Funil desde o primeiro contato (títulos iguais ao Kanban) */}
+                {/* Funil — somente Triagem, Em Contato, Entrevista, Encaminhado, Aprovado, Reprovado, Desistiu */}
                 <Card className="card-panel app-border-color">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-sm font-medium app-text">
-                            <TrendingDown className="h-4 w-4" /> Funil por etapa (desde o primeiro contato)
-                        </CardTitle>
-                        <p className="text-xs app-text-muted">Pré-cadastro → Triagem → Em contato → Entrevista → Encaminhado → Aprovado → Reprovado → Desistiu</p>
+                        <CardTitle className="text-sm font-medium app-text">Funil por etapa</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                        {funnelStages.map((item) => (
-                            <div key={item.stageId} className="flex items-center gap-3">
-                                <span className="w-40 shrink-0 text-xs font-medium app-text">
-                                    {item.title}
-                                </span>
-                                <div className="flex-1 h-6 rounded-md bg-[hsl(var(--app-border))] overflow-hidden">
-                                    <div
-                                        className="h-full rounded-md bg-[hsl(var(--app-primary))] transition-all"
-                                        style={{ width: `${(item.total / maxFunnel) * 100}%`, minWidth: item.total ? "4px" : 0 }}
-                                    />
+                        {FUNNEL_DISPLAY_IDS.map((stageId) => {
+                            const item = funnelStages.find((f) => f.stageId === stageId);
+                            const total = item?.total ?? 0;
+                            const title = FUNNEL_STAGE_LABELS[stageId] ?? stageId;
+                            return (
+                                <div key={stageId} className="flex items-center gap-3">
+                                    <span className="w-40 shrink-0 text-xs font-medium app-text">{title}</span>
+                                    <div className="flex-1 h-6 rounded-md bg-[hsl(var(--app-border))] overflow-hidden">
+                                        <div
+                                            className="h-full rounded-md bg-[hsl(var(--app-primary))] transition-all"
+                                            style={{ width: `${(total / maxFunnel) * 100}%`, minWidth: total ? "4px" : 0 }}
+                                        />
+                                    </div>
+                                    <span className="w-12 shrink-0 text-right text-sm font-medium app-text">{total}</span>
                                 </div>
-                                <span className="w-12 shrink-0 text-right text-sm font-medium app-text">{item.total}</span>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </CardContent>
                 </Card>
 

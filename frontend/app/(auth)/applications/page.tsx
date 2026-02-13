@@ -293,9 +293,6 @@ export default function ApplicationsPage() {
                                     Empresa
                                 </TableHead>
                                 <TableHead className="h-11 text-xs font-medium app-text-muted">
-                                    Setor
-                                </TableHead>
-                                <TableHead className="h-11 text-xs font-medium app-text-muted">
                                     Status
                                 </TableHead>
                                 <TableHead className="h-11 text-xs font-medium app-text-muted">
@@ -310,7 +307,7 @@ export default function ApplicationsPage() {
                             {loading ? (
                                 <TableRow className="app-border-color">
                                     <TableCell
-                                        colSpan={8}
+                                        colSpan={7}
                                         className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Carregando…
@@ -319,7 +316,7 @@ export default function ApplicationsPage() {
                             ) : applications.length === 0 ? (
                                 <TableRow className="app-border-color">
                                     <TableCell
-                                        colSpan={8}
+                                        colSpan={7}
                                         className="h-32 text-center text-sm app-text-muted"
                                     >
                                         Nenhuma candidatura encontrada.
@@ -339,7 +336,6 @@ export default function ApplicationsPage() {
                                         <TableCell>{app.candidate?.name || "—"}</TableCell>
                                         <TableCell>{app.candidate?.phone_normalizado}</TableCell>
                                         <TableCell>{app.company?.nome_interno}</TableCell>
-                                        <TableCell>{app.sector?.nome}</TableCell>
                                         <TableCell>{getStatusBadge(app.status)}</TableCell>
                                         <TableCell className="text-sm app-text-muted">
                                             {formatAppDate(app)}

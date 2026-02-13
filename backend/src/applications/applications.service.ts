@@ -637,7 +637,14 @@ export class ApplicationsService {
         const linkGerado = await this.prisma.application.count({ where: { status: ApplicationStatus.LINK_GERADO } });
         const whatsappAberto = await this.prisma.application.count({ where: { status: ApplicationStatus.WHATSAPP_ABERTO } });
         const linkEnviado = await this.prisma.application.count({ where: { status: ApplicationStatus.LINK_ENVIADO } });
-        const cadastroPreenchido = await this.prisma.application.count({ where: { status: ApplicationStatus.CADASTRO_PREENCHIDO } });
+        const cadastroPreenchidoAll = await this.prisma.application.findMany({
+            where: { status: ApplicationStatus.CADASTRO_PREENCHIDO },
+            select: { candidate: { select: { name: true } } },
+        });
+        const cadastroPreenchido = cadastroPreenchidoAll.filter(
+            (app) => app.candidate?.name != null && String(app.candidate.name).trim() !== '',
+        ).length;
+        const cadastroDadosIncompletos = cadastroPreenchidoAll.length - cadastroPreenchido;
         const emContato = await this.prisma.application.count({ where: { status: ApplicationStatus.EM_CONTATO } });
         const entrevistaMarcada = await this.prisma.application.count({ where: { status: ApplicationStatus.ENTREVISTA_MARCADA } });
         const encaminhado = await this.prisma.application.count({ where: { status: ApplicationStatus.ENCAMINHADO } });
@@ -661,6 +668,7 @@ export class ApplicationsService {
                 aguardando_envio: preCadastro + linkGerado + whatsappAberto,
                 aguardando_preenchimento: linkEnviado,
                 cadastro_completo: cadastroPreenchido,
+                cadastro_dados_incompletos: cadastroDadosIncompletos,
                 em_processo: emContato + entrevistaMarcada + encaminhado,
                 finalizados: aprovado + reprovado + desistiu,
             },
