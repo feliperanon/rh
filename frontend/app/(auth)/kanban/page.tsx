@@ -181,17 +181,17 @@ export default function KanbanPage() {
                     </div>
                 </div>
 
-                {/* Kanban Board */}
-                <div className="overflow-x-auto pb-4">
+                {/* Kanban Board — grid que quebra em várias linhas, sem scroll horizontal */}
+                <div className="w-full">
                     <DragDropContext onDragEnd={onDragEnd}>
-                        <div className="flex gap-4 min-w-max">
+                        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
                             {COLUMNS.map(column => (
-                                <div key={column.id} className="w-80 flex flex-col shrink-0">
+                                <div key={column.id} className="flex min-w-0 flex-col">
                                     <div className="mb-3 flex items-center justify-between px-1">
-                                        <div className="flex items-center gap-2">
-                                            <div className={`h-2 w-2 rounded-full ${column.color}`} />
-                                            <h3 className="text-sm font-semibold app-text">{column.title}</h3>
-                                            <span className="rounded bg-[hsl(var(--app-border))] px-1.5 py-0.5 text-xs app-text-muted">
+                                        <div className="flex min-w-0 items-center gap-2">
+                                            <div className={`h-2 w-2 shrink-0 rounded-full ${column.color}`} />
+                                            <h3 className="truncate text-sm font-semibold app-text">{column.title}</h3>
+                                            <span className="rounded bg-[hsl(var(--app-border))] px-1.5 py-0.5 text-xs app-text-muted shrink-0">
                                                 {boardData[column.id]?.length || 0}
                                             </span>
                                         </div>
@@ -202,7 +202,7 @@ export default function KanbanPage() {
                                             <div
                                                 {...provided.droppableProps}
                                                 ref={provided.innerRef}
-                                                className={`flex-1 min-h-[500px] rounded-xl border border-dashed p-2 transition-colors ${snapshot.isDraggingOver
+                                                className={`min-h-[320px] flex-1 rounded-xl border border-dashed p-2 transition-colors ${snapshot.isDraggingOver
                                                         ? "border-primary/50 bg-primary/5"
                                                         : "app-border-color opacity-90"
                                                     }`}

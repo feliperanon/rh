@@ -534,6 +534,103 @@ export class ApplicationsService {
 
         await workbook.xlsx.write(res);
     }
+    async getAnalytics(startDate?: string, endDate?: string) {
+        const dateFilter: { created_at?: { gte?: Date; lte?: Date } } = {};
+        if (startDate) dateFilter.created_at = { ...dateFilter.created_at, gte: new Date(startDate) };
+        if (endDate) dateFilter.created_at = { ...dateFilter.created_at, lte: new Date(endDate + 'T23:59:59.999Z') };
+
+        const where = Object.keys(dateFilter).length ? dateFilter : undefined;
+
+        const total = await this.prisma.application.count({ where });
+        const aprovado = await this.prisma.application.count({ where: { ...where, status: ApplicationStatus.APROVADO } as any });
+        const reprovado = await this.prisma.application.count({ where: { ...where, status: ApplicationStatus.REPROVADO } as any });
+        const desistiu = await this.prisma.application.count({ where: { ...where, status: ApplicationStatus.DESISTIU } as any });
+        const finalizados = aprovado + reprovado + desistiu;
+        const taxaEfetividade = finalizados > 0 ? Math.round((aprovado / finalizados) * 100) : 0;
+
+        const byStatus = await this.prisma.application.groupBy({
+            by: ['status'],
+            where,
+            _count: { id: true },
+            orderBy: { status: 'asc' },
+        });
+
+        const byCompany = await this.prisma.application.groupBy({
+            by: ['company_id'],
+            where,
+            _count: { id: true },
+        });
+        const companyIds = [...new Set(byCompany.map((c) => c.company_id))];
+        const companies = companyIds.length
+            ? await this.prisma.company.findMany({ where: { id: { in: companyIds } }, select: { id: true, nome_interno: true } })
+            : [];
+        const companyMap = Object.fromEntries(companies.map((c) => [c.id, c.nome_interno]));
+        const byCompanyWithName = byCompany.map((c) => ({
+            company_id: c.company_id,
+            company_name: companyMap[c.company_id] ?? '—',
+            total: c._count.id,
+        }));
+
+        const eventsByUser = await this.prisma.event.groupBy({
+            by: ['user_id'],
+            where: { user_id: { not: null } },
+            _count: { id: true },
+        });
+        const userIds = [...new Set(eventsByUser.map((e) => e.user_id).filter(Boolean))] as string[];
+        const users = userIds.length ? await this.prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true } }) : [];
+        const userMap = Object.fromEntries(users.map((u) => [u.id, u.name]));
+
+        const byCollaboratorRaw = await this.prisma.$queryRaw<{ user_id: string; count: number }[]>`
+            SELECT user_id, (COUNT(DISTINCT application_id))::int as count
+            FROM events
+            WHERE user_id IS NOT NULL
+            GROUP BY user_id
+        `;
+        const byCollaborator = byCollaboratorRaw.map((r) => ({
+            user_id: r.user_id,
+            user_name: userMap[r.user_id] ?? '—',
+            total: Number(r.count),
+        }));
+
+        const statusOrder = [
+            ApplicationStatus.PRE_CADASTRO,
+            ApplicationStatus.LINK_GERADO,
+            ApplicationStatus.WHATSAPP_ABERTO,
+            ApplicationStatus.LINK_ENVIADO,
+            ApplicationStatus.CADASTRO_PREENCHIDO,
+            ApplicationStatus.EM_CONTATO,
+            ApplicationStatus.ENTREVISTA_MARCADA,
+            ApplicationStatus.ENCAMINHADO,
+            ApplicationStatus.APROVADO,
+            ApplicationStatus.REPROVADO,
+            ApplicationStatus.DESISTIU,
+        ];
+        const statusCountMap = Object.fromEntries(byStatus.map((s) => [s.status, s._count.id]));
+        const funnel = statusOrder.map((status) => ({ status, total: statusCountMap[status] ?? 0 }));
+
+        const etapaMaisDesistencias = 'DESISTIU';
+        const etapaMaisReprovacoes = 'REPROVADO';
+        const totalDesistencias = desistiu;
+        const totalReprovacoes = reprovado;
+
+        return {
+            total,
+            aprovado,
+            reprovado,
+            desistiu,
+            finalizados,
+            taxa_efetividade_percent: taxaEfetividade,
+            by_status: byStatus.map((s) => ({ status: s.status, total: s._count.id })),
+            by_company: byCompanyWithName,
+            by_collaborator: byCollaborator,
+            funnel,
+            etapa_mais_desistencias: etapaMaisDesistencias,
+            etapa_mais_reprovacoes: etapaMaisReprovacoes,
+            total_desistencias: totalDesistencias,
+            total_reprovacoes: totalReprovacoes,
+        };
+    }
+
     async getDashboardStats() {
         const total = await this.prisma.application.count();
         const preCadastro = await this.prisma.application.count({ where: { status: ApplicationStatus.PRE_CADASTRO } });

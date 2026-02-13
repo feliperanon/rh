@@ -11,7 +11,8 @@ import {
     LayoutDashboard,
     LogOut,
     Menu,
-    Columns
+    Columns,
+    BarChart2,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,6 +44,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     const navItems = [
         { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
         { href: "/kanban", label: "Board (Funil)", icon: Columns },
+        { href: "/avaliacao", label: "Avaliação", icon: BarChart2 },
         { href: "/companies", label: "Empresas", icon: Building2 },
         { href: "/sectors", label: "Setores", icon: FileText },
         { href: "/candidates", label: "Candidatos", icon: Users },

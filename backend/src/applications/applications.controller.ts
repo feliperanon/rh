@@ -36,6 +36,15 @@ export class ApplicationsController {
         return this.applicationsService.getDashboardStats();
     }
 
+    @Get('analytics')
+    @Roles(Role.ADMIN, Role.PSICOLOGA)
+    getAnalytics(
+        @Query('start_date') startDate?: string,
+        @Query('end_date') endDate?: string,
+    ) {
+        return this.applicationsService.getAnalytics(startDate, endDate);
+    }
+
     @Get()
     @Roles(Role.ADMIN, Role.PSICOLOGA)
     findAll(

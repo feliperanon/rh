@@ -106,6 +106,13 @@ export const api = {
         method: "POST",
     }),
     getDashboardStats: () => fetchWithAuth("/applications/stats"),
+    getAnalytics: (params?: { start_date?: string; end_date?: string }) => {
+        const search = new URLSearchParams();
+        if (params?.start_date) search.set("start_date", params.start_date);
+        if (params?.end_date) search.set("end_date", params.end_date);
+        const q = search.toString() ? `?${search.toString()}` : "";
+        return fetchWithAuth(`/applications/analytics${q}`);
+    },
 
     // Candidates
     getCandidates: (filters?: { search?: string; protocol?: string }) => {
