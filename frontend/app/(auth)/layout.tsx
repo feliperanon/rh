@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Logo } from "@/components/Logo";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     const { data: session, status } = useSession();
@@ -57,10 +58,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 >
                     <Link
                         href="/dashboard"
-                        className="mb-8 shrink-0 text-lg font-medium tracking-tight"
+                        className="mb-8 shrink-0 flex flex-col items-center"
                         style={{ color: "hsl(var(--app-text))" }}
                     >
-                        RH
+                        <Logo height={48} showSlogan={false} />
                     </Link>
                     <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
                         {navItems.map((item) => {

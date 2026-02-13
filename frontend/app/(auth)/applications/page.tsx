@@ -110,16 +110,19 @@ export default function ApplicationsPage() {
         }
     };
 
+    const getStatusBadgeClass = (status: string) => {
+        if (status === "APROVADO") return "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400";
+        if (status === "REPROVADO" || status === "DESISTIU") return "bg-rose-500/20 text-rose-700 dark:text-rose-400";
+        if (status === "ENTREVISTA_MARCADA" || status === "ENCAMINHADO") return "bg-blue-500/20 text-blue-700 dark:text-blue-400";
+        if (status === "LINK_ENVIADO" || status === "CADASTRO_PREENCHIDO" || status === "EM_CONTATO") return "bg-amber-500/20 text-amber-800 dark:text-amber-300";
+        if (status === "WHATSAPP_ABERTO") return "bg-green-500/20 text-green-700 dark:text-green-400";
+        return "bg-slate-500/15 text-slate-700 dark:text-slate-400";
+    };
+
     const getStatusBadge = (status: string) => {
-        const style =
-            status === "APROVADO"
-                ? "bg-emerald-500/20 text-emerald-400"
-                : status === "REPROVADO" || status === "DESISTIU"
-                  ? "bg-[hsl(var(--app-border))] app-text-muted"
-                  : "bg-[hsl(var(--app-border))] app-text-muted";
         const label = STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
         return (
-            <span className={`rounded px-2 py-0.5 text-xs font-medium ${style}`}>{label}</span>
+            <span className={`rounded px-2 py-0.5 text-xs font-medium ${getStatusBadgeClass(status)}`}>{label}</span>
         );
     };
 

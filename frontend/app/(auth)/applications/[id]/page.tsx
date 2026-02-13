@@ -207,6 +207,20 @@ export default function ApplicationDetailsPage() {
                                 </p>
                             </div>
                             <div>
+                                <p className="text-sm font-medium app-text-muted">Escolaridade</p>
+                                <p className="app-text">
+                                    {application.candidate.education === "FUNDAMENTAL"
+                                        ? "Ensino Fundamental"
+                                        : application.candidate.education === "MEDIO"
+                                            ? "Ensino Médio"
+                                            : application.candidate.education === "SUPERIOR"
+                                                ? "Ensino Superior"
+                                                : application.candidate.education === "POS_GRADUACAO"
+                                                    ? "Pós-Graduação"
+                                                    : "-"}
+                                </p>
+                            </div>
+                            <div>
                                 <p className="text-sm font-medium app-text-muted">Já trabalhou na empresa?</p>
                                 <p className="app-text">
                                     {application.candidate.worked_here_before === true

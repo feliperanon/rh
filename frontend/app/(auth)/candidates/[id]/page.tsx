@@ -133,10 +133,13 @@ export default function CandidateDetailsPage() {
     };
 
     const getStatusColor = (status: string) => {
-        if (status === ApplicationStatus.APROVADO) return "bg-emerald-100 text-emerald-800";
+        if (status === ApplicationStatus.APROVADO) return "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400";
         if (status === ApplicationStatus.REPROVADO || status === ApplicationStatus.DESISTIU)
-            return "bg-slate-200 text-slate-600";
-        return "bg-slate-100 text-slate-700";
+            return "bg-rose-500/20 text-rose-700 dark:text-rose-400";
+        if (status === "ENTREVISTA_MARCADA" || status === "ENCAMINHADO") return "bg-blue-500/20 text-blue-700 dark:text-blue-400";
+        if (status === "LINK_ENVIADO" || status === "CADASTRO_PREENCHIDO" || status === "EM_CONTATO") return "bg-amber-500/20 text-amber-800 dark:text-amber-300";
+        if (status === "WHATSAPP_ABERTO") return "bg-green-500/20 text-green-700 dark:text-green-400";
+        return "bg-slate-500/15 text-slate-700 dark:text-slate-400";
     };
 
     if (loading) {

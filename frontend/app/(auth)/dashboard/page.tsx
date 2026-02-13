@@ -146,7 +146,21 @@ export default function DashboardPage() {
                                             </p>
                                         </div>
                                         <div className="flex shrink-0 items-center gap-2 pl-3">
-                                            <span className="rounded px-2 py-0.5 text-xs app-text-muted">
+                                            <span
+                                                className={`rounded px-2 py-0.5 text-xs font-medium ${
+                                                    app.status === "APROVADO"
+                                                        ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
+                                                        : app.status === "REPROVADO" || app.status === "DESISTIU"
+                                                          ? "bg-rose-500/20 text-rose-700 dark:text-rose-400"
+                                                          : app.status === "ENTREVISTA_MARCADA" || app.status === "ENCAMINHADO"
+                                                            ? "bg-blue-500/20 text-blue-700 dark:text-blue-400"
+                                                            : app.status === "LINK_ENVIADO" || app.status === "CADASTRO_PREENCHIDO" || app.status === "EM_CONTATO"
+                                                              ? "bg-amber-500/20 text-amber-800 dark:text-amber-300"
+                                                              : app.status === "WHATSAPP_ABERTO"
+                                                                ? "bg-green-500/20 text-green-700 dark:text-green-400"
+                                                                : "bg-slate-500/15 text-slate-700 dark:text-slate-400"
+                                                }`}
+                                            >
                                                 {STATUS_LABELS[app.status] ?? app.status}
                                             </span>
                                             <span className="text-xs app-text-muted">

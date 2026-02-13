@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { loginSchema, type LoginFormValues } from "@/lib/validators/login";
 import { loginAction } from "@/lib/actions/login";
 import { Button } from "@/components/ui/button";
@@ -98,14 +99,11 @@ export function LoginCard({
       )}
     >
       <CardHeader className="space-y-2 text-center pb-2">
-        <div
-          className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[hsl(var(--login-primary))] text-white transition-transform hover:scale-105 focus-within:ring-2 focus-within:ring-[hsl(var(--login-primary))] focus-within:ring-offset-2"
-          aria-hidden
-        >
-          <Lock className="h-6 w-6" aria-hidden />
+        <div className="mx-auto flex justify-center" aria-hidden>
+          <Logo height={64} showSlogan={true} />
         </div>
         <CardTitle className="text-xl font-semibold text-[hsl(var(--login-text))]">
-          RH Admin
+          Painel Administrativo
         </CardTitle>
         <CardDescription className="text-[hsl(var(--login-text-muted))]">
           Faça login para gerenciar o painel

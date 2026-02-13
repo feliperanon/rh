@@ -175,7 +175,6 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                                     onChange={field.onChange}
                                 />
                             </FormControl>
-                            <FormDescription>Se não utilizar, deixe 0,00. Padrão brasileiro (vírgula e ponto automático).</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -256,6 +255,9 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                     />
                 )}
 
+                <p className="text-xs text-muted-foreground text-center">
+                    Obs.: não solicitamos senha e nem pagamento em nenhuma etapa.
+                </p>
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>
                     {loading ? "Enviando..." : "Finalizar Cadastro"}
                 </Button>
