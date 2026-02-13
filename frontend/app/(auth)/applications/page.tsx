@@ -34,20 +34,9 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const ALL_VALUE = "__all__";
+import { STATUS_OPTIONS, STATUS_LABELS } from "@/lib/status-labels";
 
-const STATUS_OPTIONS: { value: string; label: string }[] = [
-    { value: "PRE_CADASTRO", label: "Pré-cadastro" },
-    { value: "LINK_GERADO", label: "Link gerado" },
-    { value: "LINK_ENVIADO", label: "Link enviado" },
-    { value: "CADASTRO_PREENCHIDO", label: "Cadastro preenchido" },
-    { value: "EM_CONTATO", label: "Em contato" },
-    { value: "ENTREVISTA_MARCADA", label: "Entrevista marcada" },
-    { value: "ENCAMINHADO", label: "Encaminhado" },
-    { value: "APROVADO", label: "Aprovado" },
-    { value: "REPROVADO", label: "Reprovado" },
-    { value: "DESISTIU", label: "Desistiu" },
-];
+const ALL_VALUE = "__all__";
 
 export default function ApplicationsPage() {
     const [applications, setApplications] = useState<Application[]>([]);
@@ -120,7 +109,7 @@ export default function ApplicationsPage() {
     };
 
     const getStatusBadge = (status: string) => {
-        const label = STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
+        const label = STATUS_LABELS[status] ?? status;
         return (
             <span className={`rounded px-2 py-0.5 text-xs font-medium ${getStatusBadgeClass(status)}`}>{label}</span>
         );

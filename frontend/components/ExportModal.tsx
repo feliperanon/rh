@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api } from "@/lib/api";
 import { Company, Sector } from "@/types";
+import { STATUS_OPTIONS } from "@/lib/status-labels";
 import { toast } from "sonner";
 import { Download } from "lucide-react";
 
@@ -144,17 +145,9 @@ export function ExportModal() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">Todos os status</SelectItem>
-                                <SelectItem value="PRE_CADASTRO">Pré-Cadastro</SelectItem>
-                                <SelectItem value="LINK_GERADO">Link Gerado</SelectItem>
-                                <SelectItem value="WHATSAPP_ABERTO_PARA_ENVIO">WhatsApp Aberto</SelectItem>
-                                <SelectItem value="LINK_ENVIADO">Link Enviado</SelectItem>
-                                <SelectItem value="CADASTRO_PREENCHIDO">Cadastro Preenchido</SelectItem>
-                                <SelectItem value="EM_CONTATO">Em Contato</SelectItem>
-                                <SelectItem value="ENTREVISTA_MARCADA">Entrevista Marcada</SelectItem>
-                                <SelectItem value="ENCAMINHADO">Encaminhado</SelectItem>
-                                <SelectItem value="APROVADO">Aprovado</SelectItem>
-                                <SelectItem value="REPROVADO">Reprovado</SelectItem>
-                                <SelectItem value="DESISTIU">Desistiu</SelectItem>
+                                {STATUS_OPTIONS.map((o) => (
+                                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>

@@ -27,20 +27,7 @@ import {
     UserCog,
     Filter,
 } from "lucide-react";
-
-const STATUS_LABELS: Record<string, string> = {
-    PRE_CADASTRO: "Pré-cadastro",
-    LINK_GERADO: "Link gerado",
-    WHATSAPP_ABERTO: "WhatsApp aberto",
-    LINK_ENVIADO: "Link enviado",
-    CADASTRO_PREENCHIDO: "Cadastro preenchido",
-    EM_CONTATO: "Em contato",
-    ENTREVISTA_MARCADA: "Entrevista marcada",
-    ENCAMINHADO: "Encaminhado",
-    APROVADO: "Aprovado",
-    REPROVADO: "Reprovado",
-    DESISTIU: "Desistiu",
-};
+import { STATUS_LABELS, groupByStatusIntoFunnel } from "@/lib/status-labels";
 
 type AnalyticsData = {
     total: number;
@@ -103,7 +90,8 @@ export default function AvaliacaoPage() {
         );
     }
 
-    const maxFunnel = Math.max(...data.funnel.map((f) => f.total), 1);
+    const funnelStages = groupByStatusIntoFunnel(data.by_status);
+    const maxFunnel = Math.max(...funnelStages.map((f) => f.total), 1);
 
     return (
         <MainLayout
@@ -241,19 +229,19 @@ export default function AvaliacaoPage() {
                     </Card>
                 </div>
 
-                {/* Funil desde o primeiro contato */}
+                {/* Funil desde o primeiro contato (títulos iguais ao Kanban) */}
                 <Card className="card-panel app-border-color">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-sm font-medium app-text">
                             <TrendingDown className="h-4 w-4" /> Funil por etapa (desde o primeiro contato)
                         </CardTitle>
-                        <p className="text-xs app-text-muted">Quantidade em cada etapa do processo</p>
+                        <p className="text-xs app-text-muted">Pré-cadastro → Triagem → Em contato → Entrevista → Encaminhado → Aprovado / Reprovado/Desistiu</p>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                        {data.funnel.map((item) => (
-                            <div key={item.status} className="flex items-center gap-3">
+                        {funnelStages.map((item) => (
+                            <div key={item.stageId} className="flex items-center gap-3">
                                 <span className="w-40 shrink-0 text-xs font-medium app-text">
-                                    {STATUS_LABELS[item.status] ?? item.status}
+                                    {item.title}
                                 </span>
                                 <div className="flex-1 h-6 rounded-md bg-[hsl(var(--app-border))] overflow-hidden">
                                     <div

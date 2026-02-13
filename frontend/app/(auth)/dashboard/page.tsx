@@ -12,19 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ExportModal } from "@/components/ExportModal";
 import { MainLayout } from "@/components/layout/MainLayout";
 
-const STATUS_LABELS: Record<string, string> = {
-    PRE_CADASTRO: "Pré-cadastro",
-    LINK_GERADO: "Link gerado",
-    WHATSAPP_ABERTO: "WhatsApp aberto",
-    LINK_ENVIADO: "Link enviado",
-    CADASTRO_PREENCHIDO: "Cadastro preenchido",
-    EM_CONTATO: "Em contato",
-    ENTREVISTA_MARCADA: "Entrevista marcada",
-    ENCAMINHADO: "Encaminhado",
-    APROVADO: "Aprovado",
-    REPROVADO: "Reprovado",
-    DESISTIU: "Desistiu",
-};
+import { STATUS_LABELS } from "@/lib/status-labels";
 
 export default function DashboardPage() {
     const [stats, setStats] = useState<any>(null);

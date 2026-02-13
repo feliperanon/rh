@@ -14,20 +14,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const STATUS_OPTIONS: { value: string; label: string }[] = [
-    { value: "PRE_CADASTRO", label: "Pré-cadastro" },
-    { value: "LINK_GERADO", label: "Link gerado" },
-    { value: "WHATSAPP_ABERTO", label: "WhatsApp aberto" },
-    { value: "LINK_ENVIADO", label: "Link enviado" },
-    { value: "CADASTRO_PREENCHIDO", label: "Cadastro preenchido" },
-    { value: "EM_CONTATO", label: "Em contato" },
-    { value: "ENTREVISTA_MARCADA", label: "Entrevista marcada" },
-    { value: "ENCAMINHADO", label: "Encaminhado" },
-    { value: "APROVADO", label: "Aprovado" },
-    { value: "REPROVADO", label: "Reprovado" },
-    { value: "DESISTIU", label: "Desistiu" },
-];
+import { STATUS_OPTIONS, STATUS_LABELS } from "@/lib/status-labels";
 
 function getStatusBadgeClass(status: string): string {
     if (status === "APROVADO") return "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30";
@@ -269,7 +256,7 @@ export default function ApplicationDetailsPage() {
                                     </SelectContent>
                                 </Select>
                                 <Badge variant="outline" className={`mt-2 ${getStatusBadgeClass(application.status)}`}>
-                                    {STATUS_OPTIONS.find((o) => o.value === application.status)?.label ?? application.status}
+                                    {STATUS_LABELS[application.status] ?? application.status}
                                 </Badge>
                             </div>
 
