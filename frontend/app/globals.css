@@ -30,6 +30,22 @@
   --input: 214.3 31.8% 91.4%;
   --ring: 222.2 84% 4.9%;
   --radius: 0.5rem;
+
+  /* Login page design tokens (clean, light, acessível) */
+  --login-bg: 210 20% 98%;
+  --login-surface: 0 0% 100%;
+  --login-text: 222 47% 11%;
+  --login-text-muted: 215 16% 47%;
+  --login-primary: 221 83% 53%;
+  --login-primary-hover: 221 83% 48%;
+  --login-border: 214 32% 91%;
+  --login-input-bg: 0 0% 100%;
+  --login-radius: 1rem;
+  --login-radius-lg: 1.5rem;
+  --login-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --login-shadow-focus: 0 0 0 3px hsl(221 83% 53% / 0.2);
+  --login-spacing-card: 1.5rem;
+  --login-input-height: 2.75rem;
 }
 
 .dark {

@@ -1,0 +1,17 @@
+Cole estas variáveis no "Environment Variables" do novo Web Service (backend).
+Para cada linha: no campo NAME coloque a palavra antes do = e no campo value o que está depois do = (entre aspas não coloque as aspas).
+
+DATABASE_URL
+Cole aqui a "Internal Database URL" do seu banco. No Render: abra o banco rh-backend (PostgreSQL) → aba Info → copie "Internal Database URL". No final adicione ?schema=public se não tiver.
+
+JWT_SECRET
+minha-chave-jwt-super-secreta-rh-2026
+
+NODE_ENV
+production
+
+PORT
+10000
+
+FRONTEND_URL
+https://rh-gppm.onrender.com
