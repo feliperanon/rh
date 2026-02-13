@@ -31,7 +31,7 @@ export default function PublicRegistrationPage() {
     if (loading) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-                <Logo height={64} showSlogan={true} className="mb-6" />
+                <Logo height={100} showSlogan={true} lightBackground className="mb-6" />
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" />
                 <p className="text-gray-600">Carregando informações...</p>
             </div>
@@ -41,7 +41,7 @@ export default function PublicRegistrationPage() {
     if (error) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50">
-                <Logo height={56} showSlogan={true} className="mb-6" />
+                <Logo height={88} showSlogan={true} lightBackground className="mb-6" />
                 <Card className="w-full max-w-md border-destructive/50">
                     <CardHeader>
                         <CardTitle className="text-destructive text-center">Link Inválido</CardTitle>
@@ -57,7 +57,7 @@ export default function PublicRegistrationPage() {
     if (success) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50">
-                <Logo height={56} showSlogan={true} className="mb-6" />
+                <Logo height={88} showSlogan={true} lightBackground className="mb-6" />
                 <Card className="w-full max-w-md border-green-500/50">
                     <CardHeader className="text-center">
                         <div className="mx-auto bg-green-100 p-3 rounded-full w-fit mb-4">
@@ -78,7 +78,7 @@ export default function PublicRegistrationPage() {
         <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-xl mx-auto space-y-6">
                 <div className="text-center space-y-4">
-                    <Logo height={72} showSlogan={true} className="mb-2" />
+                    <Logo height={120} showSlogan={true} lightBackground className="mb-4" />
                     <h1 className="text-2xl font-bold text-gray-900">Finalizar Cadastro</h1>
                     <p className="text-gray-500">
                         {data.company.sigilosa ? "Processo Seletivo Confidencial" : data.company.nome}
