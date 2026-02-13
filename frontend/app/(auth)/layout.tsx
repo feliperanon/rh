@@ -72,7 +72,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                                     href={item.href}
                                     className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive
                                         ? "text-white"
-                                        : "hover:opacity-90"
+                                        : "hover:bg-[hsl(214_32%_94%)]"
                                         }`}
                                     style={isActive ? { background: "hsl(var(--app-primary))", color: "white" } : { color: "hsl(var(--app-text-muted))" }}
                                 >

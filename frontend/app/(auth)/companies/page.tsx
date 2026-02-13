@@ -101,7 +101,7 @@ export default function CompaniesPage() {
             <DialogTrigger asChild>
                 <Button
                     size="sm"
-                    className="h-9 bg-[hsl(var(--app-primary))] app-text hover:opacity-90"
+                    className="h-9 btn-primary"
                     onClick={handleCreate}
                 >
                     <Plus className="h-4 w-4" />
@@ -170,7 +170,7 @@ export default function CompaniesPage() {
                                         companies.map((company) => (
                                             <TableRow
                                                 key={company.id}
-                                                className="app-border-color app-text transition-colors hover:bg-slate-800/30"
+                                                className="app-border-color app-text transition-colors hover:bg-[hsl(214_32%_94%)]"
                                             >
                                                 <TableCell className="font-medium">
                                                     {company.nome_interno}

@@ -88,7 +88,7 @@ export default function SectorsPage() {
     const headerActions = useMemo(() => (
         <div className="flex flex-wrap items-center gap-2">
             <Select value={selectedCompanyId} onValueChange={setSelectedCompanyId}>
-                <SelectTrigger className="h-9 w-[200px] app-border-color bg-[hsl(var(--app-input-bg))] app-text hover:opacity-90 sm:w-[220px]">
+                <SelectTrigger className="h-9 w-[200px] app-border-color bg-[hsl(var(--app-input-bg))] app-text hover:bg-[hsl(214_32%_94%)] sm:w-[220px]">
                     <SelectValue placeholder="Empresa" />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +104,7 @@ export default function SectorsPage() {
                     <Button
                         size="sm"
                         disabled={!selectedCompanyId}
-                        className="h-9 bg-[hsl(var(--app-primary))] text-white hover:opacity-90"
+                        className="h-9 btn-primary"
                     >
                         <Plus className="h-4 w-4" />
                         Novo setor
@@ -169,7 +169,7 @@ export default function SectorsPage() {
                             sectors.map((sector) => (
                                 <TableRow
                                     key={sector.id}
-                                    className="app-border-color app-text transition-colors hover:bg-slate-800/30"
+                                    className="app-border-color app-text transition-colors hover:bg-[hsl(214_32%_94%)]"
                                 >
                                     <TableCell className="font-medium">
                                         {sector.nome}

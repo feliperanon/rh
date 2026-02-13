@@ -112,7 +112,7 @@ export default function CandidatesPage() {
                         type="submit"
                         size="sm"
                         disabled={loading}
-                        className="h-9 shrink-0 bg-[hsl(var(--app-primary))] text-white hover:opacity-90"
+                        className="h-9 shrink-0 btn-primary"
                     >
                         <Search className="h-4 w-4" />
                         Buscar
@@ -161,7 +161,7 @@ export default function CandidatesPage() {
                                 candidates.map((candidate) => (
                                     <TableRow
                                         key={candidate.id}
-                                        className="group cursor-pointer app-border-color app-text transition-colors hover:opacity-90"
+                                        className="group cursor-pointer app-border-color app-text transition-colors hover:bg-[hsl(214_32%_94%)]"
                                         onClick={() => router.push(`/candidates/${candidate.id}`)}
                                     >
                                         <TableCell className="font-medium">

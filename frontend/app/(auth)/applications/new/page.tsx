@@ -201,7 +201,7 @@ export default function NewApplicationPage() {
                     </CardContent>
                 </Card>
 
-                <Dialog open={!!successData} onOpenChange={(open) => !open && router.push("/applications")}>
+                <Dialog open={!!successData} onOpenChange={(open) => !open && setSuccessData(null)}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                             <DialogTitle>Pré-cadastro Criado!</DialogTitle>

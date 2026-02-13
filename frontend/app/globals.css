@@ -37,8 +37,8 @@
   --app-text: 222 47% 11%;
   --app-text-muted: 215 16% 47%;
   --app-primary: 221 83% 53%;
-  --app-primary-hover: 221 83% 48%;
-  --app-border: 214 32% 91%;
+  --app-primary-hover: 221 83% 42%;
+  --app-border: 214 28% 85%;
   --app-input-bg: 0 0% 100%;
   --app-radius: 1rem;
   --app-radius-lg: 1.5rem;
@@ -162,5 +162,27 @@
 
   .app-border-color {
     border-color: hsl(var(--app-border));
+  }
+
+  /* Botão primário: azul com hover azul mais escuro (nunca branco) */
+  .btn-primary {
+    background: hsl(var(--app-primary));
+    color: white;
+  }
+  .btn-primary:hover {
+    background: hsl(var(--app-primary-hover));
+    color: white;
+  }
+
+  /* Botão outline: borda visível, hover com fundo cinza claro bem definido */
+  .btn-outline-app {
+    border: 1px solid hsl(var(--app-border));
+    background: hsl(var(--app-surface));
+    color: hsl(var(--app-text));
+  }
+  .btn-outline-app:hover {
+    background: hsl(214 32% 94%);
+    border-color: hsl(214 32% 85%);
+    color: hsl(var(--app-text));
   }
 }

@@ -35,14 +35,14 @@ export default function DashboardPage() {
             <Button
                 variant="outline"
                 size="sm"
-                className="app-border-color bg-transparent app-text-muted hover:opacity-90"
+                className="btn-outline-app"
                 onClick={() => router.push("/applications")}
             >
                 Ver candidaturas
             </Button>
             <Button
                 size="sm"
-                className="h-9 bg-[hsl(var(--app-primary))] app-text hover:opacity-90"
+                className="h-9 btn-primary"
                 onClick={() => router.push("/applications/new")}
             >
                 <Send className="h-4 w-4" />
@@ -129,7 +129,7 @@ export default function DashboardPage() {
                                 ))}
                             </div>
                             <Button
-                                className="mt-4 w-full app-border-color app-text-muted hover:opacity-90"
+                                className="mt-4 w-full btn-outline-app"
                                 variant="outline"
                                 size="sm"
                                 onClick={() => router.push("/applications")}
@@ -146,7 +146,7 @@ export default function DashboardPage() {
                         <CardContent className="space-y-2">
                             <Button
                                 size="sm"
-                                className="w-full justify-start bg-[hsl(var(--app-primary))] text-white hover:opacity-90"
+                                className="w-full justify-start btn-primary"
                                 onClick={() => router.push("/applications/new")}
                             >
                                 <Send className="mr-2 h-4 w-4" /> Nova Candidatura
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                className="w-full justify-start app-border-color app-text-muted hover:opacity-90"
+                                className="w-full justify-start btn-outline-app"
                                 onClick={() => router.push("/candidates")}
                             >
                                 <Users className="mr-2 h-4 w-4" /> Buscar Candidato

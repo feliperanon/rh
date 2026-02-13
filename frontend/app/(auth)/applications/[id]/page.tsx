@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/lib/api";
@@ -16,7 +16,9 @@ import { Label } from "@/components/ui/label";
 
 export default function ApplicationDetailsPage() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const router = useRouter();
+    const didAutoOpenWhatsApp = useRef(false);
     const [application, setApplication] = useState<Application | null>(null);
     const [loading, setLoading] = useState(true);
     const [whatsappDialog, setWhatsappDialog] = useState<{
@@ -43,6 +45,37 @@ export default function ApplicationDetailsPage() {
             fetchApplication();
         }
     }, [params.id]);
+
+    // Abrir automaticamente o diálogo de edição do WhatsApp quando a URL tiver ?openWhatsApp=1
+    useEffect(() => {
+        if (
+            searchParams.get("openWhatsApp") !== "1" ||
+            !application ||
+            didAutoOpenWhatsApp.current
+        ) return;
+
+        didAutoOpenWhatsApp.current = true;
+        setWhatsappLinkLoading(true);
+        api.refreshInviteLink(application.id)
+            .then((res) => {
+                const message = res.message ?? res.whatsapp_link ?? "";
+                const phone_e164 = res.phone_e164 ?? "";
+                if (!phone_e164) {
+                    toast.error("Telefone não disponível para WhatsApp");
+                    return;
+                }
+                setWhatsappDialog({
+                    open: true,
+                    message: typeof message === "string" ? message : "",
+                    phone_e164,
+                });
+            })
+            .catch((e) => {
+                console.error(e);
+                toast.error("Erro ao gerar link do WhatsApp");
+            })
+            .finally(() => setWhatsappLinkLoading(false));
+    }, [application, searchParams]);
 
     const handleOpenWhatsAppDialog = async () => {
         if (!application) return;

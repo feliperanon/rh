@@ -44,7 +44,7 @@ export function ExportButton({ filters }: ExportButtonProps = {}) {
         <Button
             variant="outline"
             size="sm"
-            className="h-9 border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="h-9 btn-outline-app"
             onClick={handleExport}
             disabled={loading}
         >

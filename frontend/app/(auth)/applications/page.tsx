@@ -23,7 +23,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Plus, MoreHorizontal, Trash2, Filter, ChevronRight } from "lucide-react";
+import { Plus, MoreHorizontal, Trash2, Filter, ChevronRight, MessageCircle } from "lucide-react";
 import { api } from "@/lib/api";
 import { Application, Company, Sector } from "@/types";
 import { useRouter } from "next/navigation";
@@ -163,7 +163,7 @@ export default function ApplicationsPage() {
                 />
                 <Button
                     size="sm"
-                    className="h-9 bg-[hsl(var(--app-primary))] text-white hover:opacity-90"
+                    className="h-9 btn-primary"
                     onClick={() => router.push("/applications/new")}
                 >
                     <Plus className="h-4 w-4" />
@@ -191,7 +191,7 @@ export default function ApplicationsPage() {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="app-text-muted hover:opacity-100"
+                                className="app-text-muted hover:text-[hsl(var(--app-text))]"
                                 onClick={clearFilters}
                             >
                                 Limpar filtros
@@ -338,7 +338,7 @@ export default function ApplicationsPage() {
                                 applications.map((app) => (
                                     <TableRow
                                         key={app.id}
-                                        className="group cursor-pointer app-border-color app-text transition-colors hover:opacity-90"
+                                        className="group cursor-pointer app-border-color app-text transition-colors hover:bg-[hsl(214_32%_94%)]"
                                         onClick={() => router.push(`/applications/${app.id}`)}
                                     >
                                         <TableCell className="font-mono text-sm">
@@ -372,6 +372,12 @@ export default function ApplicationsPage() {
                                                     >
                                                         <ChevronRight className="mr-2 h-4 w-4" />
                                                         Ver detalhes
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        onClick={() => router.push(`/applications/${app.id}?openWhatsApp=1`)}
+                                                    >
+                                                        <MessageCircle className="mr-2 h-4 w-4" />
+                                                        Editar WhatsApp
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="text-red-400 focus:text-red-400"
