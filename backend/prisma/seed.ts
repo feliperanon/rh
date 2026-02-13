@@ -51,10 +51,26 @@ async function main() {
         senha: 'admin123',
     });
 
+    // Usuário principal (e-mail solicitado)
+    const senhaFelipe = await bcrypt.hash('571232Ce!', 10);
+    const felipe = await prisma.user.upsert({
+        where: { email: 'feliperanon@live.com' },
+        update: { password_hash: senhaFelipe },
+        create: {
+            name: 'Felipe',
+            email: 'feliperanon@live.com',
+            password_hash: senhaFelipe,
+            role: 'ADMIN',
+        },
+    });
+
+    console.log('✅ Usuário feliperanon@live.com criado/atualizado');
+
     console.log('\n🎉 Seed concluído com sucesso!');
     console.log('\n📝 Credenciais de acesso:');
     console.log('Admin: admin@rh.com / admin123');
     console.log('Psicóloga: psicologa@rh.com / admin123');
+    console.log('Felipe: feliperanon@live.com / (senha definida no seed)');
 }
 
 main()
