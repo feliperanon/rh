@@ -119,20 +119,20 @@ export default function CandidatesPage() {
                     </Button>
                 </form>
 
-                <div className="rounded-xl border app-border-color bg-slate-900/30">
+                <div className="rounded-xl border app-border-color glass-panel overflow-hidden">
                     <Table>
                         <TableHeader>
-                            <TableRow className="app-border-color hover:bg-transparent">
-                                <TableHead className="h-11 text-xs font-medium app-text-muted">
+                            <TableRow className="app-border-color border-b-2 bg-[hsl(214_32%_96%)] hover:bg-[hsl(214_32%_96%)]">
+                                <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
                                     Nome
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium app-text-muted">
+                                <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
                                     Telefone
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium app-text-muted">
+                                <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
                                     CPF
                                 </TableHead>
-                                <TableHead className="h-11 text-xs font-medium app-text-muted">
+                                <TableHead className="h-11 text-xs font-semibold uppercase tracking-wider app-text">
                                     Processos
                                 </TableHead>
                                 <TableHead className="h-11 w-[60px]"></TableHead>
@@ -161,25 +161,25 @@ export default function CandidatesPage() {
                                 candidates.map((candidate) => (
                                     <TableRow
                                         key={candidate.id}
-                                        className="group cursor-pointer app-border-color app-text transition-colors hover:bg-[hsl(214_32%_94%)]"
+                                        className="group cursor-pointer app-border-color app-text transition-colors hover:bg-[hsl(214_32%_97%)]"
                                         onClick={() => router.push(`/candidates/${candidate.id}`)}
                                     >
                                         <TableCell className="font-medium">
                                             <div className="flex items-center gap-2">
-                                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--app-border))]">
-                                                    <User className="h-4 w-4 app-text-muted" />
+                                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--app-primary))] text-white">
+                                                    <User className="h-4 w-4" />
                                                 </div>
-                                                {candidate.name || "Sem nome"}
+                                                <span className="app-text">{candidate.name || "Sem nome"}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="font-mono text-sm">
+                                        <TableCell className="font-mono text-sm app-text">
                                             {formatPhone(candidate.phone_normalizado)}
                                         </TableCell>
                                         <TableCell className="text-sm app-text-muted">
                                             {formatCPF(candidate.cpf)}
                                         </TableCell>
                                         <TableCell>
-                                            <span className="inline-flex items-center rounded-md bg-[hsl(var(--app-border))] px-2 py-0.5 text-xs app-text-muted">
+                                            <span className="inline-flex items-center rounded-md border border-[hsl(var(--app-border))] bg-[hsl(214_32%_98%)] px-2 py-0.5 text-xs font-medium app-text">
                                                 {candidate._count?.applications ?? 0} processo(s)
                                             </span>
                                         </TableCell>
@@ -192,7 +192,7 @@ export default function CandidatesPage() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-8 w-8 app-text-muted opacity-60 hover:opacity-100"
+                                                        className="h-8 w-8 app-text-muted hover:bg-[hsl(214_32%_94%)] hover:text-[hsl(var(--app-text))]"
                                                     >
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>

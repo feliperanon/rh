@@ -17,6 +17,8 @@ import { Label } from "@/components/ui/label";
 import { Filter, User, Building2, Briefcase, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+const ALL_VALUE = "__all__";
+
 const COLUMNS = [
     { id: ApplicationStatus.CADASTRO_PREENCHIDO, title: "Triagem", color: "bg-blue-500" },
     { id: ApplicationStatus.EM_CONTATO, title: "Em Contato", color: "bg-yellow-500" },
@@ -34,8 +36,8 @@ export default function KanbanPage() {
     const router = useRouter();
 
     const [filters, setFilters] = useState({
-        companyId: "",
-        sectorId: "",
+        companyId: ALL_VALUE,
+        sectorId: ALL_VALUE,
     });
 
     const fetchInitialData = async () => {
@@ -53,8 +55,8 @@ export default function KanbanPage() {
         setLoading(true);
         try {
             const data = await api.getApplications({
-                companyId: filters.companyId || undefined,
-                sectorId: filters.sectorId || undefined,
+                companyId: filters.companyId && filters.companyId !== ALL_VALUE ? filters.companyId : undefined,
+                sectorId: filters.sectorId && filters.sectorId !== ALL_VALUE ? filters.sectorId : undefined,
             });
             setApplications(data);
         } catch (error) {
@@ -70,7 +72,7 @@ export default function KanbanPage() {
     }, []);
 
     useEffect(() => {
-        if (filters.companyId) {
+        if (filters.companyId && filters.companyId !== ALL_VALUE) {
             api.getSectors(filters.companyId).then(setSectors).catch(() => setSectors([]));
         } else {
             setSectors([]);
@@ -145,13 +147,13 @@ export default function KanbanPage() {
                             <Label className="text-xs app-text-muted">Empresa</Label>
                             <Select
                                 value={filters.companyId}
-                                onValueChange={(v) => setFilters(p => ({ ...p, companyId: v, sectorId: "" }))}
+                                onValueChange={(v) => setFilters(p => ({ ...p, companyId: v, sectorId: ALL_VALUE }))}
                             >
                                 <SelectTrigger className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]">
                                     <SelectValue placeholder="Todas" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">Todas</SelectItem>
+                                    <SelectItem value={ALL_VALUE}>Todas</SelectItem>
                                     {companies.map(c => (
                                         <SelectItem key={c.id} value={c.id}>{c.nome_interno}</SelectItem>
                                     ))}
@@ -163,13 +165,13 @@ export default function KanbanPage() {
                             <Select
                                 value={filters.sectorId}
                                 onValueChange={(v) => setFilters(p => ({ ...p, sectorId: v }))}
-                                disabled={!filters.companyId}
+                                disabled={!filters.companyId || filters.companyId === ALL_VALUE}
                             >
                                 <SelectTrigger className="h-9 app-border-color bg-[hsl(var(--app-input-bg))]">
                                     <SelectValue placeholder="Todos" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">Todos</SelectItem>
+                                    <SelectItem value={ALL_VALUE}>Todos</SelectItem>
                                     {sectors.map(s => (
                                         <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>
                                     ))}

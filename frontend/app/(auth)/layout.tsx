@@ -52,17 +52,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="min-h-screen" style={{ background: "hsl(var(--app-bg))", color: "hsl(var(--app-text))" }}>
             <div className="flex min-h-screen">
                 <aside
-                    className="hidden w-64 flex-col border-r p-5 md:flex"
+                    className="hidden w-64 flex-col border-r p-5 md:flex md:max-h-[calc(100vh-2rem)] md:overflow-y-auto md:pb-6"
                     style={{ borderColor: "hsl(var(--app-border))", background: "hsl(var(--app-surface))", boxShadow: "var(--app-shadow)" }}
                 >
                     <Link
                         href="/dashboard"
-                        className="mb-8 text-lg font-medium tracking-tight"
+                        className="mb-8 shrink-0 text-lg font-medium tracking-tight"
                         style={{ color: "hsl(var(--app-text))" }}
                     >
                         RH
                     </Link>
-                    <nav className="flex-1 space-y-0.5">
+                    <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
                         {navItems.map((item) => {
                             const Icon = item.icon;
                             const isActive = pathname.startsWith(item.href);
@@ -82,7 +82,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                             );
                         })}
                     </nav>
-                    <div className="mt-auto border-t pt-4" style={{ borderColor: "hsl(var(--app-border))" }}>
+                    <div className="mt-auto shrink-0 border-t pt-4" style={{ borderColor: "hsl(var(--app-border))" }}>
                         <div className="flex items-center gap-3 px-1 py-2">
                             <div
                                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-medium"
