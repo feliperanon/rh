@@ -133,16 +133,16 @@ export default function CandidateDetailsPage() {
     };
 
     const getStatusColor = (status: string) => {
-        if (status === ApplicationStatus.APROVADO) return "bg-emerald-500/20 text-emerald-400";
+        if (status === ApplicationStatus.APROVADO) return "bg-emerald-100 text-emerald-800";
         if (status === ApplicationStatus.REPROVADO || status === ApplicationStatus.DESISTIU)
-            return "bg-slate-700/50 text-slate-500";
-        return "bg-slate-700/50 text-slate-400";
+            return "bg-slate-200 text-slate-600";
+        return "bg-slate-100 text-slate-700";
     };
 
     if (loading) {
         return (
             <MainLayout title="Candidato" description="">
-                <div className="flex h-48 items-center justify-center text-sm text-slate-500">
+                <div className="flex h-48 items-center justify-center text-sm app-text-muted">
                     Carregando…
                 </div>
             </MainLayout>
@@ -152,7 +152,7 @@ export default function CandidateDetailsPage() {
     if (!candidate) {
         return (
             <MainLayout title="Candidato" description="">
-                <div className="flex h-48 items-center justify-center text-sm text-slate-500">
+                <div className="flex h-48 items-center justify-center text-sm app-text-muted">
                     Candidato não encontrado.
                 </div>
             </MainLayout>
@@ -172,13 +172,13 @@ export default function CandidateDetailsPage() {
             <div className="space-y-6 max-w-3xl">
                 {isExistentRedirect && (
                     <div
-                        className="flex items-center gap-3 rounded-lg border border-amber-500/50 bg-amber-500/10 px-4 py-3 text-amber-200"
+                        className="flex items-center gap-3 rounded-lg border border-amber-400 bg-amber-50 px-4 py-3 text-amber-900"
                         role="alert"
                     >
-                        <UserCheck className="h-5 w-5 shrink-0 text-amber-500" />
+                        <UserCheck className="h-5 w-5 shrink-0 text-amber-600" />
                         <div>
                             <p className="font-medium">Cadastro existente</p>
-                            <p className="text-sm text-amber-200/90">
+                            <p className="text-sm text-amber-800">
                                 Este telefone já possui cadastro. Aqui estão os dados e processos.
                             </p>
                         </div>
@@ -188,7 +188,7 @@ export default function CandidateDetailsPage() {
                 <div className="flex flex-wrap items-center gap-3">
                     <Button
                         size="sm"
-                        className="bg-white text-slate-900 hover:bg-slate-100"
+                        className="bg-green-600 text-white hover:bg-green-700"
                         onClick={() =>
                             window.open(
                                 `https://wa.me/55${candidate.phone_normalizado.replace(/\D/g, "")}`,
@@ -201,11 +201,7 @@ export default function CandidateDetailsPage() {
                     </Button>
                     <Dialog open={editOpen} onOpenChange={setEditOpen}>
                         <DialogTrigger asChild>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-white"
-                            >
+                            <Button size="sm" variant="default">
                                 <Pencil className="h-4 w-4" />
                                 Editar dados
                             </Button>
@@ -325,22 +321,22 @@ export default function CandidateDetailsPage() {
                 </div>
 
                 <div>
-                    <h2 className="mb-3 text-sm font-medium text-slate-400">Processos participados</h2>
+                    <h2 className="mb-3 text-sm font-medium app-text">Processos participados</h2>
                     <div className="space-y-2">
                         {applications.length === 0 ? (
-                            <p className="rounded-lg border border-slate-800/80 bg-slate-900/30 px-4 py-6 text-center text-sm text-slate-500">
+                            <p className="rounded-xl border app-border-color glass-panel px-4 py-6 text-center text-sm app-text-muted">
                                 Nenhum processo cadastrado.
                             </p>
                         ) : (
                             applications.map((app) => (
                                 <div
                                     key={app.id}
-                                    className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-slate-800/80 bg-slate-900/30 px-4 py-3 transition-colors hover:bg-slate-800/40"
+                                    className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border app-border-color glass-panel px-4 py-3 transition-colors hover:bg-[hsl(214_32%_96%)]"
                                     onClick={() => router.push(`/applications/${app.id}`)}
                                 >
                                     <div className="min-w-0 flex-1 space-y-1">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="font-mono text-xs text-slate-500">
+                                            <span className="font-mono text-xs font-medium app-text">
                                                 {(app as { protocol?: string }).protocol ?? "—"}
                                             </span>
                                             <span
@@ -352,24 +348,24 @@ export default function CandidateDetailsPage() {
                                             </span>
                                         </div>
                                         <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-sm">
-                                            <span className="flex items-center gap-1.5 text-slate-300">
-                                                <Building2 className="h-3.5 w-3.5 text-slate-500" />
+                                            <span className="flex items-center gap-1.5 app-text-muted">
+                                                <Building2 className="h-3.5 w-3.5" />
                                                 {app.company?.nome_interno ?? "—"}
                                             </span>
-                                            <span className="flex items-center gap-1.5 text-slate-300">
-                                                <Briefcase className="h-3.5 w-3.5 text-slate-500" />
+                                            <span className="flex items-center gap-1.5 app-text-muted">
+                                                <Briefcase className="h-3.5 w-3.5" />
                                                 {app.sector?.nome ?? "—"}
                                             </span>
                                         </div>
                                     </div>
                                     <div className="flex shrink-0 items-center gap-3">
-                                        <span className="text-xs text-slate-500">
+                                        <span className="text-xs app-text-muted">
                                             {formatDate(
                                                 (app as { createdAt?: string }).createdAt ??
                                                     (app as { created_at?: string }).created_at
                                             )}
                                         </span>
-                                        <ChevronRight className="h-4 w-4 text-slate-500" />
+                                        <ChevronRight className="h-4 w-4 app-text-muted" />
                                     </div>
                                 </div>
                             ))
@@ -377,16 +373,16 @@ export default function CandidateDetailsPage() {
                     </div>
                 </div>
 
-                <div className=" rounded-xl border border-slate-800/80 bg-slate-900/30 px-4 py-3">
-                    <h3 className="mb-2 text-xs font-medium text-slate-500">Resumo</h3>
+                <div className="rounded-xl border app-border-color glass-panel px-4 py-3">
+                    <h3 className="mb-2 text-sm font-medium app-text">Resumo</h3>
                     <div className="grid gap-2 text-sm sm:grid-cols-2">
                         <div>
-                            <span className="text-slate-500">Nome:</span>{" "}
-                            <span className="text-slate-300">{candidate.name || "—"}</span>
+                            <span className="app-text-muted">Nome:</span>{" "}
+                            <span className="app-text">{candidate.name || "—"}</span>
                         </div>
                         <div>
-                            <span className="text-slate-500">CPF:</span>{" "}
-                            <span className="text-slate-300">{candidate.cpf || "—"}</span>
+                            <span className="app-text-muted">CPF:</span>{" "}
+                            <span className="app-text">{candidate.cpf || "—"}</span>
                         </div>
                     </div>
                 </div>
