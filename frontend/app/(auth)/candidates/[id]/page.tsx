@@ -327,9 +327,6 @@ export default function CandidateDetailsPage() {
                                 >
                                     <div className="min-w-0 flex-1 space-y-1">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="font-mono text-xs font-medium app-text">
-                                                {(app as { protocol?: string }).protocol ?? "—"}
-                                            </span>
                                             <span
                                                 className={`rounded px-2 py-0.5 text-xs font-medium ${getStatusColor(
                                                     app.status

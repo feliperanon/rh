@@ -1,16 +1,22 @@
-import { Controller, Get, Param, UseGuards, Query, Patch, Delete, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, UseGuards, Query, Patch, Delete } from '@nestjs/common';
 import { CandidatesService } from './candidates.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { UpdateCandidateDto } from './dto/update-candidate.dto';
-
+import { CreateCandidateDto } from './dto/create-candidate.dto';
 
 @Controller('candidates')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CandidatesController {
     constructor(private readonly candidatesService: CandidatesService) { }
+
+    @Post()
+    @Roles(Role.ADMIN, Role.PSICOLOGA)
+    create(@Body() dto: CreateCandidateDto) {
+        return this.candidatesService.create(dto);
+    }
 
     @Get()
     @Roles(Role.ADMIN, Role.PSICOLOGA)

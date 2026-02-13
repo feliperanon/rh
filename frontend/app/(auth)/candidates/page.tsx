@@ -17,7 +17,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Search, MoreHorizontal, User, Trash2 } from "lucide-react";
+import { Search, MoreHorizontal, User, Trash2, UserPlus } from "lucide-react";
 import { api } from "@/lib/api";
 import { Candidate } from "@/types";
 import { useRouter } from "next/navigation";
@@ -35,7 +35,6 @@ const EDUCATION_LABELS: Record<string, string> = {
 export default function CandidatesPage() {
     const [candidates, setCandidates] = useState<Candidate[]>([]);
     const [search, setSearch] = useState("");
-    const [protocolSearch, setProtocolSearch] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -44,7 +43,6 @@ export default function CandidatesPage() {
         try {
             const data = await api.getCandidates({
                 search: search.trim() || undefined,
-                protocol: protocolSearch.trim() || undefined,
             });
             setCandidates(data);
         } catch (error) {
@@ -103,14 +101,14 @@ export default function CandidatesPage() {
     return (
         <MainLayout
             title="Candidatos"
-            description="Busque por nome, CPF, telefone ou protocolo."
+            description="Busque por nome, CPF ou telefone."
         >
             <div className="space-y-4">
-                <form
-                    onSubmit={handleSearch}
-                    className="flex flex-col gap-3 sm:flex-row sm:items-end"
-                >
-                    <div className="flex flex-1 flex-col gap-2 sm:flex-row">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <form
+                        onSubmit={handleSearch}
+                        className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3"
+                    >
                         <Input
                             type="text"
                             placeholder="Nome, CPF ou telefone"
@@ -118,24 +116,25 @@ export default function CandidatesPage() {
                             onChange={(e) => setSearch(e.target.value)}
                             className="h-9 flex-1 app-border-color bg-[hsl(var(--app-input-bg))] app-text placeholder:app-text-muted"
                         />
-                        <Input
-                            type="text"
-                            placeholder="Protocolo (RH-...)"
-                            value={protocolSearch}
-                            onChange={(e) => setProtocolSearch(e.target.value)}
-                            className="h-9 flex-1 app-border-color bg-[hsl(var(--app-input-bg))] app-text placeholder:app-text-muted"
-                        />
-                    </div>
+                        <Button
+                            type="submit"
+                            size="sm"
+                            disabled={loading}
+                            className="h-9 shrink-0 btn-primary"
+                        >
+                            <Search className="h-4 w-4" />
+                            Buscar
+                        </Button>
+                    </form>
                     <Button
-                        type="submit"
                         size="sm"
-                        disabled={loading}
                         className="h-9 shrink-0 btn-primary"
+                        onClick={() => router.push("/candidates/new")}
                     >
-                        <Search className="h-4 w-4" />
-                        Buscar
+                        <UserPlus className="h-4 w-4" />
+                        Cadastrar manual
                     </Button>
-                </form>
+                </div>
 
                 <div className="rounded-xl border app-border-color glass-panel overflow-hidden">
                     <Table>

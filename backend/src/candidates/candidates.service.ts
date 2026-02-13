@@ -2,10 +2,35 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateCandidateDto } from './dto/update-candidate.dto';
+import { CreateCandidateDto } from './dto/create-candidate.dto';
+import { normalizePhone, phoneToE164, validatePhone } from '../common/validators/phone-validators';
 
 @Injectable()
 export class CandidatesService {
     constructor(private prisma: PrismaService) { }
+
+    async create(dto: CreateCandidateDto) {
+        if (!validatePhone(dto.phone)) {
+            throw new BadRequestException('Telefone inválido');
+        }
+        const phoneNormalized = normalizePhone(dto.phone);
+        const phoneE164 = phoneToE164(phoneNormalized);
+
+        const existing = await this.prisma.candidate.findUnique({
+            where: { phone_normalizado: phoneNormalized },
+        });
+        if (existing) {
+            throw new BadRequestException('Já existe um candidato com este telefone');
+        }
+
+        return this.prisma.candidate.create({
+            data: {
+                phone_normalizado: phoneNormalized,
+                phone_e164: phoneE164,
+                name: dto.name?.trim() || null,
+            },
+        });
+    }
 
     async findAll(search?: string, protocol?: string) {
         const where: any = {};

@@ -123,6 +123,10 @@ export const api = {
         return fetchWithAuth(`/candidates${query}`);
     },
     getCandidate: (id: string) => fetchWithAuth(`/candidates/${id}`),
+    createCandidate: (data: { phone: string; name?: string }) => fetchWithAuth("/candidates", {
+        method: "POST",
+        body: JSON.stringify(data),
+    }),
     updateCandidate: (id: string, data: any) => fetchWithAuth(`/candidates/${id}`, {
         method: "PATCH",
         body: JSON.stringify(data),
