@@ -2,7 +2,15 @@ import { phoneToE164 } from '../validators/phone-validators';
 
 /** Mensagem padrão enviada ao candidato (recrutador pode editar no front antes de abrir o WhatsApp). */
 export function getDefaultWhatsAppMessage(protocol: string, link: string): string {
-    return `Olá! 😊 Tudo bem?\nPara concluir seu cadastro no processo seletivo, preencha este link: ${link}\nProtocolo: ${protocol}\nObrigado!`;
+    return `Olá! Tudo bem?
+
+Sou Laizer Sá, psicóloga e recrutadora.
+Para concluir seu cadastro, acesse o link e preencha todos os campos até o final:
+${link}
+
+Protocolo: ${protocol}
+Obrigada!
+Laizer Sá | Psicóloga e Recrutadora`;
 }
 
 /**

@@ -81,7 +81,15 @@ export default function NewApplicationPage() {
                 sector_id: sectorId,
             });
 
-            const defaultMessage = result.message ?? `Olá! 😊 Tudo bem?\nPara concluir seu cadastro no processo seletivo, preencha este link: ${result.cadastro_link}\nProtocolo: ${result.protocol}\nObrigado!`;
+            const defaultMessage = result.message ?? `Olá! Tudo bem?
+
+Sou Laizer Sá, psicóloga e recrutadora.
+Para concluir seu cadastro, acesse o link e preencha todos os campos até o final:
+${result.cadastro_link}
+
+Protocolo: ${result.protocol}
+Obrigada!
+Laizer Sá | Psicóloga e Recrutadora`;
             setSuccessData({
                 protocol: result.protocol,
                 link: result.cadastro_link,
