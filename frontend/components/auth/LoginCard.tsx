@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +8,22 @@ import { Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginSchema, type LoginFormValues } from "@/lib/validators/login";
 import { loginAction } from "@/lib/actions/login";
 import { Button } from "@/components/ui/button";
+
+export type LoginResult =
+  | { success: true }
+  | { success: false; message: string };
+
+export type LoginCardProps = {
+  /** Se informado, usa este callback em vez do mock (ex.: NextAuth signIn). */
+  onLogin?: (
+    email: string,
+    password: string
+  ) => Promise<LoginResult>;
+  /** Chamado quando o login é bem-sucedido (ex.: redirect + salvar "lembrar"). */
+  onSuccess?: (values: LoginFormValues) => void;
+  /** Valores iniciais (ex.: email/senha salvos em "lembrar de mim"). */
+  defaultValues?: Partial<LoginFormValues>;
+};
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -29,30 +45,47 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
-export function LoginCard() {
+export function LoginCard({
+  onLogin,
+  onSuccess,
+  defaultValues,
+}: LoginCardProps = {}) {
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema) as any,
     defaultValues: {
-      email: "",
-      password: "",
-      remember: false,
+      email: defaultValues?.email ?? "",
+      password: defaultValues?.password ?? "",
+      remember: defaultValues?.remember ?? false,
     },
   });
+
+  useEffect(() => {
+    if (defaultValues && (defaultValues.email || defaultValues.password)) {
+      form.reset({
+        email: defaultValues.email ?? "",
+        password: defaultValues.password ?? "",
+        remember: defaultValues.remember ?? false,
+      });
+    }
+  }, [defaultValues?.email, defaultValues?.password, defaultValues?.remember]);
 
   const isSubmitting = form.formState.isSubmitting;
 
   async function onSubmit(values: LoginFormValues) {
     setServerError(null);
-    const result = await loginAction({
-      email: values.email,
-      password: values.password,
-    });
+    const result = onLogin
+      ? await onLogin(values.email, values.password)
+      : await loginAction({
+          email: values.email,
+          password: values.password,
+        });
 
     if (result.success) {
-      form.reset();
+      if (onSuccess) onSuccess(values);
+      else form.reset();
       return;
     }
     setServerError(result.message);
