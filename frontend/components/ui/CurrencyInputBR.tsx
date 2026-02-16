@@ -38,6 +38,9 @@ const CurrencyInputBR = React.forwardRef<HTMLInputElement, CurrencyInputBRProps>
       setIsFocused(true);
       setLocalValue(displayValue);
       props.onFocus?.(e);
+      requestAnimationFrame(() => {
+        e.target.select();
+      });
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
