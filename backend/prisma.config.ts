@@ -1,4 +1,8 @@
-﻿import { defineConfig, env } from '@prisma/config';
+import { defineConfig, env } from '@prisma/config';
+import { config } from 'dotenv';
+
+// Garante que .env seja carregado antes do Prisma acessar DATABASE_URL
+config();
 
 export default defineConfig({
   schema: './prisma/schema.prisma',
