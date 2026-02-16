@@ -176,23 +176,27 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                     )}
                 />
 
-                {initialData.sector && (
+                {(() => {
+                    // Suporta sector no topo ou aninhado (API pode retornar formatos diferentes)
+                    const sector = initialData?.sector ?? (initialData as { application?: { sector?: { schedule_slots?: string[] } } })?.application?.sector;
+                    const slots = sector?.schedule_slots ?? sector?.scheduleSlots ?? (initialData as { schedule_slots?: string[] })?.schedule_slots ?? [];
+                    const hasSlots = Array.isArray(slots) && slots.length > 0;
+                    return (
                     <FormField
                         control={form.control}
                         name="candidate_schedule_selections"
                         render={() => {
-                            const slots = initialData.sector?.schedule_slots || initialData.sector?.scheduleSlots || [];
                             return (
                                 <FormItem>
                                     <div className="mb-2">
                                         <FormLabel>Horários de sua disponibilidade</FormLabel>
                                         <FormDescription>
-                                            {slots.length > 0
+                                            {hasSlots
                                                 ? "Selecione um ou mais horários em que você pode trabalhar nesta vaga."
                                                 : "O recrutador ainda não cadastrou os horários desta vaga. Você pode prosseguir com o cadastro."}
                                         </FormDescription>
                                     </div>
-                                    {slots.length > 0 ? (
+                                    {hasSlots ? (
                                         <div className="flex flex-col gap-2">
                                             {slots.map((slot: string) => (
                                                 <FormField
@@ -223,7 +227,8 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                             );
                         }}
                     />
-                )}
+                );
+                })()}
 
                 {initialData.company.perguntar_recontratacao && (
                     <FormField

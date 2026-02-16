@@ -378,7 +378,7 @@ export class ApplicationsService {
             sector: {
                 id: app.sector.id,
                 nome: app.sector.nome,
-                schedule_slots: (app.sector as { schedule_slots?: string[] }).schedule_slots || [],
+                schedule_slots: (app.sector as { schedule_slots?: string[] }).schedule_slots ?? [],
             },
             candidate_schedule_selections: (app as { candidate_schedule_selections?: string[] }).candidate_schedule_selections || [],
         };
@@ -509,8 +509,7 @@ export class ApplicationsService {
             { header: 'Empresa', key: 'company', width: 20 },
             { header: 'Setor', key: 'sector', width: 20 },
             { header: 'Valor Transporte (R$)', key: 'vt_value', width: 18 },
-            { header: 'Horários da Vaga', key: 'schedule_slots', width: 30 },
-            { header: 'Horários Selecionados', key: 'candidate_schedule_selections', width: 30 },
+            { header: 'Horário (selecionado pelo candidato)', key: 'schedule_selected', width: 35 },
             { header: 'Status', key: 'status', width: 15 },
         ];
 
@@ -518,12 +517,8 @@ export class ApplicationsService {
             const vtValue = app.candidate.vt_value_cents != null
                 ? (app.candidate.vt_value_cents / 100).toFixed(2)
                 : '';
-            const sectorSlots = (app.sector as { schedule_slots?: string[] }).schedule_slots;
-            const scheduleSlotsStr = Array.isArray(sectorSlots) && sectorSlots.length
-                ? sectorSlots.join(' | ')
-                : '';
             const candidateSelections = (app as { candidate_schedule_selections?: string[] }).candidate_schedule_selections;
-            const candidateSelectionsStr = Array.isArray(candidateSelections) && candidateSelections.length
+            const scheduleSelectedStr = Array.isArray(candidateSelections) && candidateSelections.length
                 ? candidateSelections.join(' | ')
                 : '';
 
@@ -536,8 +531,7 @@ export class ApplicationsService {
                 company: app.company.sigilosa ? 'Confidencial' : app.company.nome_interno,
                 sector: app.sector.nome,
                 vt_value: vtValue,
-                schedule_slots: scheduleSlotsStr,
-                candidate_schedule_selections: candidateSelectionsStr,
+                schedule_selected: scheduleSelectedStr,
                 status: app.status,
             });
         });
