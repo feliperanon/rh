@@ -365,7 +365,6 @@ export class ApplicationsService {
                 birth_date: app.candidate.birth_date,
                 education: app.candidate.education,
                 vt_value_cents: app.candidate.vt_value_cents,
-                schedule_prefs: app.candidate.schedule_prefs,
                 worked_here_before: app.candidate.worked_here_before,
             },
             company: {
@@ -378,6 +377,7 @@ export class ApplicationsService {
             sector: {
                 id: app.sector.id,
                 nome: app.sector.nome,
+                schedule_prefs: app.sector.schedule_prefs || [],
             },
         };
     }
@@ -408,7 +408,6 @@ export class ApplicationsService {
                 birth_date: data.birth_date ? new Date(data.birth_date) : null,
                 education: data.education,
                 vt_value_cents: typeof data.vt_value_cents === 'string' ? parseInt(data.vt_value_cents) : data.vt_value_cents,
-                schedule_prefs: data.schedule_prefs, // Array de string/enum
                 worked_here_before: data.worked_here_before,
             },
         });
@@ -488,7 +487,7 @@ export class ApplicationsService {
             { header: 'Empresa', key: 'company', width: 20 },
             { header: 'Setor', key: 'sector', width: 20 },
             { header: 'Valor Transporte (R$)', key: 'vt_value', width: 18 },
-            { header: 'Horário Desejado', key: 'schedule_prefs', width: 22 },
+            { header: 'Horários da Vaga', key: 'schedule_prefs', width: 22 },
             { header: 'Status', key: 'status', width: 15 },
         ];
 
@@ -496,8 +495,8 @@ export class ApplicationsService {
             const vtValue = app.candidate.vt_value_cents != null
                 ? (app.candidate.vt_value_cents / 100).toFixed(2)
                 : '';
-            const schedulePrefs = Array.isArray(app.candidate.schedule_prefs) && app.candidate.schedule_prefs.length
-                ? app.candidate.schedule_prefs.map((p: string) => p === 'MANHA' ? 'Manhã' : p === 'TARDE' ? 'Tarde' : p === 'NOITE' ? 'Noite' : p).join(', ')
+            const schedulePrefs = Array.isArray(app.sector.schedule_prefs) && app.sector.schedule_prefs.length
+                ? app.sector.schedule_prefs.map((p: string) => p === 'MANHA' ? 'Manhã' : p === 'TARDE' ? 'Tarde' : p === 'NOITE' ? 'Noite' : p).join(', ')
                 : '';
 
             sheet.addRow({

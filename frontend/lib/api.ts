@@ -64,11 +64,23 @@ export const api = {
     }),
 
     // Sectors
-    getSectors: (companyId?: string) =>
-        fetchWithAuth(`/sectors${companyId ? `?companyId=${companyId}` : ""}`),
+    getSectors: (companyId?: string, includeInactive?: boolean) => {
+        const params = new URLSearchParams();
+        if (companyId) params.append("company_id", companyId);
+        if (includeInactive) params.append("include_inactive", "true");
+        const query = params.toString() ? `?${params.toString()}` : "";
+        return fetchWithAuth(`/sectors${query}`);
+    },
     createSector: (data: any) => fetchWithAuth("/sectors", {
         method: "POST",
         body: JSON.stringify(data),
+    }),
+    updateSector: (id: string, data: any) => fetchWithAuth(`/sectors/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+    }),
+    deleteSector: (id: string) => fetchWithAuth(`/sectors/${id}`, {
+        method: "DELETE",
     }),
 
     // Applications

@@ -112,7 +112,6 @@ export class CandidatesService {
                     birth_date: data.birth_date ? new Date(data.birth_date) : undefined,
                     education: data.education,
                     vt_value_cents: data.vt_value_cents,
-                    schedule_prefs: data.schedule_prefs,
                     worked_here_before: data.worked_here_before,
                 },
             });

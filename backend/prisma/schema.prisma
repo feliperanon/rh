@@ -105,12 +105,13 @@ model Company {
 }
 
 model Sector {
-  id         String   @id @default(cuid())
-  company_id String
-  nome       String
-  ativo      Boolean  @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id             String         @id @default(cuid())
+  company_id     String
+  nome          String
+  ativo         Boolean        @default(true)
+  schedule_prefs SchedulePref[]  @default([])
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
 
   // Relations
   company      Company       @relation(fields: [company_id], references: [id], onDelete: Cascade)
@@ -121,18 +122,17 @@ model Sector {
 }
 
 model Candidate {
-  id                 String         @id @default(cuid())
-  phone_normalizado  String         @unique
-  phone_e164         String         @unique
+  id                 String   @id @default(cuid())
+  phone_normalizado  String   @unique
+  phone_e164         String   @unique
   name               String?
-  cpf                String?        @unique
+  cpf                String?  @unique
   birth_date         DateTime?
   education          Education?
   vt_value_cents     Int?
-  schedule_prefs     SchedulePref[]
   worked_here_before Boolean?
-  created_at         DateTime       @default(now())
-  updated_at         DateTime       @updatedAt
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
 
   // Relations
   applications Application[]

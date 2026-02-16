@@ -1,5 +1,5 @@
-import { IsOptional, IsString, MinLength, IsEnum, IsBoolean, IsInt, IsArray } from 'class-validator';
-import { Education, SchedulePref } from '@prisma/client';
+import { IsOptional, IsString, MinLength, IsEnum, IsBoolean, IsInt } from 'class-validator';
+import { Education } from '@prisma/client';
 
 export class UpdateCandidateDto {
     @IsOptional()
@@ -22,11 +22,6 @@ export class UpdateCandidateDto {
     @IsOptional()
     @IsInt()
     vt_value_cents?: number;
-
-    @IsOptional()
-    @IsArray()
-    @IsEnum(SchedulePref, { each: true })
-    schedule_prefs?: SchedulePref[];
 
     @IsOptional()
     @IsBoolean()

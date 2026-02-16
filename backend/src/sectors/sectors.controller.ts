@@ -30,8 +30,11 @@ export class SectorsController {
 
     @Get()
     @Roles(Role.ADMIN, Role.PSICOLOGA)
-    findAll(@Query('company_id') companyId?: string) {
-        return this.sectorsService.findAll(companyId);
+    findAll(
+        @Query('company_id') companyId?: string,
+        @Query('include_inactive') includeInactive?: string,
+    ) {
+        return this.sectorsService.findAll(companyId, includeInactive === 'true');
     }
 
     @Get(':id')

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { CurrencyInputBR } from "@/components/ui/CurrencyInputBR";
+import { DateInputBR } from "@/components/ui/DateInputBR";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -48,7 +49,6 @@ export default function CandidateDetailsPage() {
         birth_date: "",
         education: "",
         vt_value_cents: "",
-        schedule_prefs: [] as string[],
         worked_here_before: false,
     });
 
@@ -69,7 +69,6 @@ export default function CandidateDetailsPage() {
                     (data as { vt_value_cents?: number }).vt_value_cents != null
                         ? String((data as { vt_value_cents?: number }).vt_value_cents! / 100)
                         : "",
-                schedule_prefs: (data as { schedule_prefs?: string[] }).schedule_prefs || [],
                 worked_here_before: !!(data as { worked_here_before?: boolean }).worked_here_before,
             });
         } catch (error) {
@@ -109,7 +108,6 @@ export default function CandidateDetailsPage() {
                 vt_value_cents: formData.vt_value_cents
                     ? Math.round(parseFloat(formData.vt_value_cents) * 100)
                     : undefined,
-                schedule_prefs: formData.schedule_prefs.length ? formData.schedule_prefs : undefined,
                 worked_here_before: formData.worked_here_before,
             });
             toast.success("Dados atualizados");
@@ -223,10 +221,10 @@ export default function CandidateDetailsPage() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-slate-700">Data de nascimento</Label>
-                                    <Input
-                                        type="date"
+                                    <DateInputBR
+                                        placeholder="DD/MM/AAAA"
                                         value={formData.birth_date}
-                                        onChange={(e) => setFormData((p) => ({ ...p, birth_date: e.target.value }))}
+                                        onChange={(v) => setFormData((p) => ({ ...p, birth_date: v }))}
                                         className="border-slate-300"
                                     />
                                 </div>
@@ -258,38 +256,6 @@ export default function CandidateDetailsPage() {
                                         }
                                         className="border-slate-300"
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-slate-700">Preferência de horário</Label>
-                                    <div className="flex gap-2">
-                                        {(["MANHA", "TARDE", "NOITE"] as const).map((opt) => (
-                                            <Button
-                                                key={opt}
-                                                type="button"
-                                                size="sm"
-                                                variant={
-                                                    formData.schedule_prefs.includes(opt)
-                                                        ? "default"
-                                                        : "outline"
-                                                }
-                                                className={
-                                                    formData.schedule_prefs.includes(opt)
-                                                        ? ""
-                                                        : "border-slate-300"
-                                                }
-                                                onClick={() =>
-                                                    setFormData((p) => ({
-                                                        ...p,
-                                                        schedule_prefs: p.schedule_prefs.includes(opt)
-                                                            ? p.schedule_prefs.filter((x) => x !== opt)
-                                                            : [...p.schedule_prefs, opt],
-                                                    }))
-                                                }
-                                            >
-                                                {opt === "MANHA" ? "Manhã" : opt === "TARDE" ? "Tarde" : "Noite"}
-                                            </Button>
-                                        ))}
-                                    </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Checkbox

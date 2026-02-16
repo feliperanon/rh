@@ -25,8 +25,9 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 import { Company, Sector } from "@/types";
 import { SectorForm } from "@/components/forms/SectorForm";
 import { format, isValid } from "date-fns";
@@ -45,6 +46,7 @@ export default function SectorsPage() {
     const [sectors, setSectors] = useState<Sector[]>([]);
     const [loading, setLoading] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [editingSector, setEditingSector] = useState<Sector | null>(null);
 
     useEffect(() => {
         const loadCompanies = async () => {
@@ -67,7 +69,7 @@ export default function SectorsPage() {
         const loadSectors = async () => {
             setLoading(true);
             try {
-                const data = await api.getSectors(selectedCompanyId);
+                const data = await api.getSectors(selectedCompanyId, true);
                 setSectors(data);
             } catch (error) {
                 console.error(error);
@@ -80,8 +82,24 @@ export default function SectorsPage() {
 
     const onSuccess = () => {
         setDialogOpen(false);
+        setEditingSector(null);
         if (selectedCompanyId) {
-            api.getSectors(selectedCompanyId).then(setSectors);
+            api.getSectors(selectedCompanyId, true).then(setSectors);
+        }
+    };
+
+    const handleEdit = (sector: Sector) => {
+        setEditingSector(sector);
+    };
+
+    const handleDelete = async (sector: Sector) => {
+        if (!confirm(`Excluir o setor "${sector.nome}"? As inscrições vinculadas continuarão existindo.`)) return;
+        try {
+            await api.deleteSector(sector.id);
+            toast.success("Setor excluído");
+            onSuccess();
+        } catch (error: any) {
+            toast.error(error.message || "Erro ao excluir");
         }
     };
 
@@ -122,6 +140,23 @@ export default function SectorsPage() {
                     )}
                 </DialogContent>
             </Dialog>
+            <Dialog open={!!editingSector} onOpenChange={(open) => !open && setEditingSector(null)}>
+                <DialogContent className="sm:max-w-[400px]">
+                    <DialogHeader>
+                        <DialogTitle>Editar Setor</DialogTitle>
+                        <DialogDescription>
+                            Altere as informações do setor ou vaga.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {editingSector && selectedCompanyId && (
+                        <SectorForm
+                            sector={editingSector}
+                            companyId={selectedCompanyId}
+                            onSuccess={onSuccess}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     ), [companies, dialogOpen, onSuccess, selectedCompanyId]);
 
@@ -139,18 +174,22 @@ export default function SectorsPage() {
                                 Nome
                             </TableHead>
                             <TableHead className="h-11 text-xs font-medium app-text-muted">
+                                Horários
+                            </TableHead>
+                            <TableHead className="h-11 text-xs font-medium app-text-muted">
                                 Status
                             </TableHead>
                             <TableHead className="h-11 text-right text-xs font-medium app-text-muted">
                                 Criado em
                             </TableHead>
+                            <TableHead className="h-11 w-20" />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {loading ? (
                             <TableRow className="app-border-color">
                                 <TableCell
-                                    colSpan={3}
+                                    colSpan={5}
                                     className="h-32 text-center text-sm app-text-muted"
                                 >
                                     Carregando…
@@ -159,7 +198,7 @@ export default function SectorsPage() {
                         ) : sectors.length === 0 ? (
                             <TableRow className="app-border-color">
                                 <TableCell
-                                    colSpan={3}
+                                    colSpan={5}
                                     className="h-32 text-center text-sm app-text-muted"
                                 >
                                     Nenhum setor para esta empresa.
@@ -173,6 +212,13 @@ export default function SectorsPage() {
                                 >
                                     <TableCell className="font-medium">
                                         {sector.nome}
+                                    </TableCell>
+                                    <TableCell className="text-sm">
+                                        {sector.schedule_prefs?.length
+                                            ? sector.schedule_prefs
+                                                  .map((p) => (p === "MANHA" ? "Manhã" : p === "TARDE" ? "Tarde" : "Noite"))
+                                                  .join(", ")
+                                            : "—"}
                                     </TableCell>
                                     <TableCell>
                                         <span
@@ -190,6 +236,28 @@ export default function SectorsPage() {
                                             sector.createdAt ??
                                             (sector as Sector & { created_at?: string }).created_at
                                         )}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex justify-end gap-1">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8"
+                                                onClick={() => handleEdit(sector)}
+                                                aria-label="Editar"
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-500/10"
+                                                onClick={() => handleDelete(sector)}
+                                                aria-label="Excluir"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))

@@ -1,4 +1,5 @@
-import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsArray, IsEnum } from 'class-validator';
+import { SchedulePref } from '@prisma/client';
 
 export class CreateSectorDto {
     @IsString()
@@ -12,4 +13,9 @@ export class CreateSectorDto {
     @IsBoolean()
     @IsOptional()
     ativo?: boolean;
+
+    @IsArray()
+    @IsEnum(SchedulePref, { each: true })
+    @IsOptional()
+    schedule_prefs?: SchedulePref[];
 }

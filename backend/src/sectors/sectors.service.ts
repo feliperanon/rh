@@ -14,12 +14,14 @@ export class SectorsService {
         });
     }
 
-    async findAll(companyId?: string) {
+    async findAll(companyId?: string, includeInactive = false) {
+        const where: any = {
+            ...(companyId && { company_id: companyId }),
+        };
+        if (!includeInactive) where.ativo = true;
+
         return this.prisma.sector.findMany({
-            where: {
-                ativo: true,
-                ...(companyId && { company_id: companyId }),
-            },
+            where,
             include: {
                 company: true,
                 _count: {

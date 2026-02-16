@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsOptional, IsEnum, IsNumber, Min } from 'class-validator';
 import { IsCPF } from '../../common/validators/is-cpf.validator';
-import { Education, SchedulePref } from '@prisma/client';
+import { Education } from '@prisma/client';
 
 export class SubmitApplicationDto {
     @IsString()
@@ -24,10 +24,6 @@ export class SubmitApplicationDto {
     @Min(0)
     @IsOptional()
     vt_value_cents?: number;
-
-    @IsEnum(SchedulePref, { each: true, message: 'Preferência de horário inválida' })
-    @IsOptional()
-    schedule_prefs?: SchedulePref[];
 
     @IsOptional()
     worked_here_before?: boolean;

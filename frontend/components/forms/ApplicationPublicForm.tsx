@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CurrencyInputBR } from "@/components/ui/CurrencyInputBR";
+import { DateInputBR } from "@/components/ui/DateInputBR";
 import {
     Select,
     SelectContent,
@@ -28,17 +29,14 @@ import { api } from "@/lib/api";
 import { useState } from "react";
 import { format } from "date-fns";
 
-const scheduleEnum = z.enum(["MANHA", "TARDE", "NOITE"]);
-
 const formSchema = z.object({
     name: z.string().min(3, "Nome completo é obrigatório"),
     cpf: z.string().min(11, "CPF inválido").transform(v => v.replace(/\D/g, "")),
-    birth_date: z.string().refine((date) => new Date(date).toString() !== 'Invalid Date', {
+    birth_date: z.string().refine((date) => !date || new Date(date).toString() !== 'Invalid Date', {
         message: "Data inválida",
     }),
     education: z.enum(["FUNDAMENTAL", "MEDIO", "SUPERIOR", "POS_GRADUACAO"]),
     vt_value_cents: z.preprocess((val) => Number(val), z.number().min(0)),
-    schedule_prefs: z.array(scheduleEnum).min(1, "Selecione pelo menos um horário"),
     worked_here_before: z.boolean().optional(),
 });
 
@@ -61,7 +59,6 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
             birth_date: initialData.candidate.birth_date ? format(new Date(initialData.candidate.birth_date), "yyyy-MM-dd") : "",
             education: initialData.candidate.education || undefined,
             vt_value_cents: (initialData.candidate.vt_value_cents || 0) / 100,
-            schedule_prefs: initialData.candidate.schedule_prefs || [],
             worked_here_before: initialData.candidate.worked_here_before || false,
         },
     });
@@ -82,13 +79,6 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
             setLoading(false);
         }
     }
-
-    // Helper for schedule checkboxes
-    const schedules = [
-        { id: "MANHA", label: "Manhã" },
-        { id: "TARDE", label: "Tarde" },
-        { id: "NOITE", label: "Noite" },
-    ];
 
     return (
         <Form {...form}>
@@ -130,7 +120,11 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                             <FormItem>
                                 <FormLabel>Data de Nascimento</FormLabel>
                                 <FormControl>
-                                    <Input type="date" {...field} />
+                                    <DateInputBR
+                                        placeholder="DD/MM/AAAA"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -175,57 +169,6 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                                     onChange={field.onChange}
                                 />
                             </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="schedule_prefs"
-                    render={() => (
-                        <FormItem>
-                            <div className="mb-4">
-                                <FormLabel className="text-base">Disponibilidade de Horário</FormLabel>
-                                <FormDescription>
-                                    Selecione todos que se aplicam.
-                                </FormDescription>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                {schedules.map((item) => (
-                                    <FormField
-                                        key={item.id}
-                                        control={form.control}
-                                        name="schedule_prefs"
-                                        render={({ field }) => {
-                                            return (
-                                                <FormItem
-                                                    key={item.id}
-                                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                                >
-                                                    <FormControl>
-                                                        <Checkbox
-                                                            checked={field.value?.includes(item.id as "MANHA" | "TARDE" | "NOITE")}
-                                                            onCheckedChange={(checked) => {
-                                                                return checked
-                                                                    ? field.onChange([...field.value, item.id])
-                                                                    : field.onChange(
-                                                                        field.value?.filter(
-                                                                            (value) => value !== item.id
-                                                                        )
-                                                                    )
-                                                            }}
-                                                        />
-                                                    </FormControl>
-                                                    <FormLabel className="font-normal">
-                                                        {item.label}
-                                                    </FormLabel>
-                                                </FormItem>
-                                            )
-                                        }}
-                                    />
-                                ))}
-                            </div>
                             <FormMessage />
                         </FormItem>
                     )}
