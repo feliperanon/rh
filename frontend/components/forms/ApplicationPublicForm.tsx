@@ -176,61 +176,55 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                     )}
                 />
 
-                {(() => {
-                    // Suporta sector no topo ou aninhado (API pode retornar formatos diferentes)
-                    const sector = initialData?.sector ?? (initialData as { application?: { sector?: { schedule_slots?: string[] } } })?.application?.sector;
-                    const slots = sector?.schedule_slots ?? sector?.scheduleSlots ?? (initialData as { schedule_slots?: string[] })?.schedule_slots ?? [];
-                    const hasSlots = Array.isArray(slots) && slots.length > 0;
-                    return (
-                    <FormField
-                        control={form.control}
-                        name="candidate_schedule_selections"
-                        render={({ field }) => (
-                                <FormItem>
-                                    <div className="mb-2">
-                                        <FormLabel>Horários de sua disponibilidade</FormLabel>
-                                        <FormDescription>
-                                            {hasSlots
-                                                ? "Selecione um ou mais horários em que você pode trabalhar nesta vaga."
-                                                : "Informe seus horários disponíveis (ex: Manhã, Tarde, Comercial)."}
-                                        </FormDescription>
+                <FormField
+                    control={form.control}
+                    name="candidate_schedule_selections"
+                    render={({ field }) => {
+                        const sector = initialData?.sector ?? (initialData as { application?: { sector?: { schedule_slots?: string[] } } })?.application?.sector;
+                        const slots: string[] = Array.isArray(sector?.schedule_slots) ? sector.schedule_slots : (Array.isArray(sector?.scheduleSlots) ? sector.scheduleSlots : []);
+                        const hasSlots = slots.length > 0;
+                        return (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Horários de sua disponibilidade</FormLabel>
+                                <FormDescription>
+                                    {hasSlots
+                                        ? "Selecione um ou mais horários em que você pode trabalhar nesta vaga."
+                                        : "Informe seus horários disponíveis (ex: Manhã, Tarde, Comercial)."}
+                                </FormDescription>
+                                {hasSlots ? (
+                                    <div className="flex flex-col gap-2">
+                                        {slots.map((slot: string) => (
+                                            <div key={slot} className="flex flex-row items-center space-x-3">
+                                                <Checkbox
+                                                    id={`schedule-${slot}`}
+                                                    checked={field.value?.includes(slot)}
+                                                    onCheckedChange={(checked) =>
+                                                        checked
+                                                            ? field.onChange([...(field.value || []), slot])
+                                                            : field.onChange((field.value || []).filter((v) => v !== slot))
+                                                    }
+                                                />
+                                                <label htmlFor={`schedule-${slot}`} className="text-sm font-normal cursor-pointer">
+                                                    {slot}
+                                                </label>
+                                            </div>
+                                        ))}
                                     </div>
-                                    {hasSlots ? (
-                                        <div className="flex flex-col gap-2">
-                                            {slots.map((slot: string) => (
-                                                <FormItem key={slot} className="flex flex-row items-center space-x-3 space-y-0">
-                                                    <FormControl>
-                                                        <Checkbox
-                                                            checked={field.value?.includes(slot)}
-                                                            onCheckedChange={(checked) =>
-                                                                checked
-                                                                    ? field.onChange([...(field.value || []), slot])
-                                                                    : field.onChange((field.value || []).filter((v) => v !== slot))
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormLabel className="font-normal">{slot}</FormLabel>
-                                                </FormItem>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Ex: Manhã, Tarde, Comercial"
-                                                value={Array.isArray(field.value) && field.value.length > 0 ? field.value.join(" | ") : ""}
-                                                onChange={(e) => {
-                                                    const text = e.target.value.trim();
-                                                    field.onChange(text ? [text] : []);
-                                                }}
-                                            />
-                                        </FormControl>
-                                    )}
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                    />
-                );
-                })()}
+                                ) : (
+                                    <Input
+                                        placeholder="Ex: Manhã, Tarde, Comercial"
+                                        value={Array.isArray(field.value) && field.value.length > 0 ? field.value.join(" | ") : ""}
+                                        onChange={(e) => {
+                                            const text = e.target.value.trim();
+                                            field.onChange(text ? [text] : []);
+                                        }}
+                                    />
+                                )}
+                                <FormMessage />
+                            </FormItem>
+                        );
+                    }}
+                />
 
                 {initialData.company.perguntar_recontratacao && (
                     <FormField
