@@ -158,6 +158,37 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                     )}
                 />
 
+                {/* Horários - entre Escolaridade e VT */}
+                <FormField
+                    control={form.control}
+                    name="candidate_schedule_selections"
+                    render={({ field }) => {
+                        const sector = initialData?.sector ?? (initialData as { application?: { sector?: { schedule_slots?: string[] } } })?.application?.sector;
+                        const slots: string[] = Array.isArray(sector?.schedule_slots) ? sector.schedule_slots : (Array.isArray(sector?.scheduleSlots) ? sector.scheduleSlots : []);
+                        const hasSlots = slots.length > 0;
+                        return (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Horários de sua disponibilidade</FormLabel>
+                                <FormDescription>
+                                    {hasSlots ? "Selecione um ou mais horários em que você pode trabalhar nesta vaga." : "Informe seus horários disponíveis (ex: Manhã, Tarde, Comercial)."}
+                                </FormDescription>
+                                {hasSlots ? (
+                                    <div className="flex flex-col gap-2">
+                                        {slots.map((slot: string) => (
+                                            <div key={slot} className="flex flex-row items-center space-x-3">
+                                                <Checkbox id={`schedule-${slot}`} checked={field.value?.includes(slot)} onCheckedChange={(c) => c ? field.onChange([...(field.value || []), slot]) : field.onChange((field.value || []).filter((v) => v !== slot))} />
+                                                <label htmlFor={`schedule-${slot}`} className="text-sm font-normal cursor-pointer">{slot}</label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <Input placeholder="Ex: Manhã, Tarde, Comercial" value={Array.isArray(field.value) && field.value.length > 0 ? field.value.join(" | ") : ""} onChange={(e) => { const t = e.target.value.trim(); field.onChange(t ? [t] : []); }} />
+                                )}
+                                <FormMessage />
+                            </FormItem>
+                        );
+                    }}
+                />
                 <FormField
                     control={form.control}
                     name="vt_value_cents"
@@ -176,57 +207,7 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="candidate_schedule_selections"
-                    render={({ field }) => {
-                        const sector = initialData?.sector ?? (initialData as { application?: { sector?: { schedule_slots?: string[] } } })?.application?.sector;
-                        const slots: string[] = Array.isArray(sector?.schedule_slots) ? sector.schedule_slots : (Array.isArray(sector?.scheduleSlots) ? sector.scheduleSlots : []);
-                        const hasSlots = slots.length > 0;
-                        return (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Horários de sua disponibilidade</FormLabel>
-                                <FormDescription>
-                                    {hasSlots
-                                        ? "Selecione um ou mais horários em que você pode trabalhar nesta vaga."
-                                        : "Informe seus horários disponíveis (ex: Manhã, Tarde, Comercial)."}
-                                </FormDescription>
-                                {hasSlots ? (
-                                    <div className="flex flex-col gap-2">
-                                        {slots.map((slot: string) => (
-                                            <div key={slot} className="flex flex-row items-center space-x-3">
-                                                <Checkbox
-                                                    id={`schedule-${slot}`}
-                                                    checked={field.value?.includes(slot)}
-                                                    onCheckedChange={(checked) =>
-                                                        checked
-                                                            ? field.onChange([...(field.value || []), slot])
-                                                            : field.onChange((field.value || []).filter((v) => v !== slot))
-                                                    }
-                                                />
-                                                <label htmlFor={`schedule-${slot}`} className="text-sm font-normal cursor-pointer">
-                                                    {slot}
-                                                </label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <Input
-                                        placeholder="Ex: Manhã, Tarde, Comercial"
-                                        value={Array.isArray(field.value) && field.value.length > 0 ? field.value.join(" | ") : ""}
-                                        onChange={(e) => {
-                                            const text = e.target.value.trim();
-                                            field.onChange(text ? [text] : []);
-                                        }}
-                                    />
-                                )}
-                                <FormMessage />
-                            </FormItem>
-                        );
-                    }}
-                />
-
-                {initialData.company.perguntar_recontratacao && (
+                {initialData?.company?.perguntar_recontratacao && (
                     <FormField
                         control={form.control}
                         name="worked_here_before"
