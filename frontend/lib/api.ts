@@ -59,6 +59,9 @@ export const api = {
         method: "PATCH",
         body: JSON.stringify(data),
     }),
+    deleteCompany: (id: string) => fetchWithAuth(`/companies/${id}`, {
+        method: "DELETE",
+    }),
     toggleCompany: (id: string) => fetchWithAuth(`/companies/${id}`, {
         method: "DELETE",
     }),

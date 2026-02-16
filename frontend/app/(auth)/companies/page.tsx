@@ -27,8 +27,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, MoreHorizontal, Pencil } from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 import { Company } from "@/types";
 import { CompanyForm } from "@/components/forms/CompanyForm";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -73,6 +74,17 @@ export default function CompaniesPage() {
         setOpen(true);
     };
 
+    const handleDelete = async (company: Company) => {
+        if (!confirm(`Excluir a empresa "${company.nome_interno}"? Ela será desativada e não aparecerá mais nas filas.`)) return;
+        try {
+            await api.deleteCompany(company.id);
+            toast.success("Empresa excluída");
+            fetchCompanies();
+        } catch (error: any) {
+            toast.error("Erro ao excluir", { description: error.message });
+        }
+    };
+
     const onSuccess = () => {
         setOpen(false);
         fetchCompanies();
@@ -115,7 +127,7 @@ export default function CompaniesPage() {
                         Preencha os dados da empresa abaixo.
                     </DialogDescription>
                 </DialogHeader>
-                <CompanyForm company={selectedCompany} onSuccess={onSuccess} />
+                <CompanyForm key={selectedCompany?.id ?? "new"} company={selectedCompany} onSuccess={onSuccess} />
             </DialogContent>
         </Dialog>
     );
@@ -220,6 +232,12 @@ export default function CompaniesPage() {
                                                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
                                                             <DropdownMenuItem onClick={() => handleEdit(company)}>
                                                                 <Pencil className="mr-2 h-4 w-4" /> Editar
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                onClick={() => handleDelete(company)}
+                                                                className="text-red-600 focus:text-red-600"
+                                                            >
+                                                                <Trash2 className="mr-2 h-4 w-4" /> Excluir
                                                             </DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
