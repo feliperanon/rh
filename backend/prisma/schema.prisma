@@ -139,14 +139,15 @@ model Candidate {
 }
 
 model Application {
-  id           String            @id @default(cuid())
-  candidate_id String
-  company_id   String
-  sector_id    String
-  protocol     String            @unique
-  status       ApplicationStatus @default(PRE_CADASTRO)
-  created_at   DateTime          @default(now())
-  updated_at   DateTime          @updatedAt
+  id                        String            @id @default(cuid())
+  candidate_id               String
+  company_id                 String
+  sector_id                  String
+  protocol                   String            @unique
+  status                     ApplicationStatus @default(PRE_CADASTRO)
+  candidate_schedule_selections String[]       @default([])
+  created_at                 DateTime          @default(now())
+  updated_at                 DateTime          @updatedAt
 
   // Relations
   candidate     Candidate      @relation(fields: [candidate_id], references: [id], onDelete: Cascade)

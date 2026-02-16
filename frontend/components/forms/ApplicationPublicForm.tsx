@@ -38,6 +38,7 @@ const formSchema = z.object({
     education: z.enum(["FUNDAMENTAL", "MEDIO", "SUPERIOR", "POS_GRADUACAO"]),
     vt_value_cents: z.preprocess((val) => Number(val), z.number().min(0)),
     worked_here_before: z.boolean().optional(),
+    candidate_schedule_selections: z.array(z.string()).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -60,6 +61,7 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
             education: initialData.candidate.education || undefined,
             vt_value_cents: (initialData.candidate.vt_value_cents || 0) / 100,
             worked_here_before: initialData.candidate.worked_here_before || false,
+            candidate_schedule_selections: initialData.candidate_schedule_selections || [],
         },
     });
 
@@ -173,6 +175,48 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                         </FormItem>
                     )}
                 />
+
+                {initialData.sector?.schedule_slots?.length > 0 && (
+                    <FormField
+                        control={form.control}
+                        name="candidate_schedule_selections"
+                        render={() => (
+                            <FormItem>
+                                <div className="mb-2">
+                                    <FormLabel>Horários de sua disponibilidade</FormLabel>
+                                    <FormDescription>
+                                        Selecione um ou mais horários em que você pode trabalhar nesta vaga.
+                                    </FormDescription>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    {initialData.sector.schedule_slots.map((slot: string) => (
+                                        <FormField
+                                            key={slot}
+                                            control={form.control}
+                                            name="candidate_schedule_selections"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value?.includes(slot)}
+                                                            onCheckedChange={(checked) =>
+                                                                checked
+                                                                    ? field.onChange([...(field.value || []), slot])
+                                                                    : field.onChange((field.value || []).filter((v) => v !== slot))
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">{slot}</FormLabel>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    ))}
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
 
                 {initialData.company.perguntar_recontratacao && (
                     <FormField

@@ -380,6 +380,7 @@ export class ApplicationsService {
                 nome: app.sector.nome,
                 schedule_slots: (app.sector as { schedule_slots?: string[] }).schedule_slots || [],
             },
+            candidate_schedule_selections: (app as { candidate_schedule_selections?: string[] }).candidate_schedule_selections || [],
         };
     }
 
@@ -400,6 +401,19 @@ export class ApplicationsService {
         const applicationId = inviteToken.application_id;
         const candidateId = inviteToken.application.candidate_id;
 
+        // Validar que os horários selecionados pertencem ao setor (se houver)
+        if (data.candidate_schedule_selections && data.candidate_schedule_selections.length > 0) {
+            const appWithSector = await this.prisma.application.findUnique({
+                where: { id: applicationId },
+                include: { sector: true },
+            });
+            const sectorSlots = (appWithSector?.sector as { schedule_slots?: string[] })?.schedule_slots || [];
+            const invalid = data.candidate_schedule_selections.filter((s) => !sectorSlots.includes(s));
+            if (invalid.length > 0) {
+                throw new BadRequestException('Horários selecionados inválidos para esta vaga');
+            }
+        }
+
         // Atualiza Candidato
         await this.prisma.candidate.update({
             where: { id: candidateId },
@@ -414,10 +428,17 @@ export class ApplicationsService {
         });
 
         // Atualiza Aplicação e Token
+        const appData: { status: ApplicationStatus; candidate_schedule_selections?: string[] } = {
+            status: ApplicationStatus.CADASTRO_PREENCHIDO,
+        };
+        if (data.candidate_schedule_selections && data.candidate_schedule_selections.length > 0) {
+            appData.candidate_schedule_selections = data.candidate_schedule_selections;
+        }
+
         await this.prisma.$transaction([
             this.prisma.application.update({
                 where: { id: applicationId },
-                data: { status: ApplicationStatus.CADASTRO_PREENCHIDO },
+                data: appData,
             }),
             this.prisma.inviteToken.update({
                 where: { id: inviteToken.id },
@@ -489,6 +510,7 @@ export class ApplicationsService {
             { header: 'Setor', key: 'sector', width: 20 },
             { header: 'Valor Transporte (R$)', key: 'vt_value', width: 18 },
             { header: 'Horários da Vaga', key: 'schedule_slots', width: 30 },
+            { header: 'Horários Selecionados', key: 'candidate_schedule_selections', width: 30 },
             { header: 'Status', key: 'status', width: 15 },
         ];
 
@@ -499,6 +521,10 @@ export class ApplicationsService {
             const sectorSlots = (app.sector as { schedule_slots?: string[] }).schedule_slots;
             const scheduleSlotsStr = Array.isArray(sectorSlots) && sectorSlots.length
                 ? sectorSlots.join(' | ')
+                : '';
+            const candidateSelections = (app as { candidate_schedule_selections?: string[] }).candidate_schedule_selections;
+            const candidateSelectionsStr = Array.isArray(candidateSelections) && candidateSelections.length
+                ? candidateSelections.join(' | ')
                 : '';
 
             sheet.addRow({
@@ -511,6 +537,7 @@ export class ApplicationsService {
                 sector: app.sector.nome,
                 vt_value: vtValue,
                 schedule_slots: scheduleSlotsStr,
+                candidate_schedule_selections: candidateSelectionsStr,
                 status: app.status,
             });
         });
@@ -527,11 +554,19 @@ export class ApplicationsService {
                 bottom: { style: 'thin' as const },
                 right: { style: 'thin' as const },
             },
-            alignment: { vertical: 'middle' as const, wrapText: true },
+            alignment: { vertical: 'middle' as const, horizontal: 'center' as const, wrapText: true },
         };
-        sheet.getRow(1).eachCell((cell: Cell) => {
-            Object.assign(cell, headerStyle);
+        sheet.getRow(1).eachCell((cell: unknown) => {
+            Object.assign(cell as object, headerStyle);
         });
+
+        // Centralizar conteúdo das linhas de dados
+        const dataRowStyle = { alignment: { vertical: 'middle' as const, horizontal: 'center' as const } };
+        for (let r = 2; r <= sheet.rowCount; r++) {
+            sheet.getRow(r).eachCell((cell: unknown) => {
+                Object.assign(cell as object, dataRowStyle);
+            });
+        }
 
         // --- ABA 2: EVENTOS (TIMELINE) ---
         const eventsSheet = workbook.addWorksheet('Eventos');
@@ -561,9 +596,16 @@ export class ApplicationsService {
         eventsSheet.getColumn('occurred_at').numFmt = 'dd/mm/yyyy hh:mm';
 
         // Formatar cabeçalho - Eventos
-        eventsSheet.getRow(1).eachCell((cell: Cell) => {
-            Object.assign(cell, headerStyle);
+        eventsSheet.getRow(1).eachCell((cell: unknown) => {
+            Object.assign(cell as object, headerStyle);
         });
+
+        // Centralizar conteúdo das linhas de dados - Eventos
+        for (let r = 2; r <= eventsSheet.rowCount; r++) {
+            eventsSheet.getRow(r).eachCell((cell: unknown) => {
+                Object.assign(cell as object, dataRowStyle);
+            });
+        }
 
         await workbook.xlsx.write(res);
     }

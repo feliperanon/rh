@@ -239,7 +239,12 @@ export default function ApplicationDetailsPage() {
                                 {application.sector &&
                                     ((application.sector as { schedule_slots?: string[] }).schedule_slots?.length ?? 0) > 0 && (
                                     <p className="mt-1 text-xs app-text-muted">
-                                        Horários: {((application.sector as { schedule_slots?: string[] }).schedule_slots ?? []).join(" | ")}
+                                        Horários da vaga: {((application.sector as { schedule_slots?: string[] }).schedule_slots ?? []).join(" | ")}
+                                    </p>
+                                )}
+                                {(application as { candidate_schedule_selections?: string[] }).candidate_schedule_selections?.length > 0 && (
+                                    <p className="mt-2 text-xs app-text-muted">
+                                        Horários selecionados pelo candidato: {((application as { candidate_schedule_selections?: string[] }).candidate_schedule_selections ?? []).join(" | ")}
                                     </p>
                                 )}
                             </div>

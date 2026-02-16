@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum, IsNumber, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEnum, IsNumber, Min, IsArray } from 'class-validator';
 import { IsCPF } from '../../common/validators/is-cpf.validator';
 import { Education } from '@prisma/client';
 
@@ -27,4 +27,9 @@ export class SubmitApplicationDto {
 
     @IsOptional()
     worked_here_before?: boolean;
+
+    @IsArray()
+    @IsString({ each: true })
+    @IsOptional()
+    candidate_schedule_selections?: string[];
 }
