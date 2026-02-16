@@ -144,12 +144,12 @@ export function SectorForm({ sector, companyId, onSuccess }: SectorFormProps) {
                     )}
                 />
 
-                <FormItem>
+                <div className="space-y-2">
                     <div className="mb-2">
-                        <FormLabel className="text-slate-700">Horários disponíveis de trabalho</FormLabel>
-                        <FormDescription className="text-slate-500">
+                        <label className="text-sm font-medium leading-none text-slate-700">Horários disponíveis de trabalho</label>
+                        <p className="text-sm text-slate-500 mt-1">
                             Adicione os horários que esta vaga oferece (ex: 08:00 às 17:00).
-                        </FormDescription>
+                        </p>
                     </div>
                     <div className="flex flex-col gap-2">
                         {localSlots.map((slot, index) => (
@@ -191,7 +191,7 @@ export function SectorForm({ sector, companyId, onSuccess }: SectorFormProps) {
                             Adicionar horário
                         </Button>
                     </div>
-                </FormItem>
+                </div>
 
                 <FormField
                     control={form.control}
