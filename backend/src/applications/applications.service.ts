@@ -377,7 +377,7 @@ export class ApplicationsService {
             sector: {
                 id: app.sector.id,
                 nome: app.sector.nome,
-                schedule_prefs: app.sector.schedule_prefs || [],
+                schedule_prefs: (app.sector as { schedule_prefs?: unknown[] }).schedule_prefs || [],
             },
         };
     }
@@ -495,8 +495,9 @@ export class ApplicationsService {
             const vtValue = app.candidate.vt_value_cents != null
                 ? (app.candidate.vt_value_cents / 100).toFixed(2)
                 : '';
-            const schedulePrefs = Array.isArray(app.sector.schedule_prefs) && app.sector.schedule_prefs.length
-                ? app.sector.schedule_prefs.map((p: string) => p === 'MANHA' ? 'Manhã' : p === 'TARDE' ? 'Tarde' : p === 'NOITE' ? 'Noite' : p).join(', ')
+            const sectorPrefs = (app.sector as { schedule_prefs?: string[] }).schedule_prefs;
+            const schedulePrefs = Array.isArray(sectorPrefs) && sectorPrefs.length
+                ? sectorPrefs.map((p: string) => p === 'MANHA' ? 'Manhã' : p === 'TARDE' ? 'Tarde' : p === 'NOITE' ? 'Noite' : p).join(', ')
                 : '';
 
             sheet.addRow({
@@ -527,8 +528,8 @@ export class ApplicationsService {
             },
             alignment: { vertical: 'middle' as const, wrapText: true },
         };
-        sheet.getRow(1).eachCell((cell) => {
-            Object.assign(cell, headerStyle);
+        sheet.getRow(1).eachCell((cell: unknown) => {
+            Object.assign(cell as object, headerStyle);
         });
 
         // --- ABA 2: EVENTOS (TIMELINE) ---
@@ -559,8 +560,8 @@ export class ApplicationsService {
         eventsSheet.getColumn('occurred_at').numFmt = 'dd/mm/yyyy hh:mm';
 
         // Formatar cabeçalho - Eventos
-        eventsSheet.getRow(1).eachCell((cell) => {
-            Object.assign(cell, headerStyle);
+        eventsSheet.getRow(1).eachCell((cell: unknown) => {
+            Object.assign(cell as object, headerStyle);
         });
 
         await workbook.xlsx.write(res);
