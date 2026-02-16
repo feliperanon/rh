@@ -401,16 +401,19 @@ export class ApplicationsService {
         const applicationId = inviteToken.application_id;
         const candidateId = inviteToken.application.candidate_id;
 
-        // Validar que os horários selecionados pertencem ao setor (se houver)
+        // Validar que os horários selecionados pertencem ao setor (quando o setor tem slots predefinidos)
         if (data.candidate_schedule_selections && data.candidate_schedule_selections.length > 0) {
             const appWithSector = await this.prisma.application.findUnique({
                 where: { id: applicationId },
                 include: { sector: true },
             });
             const sectorSlots = (appWithSector?.sector as { schedule_slots?: string[] })?.schedule_slots || [];
-            const invalid = data.candidate_schedule_selections.filter((s) => !sectorSlots.includes(s));
-            if (invalid.length > 0) {
-                throw new BadRequestException('Horários selecionados inválidos para esta vaga');
+            // Só valida se o setor tem slots; se não tiver, aceita texto livre do candidato
+            if (sectorSlots.length > 0) {
+                const invalid = data.candidate_schedule_selections.filter((s) => !sectorSlots.includes(s));
+                if (invalid.length > 0) {
+                    throw new BadRequestException('Horários selecionados inválidos para esta vaga');
+                }
             }
         }
 

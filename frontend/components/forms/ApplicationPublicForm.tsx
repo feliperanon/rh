@@ -185,47 +185,49 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                     <FormField
                         control={form.control}
                         name="candidate_schedule_selections"
-                        render={() => {
-                            return (
+                        render={({ field }) => (
                                 <FormItem>
                                     <div className="mb-2">
                                         <FormLabel>Horários de sua disponibilidade</FormLabel>
                                         <FormDescription>
                                             {hasSlots
                                                 ? "Selecione um ou mais horários em que você pode trabalhar nesta vaga."
-                                                : "O recrutador ainda não cadastrou os horários desta vaga. Você pode prosseguir com o cadastro."}
+                                                : "Informe seus horários disponíveis (ex: Manhã, Tarde, Comercial)."}
                                         </FormDescription>
                                     </div>
                                     {hasSlots ? (
                                         <div className="flex flex-col gap-2">
                                             {slots.map((slot: string) => (
-                                                <FormField
-                                                    key={slot}
-                                                    control={form.control}
-                                                    name="candidate_schedule_selections"
-                                                    render={({ field }) => (
-                                                        <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                                                            <FormControl>
-                                                                <Checkbox
-                                                                    checked={field.value?.includes(slot)}
-                                                                    onCheckedChange={(checked) =>
-                                                                        checked
-                                                                            ? field.onChange([...(field.value || []), slot])
-                                                                            : field.onChange((field.value || []).filter((v) => v !== slot))
-                                                                    }
-                                                                />
-                                                            </FormControl>
-                                                            <FormLabel className="font-normal">{slot}</FormLabel>
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                                <FormItem key={slot} className="flex flex-row items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value?.includes(slot)}
+                                                            onCheckedChange={(checked) =>
+                                                                checked
+                                                                    ? field.onChange([...(field.value || []), slot])
+                                                                    : field.onChange((field.value || []).filter((v) => v !== slot))
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">{slot}</FormLabel>
+                                                </FormItem>
                                             ))}
                                         </div>
-                                    ) : null}
+                                    ) : (
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Ex: Manhã, Tarde, Comercial"
+                                                value={Array.isArray(field.value) && field.value.length > 0 ? field.value.join(" | ") : ""}
+                                                onChange={(e) => {
+                                                    const text = e.target.value.trim();
+                                                    field.onChange(text ? [text] : []);
+                                                }}
+                                            />
+                                        </FormControl>
+                                    )}
                                     <FormMessage />
                                 </FormItem>
-                            );
-                        }}
+                            )}
                     />
                 );
                 })()}
