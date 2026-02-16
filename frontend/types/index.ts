@@ -36,7 +36,7 @@ export interface Sector {
     ativo: boolean;
     company_id: string;
     company?: Company;
-    schedule_prefs?: ("MANHA" | "TARDE" | "NOITE")[];
+    schedule_slots?: string[];
     createdAt: string;
     updatedAt: string;
 }

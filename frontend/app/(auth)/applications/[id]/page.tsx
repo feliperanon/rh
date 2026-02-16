@@ -237,11 +237,9 @@ export default function ApplicationDetailsPage() {
                                 <p className="text-sm font-medium app-text-muted">Vaga</p>
                                 <p className="app-text">{application.company.nome_interno} - {application.sector.nome}</p>
                                 {application.sector &&
-                                    ((application.sector as { schedule_prefs?: string[] }).schedule_prefs?.length ?? 0) > 0 && (
+                                    ((application.sector as { schedule_slots?: string[] }).schedule_slots?.length ?? 0) > 0 && (
                                     <p className="mt-1 text-xs app-text-muted">
-                                        Horários: {((application.sector as { schedule_prefs?: string[] }).schedule_prefs ?? [])
-                                            .map((p: string) => p === "MANHA" ? "Manhã" : p === "TARDE" ? "Tarde" : "Noite")
-                                            .join(", ")}
+                                        Horários: {((application.sector as { schedule_slots?: string[] }).schedule_slots ?? []).join(" | ")}
                                     </p>
                                 )}
                             </div>

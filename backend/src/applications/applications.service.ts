@@ -8,6 +8,7 @@ import { generateProtocol } from '../common/utils/protocol';
 import { generateToken, hashToken } from '../common/utils/tokens';
 import { generateWhatsAppLink, getDefaultWhatsAppMessage } from '../common/utils/whatsapp';
 import { ApplicationStatus, EventType } from '@prisma/client';
+import type { Cell } from 'exceljs';
 
 @Injectable()
 export class ApplicationsService {
@@ -377,7 +378,7 @@ export class ApplicationsService {
             sector: {
                 id: app.sector.id,
                 nome: app.sector.nome,
-                schedule_prefs: (app.sector as { schedule_prefs?: unknown[] }).schedule_prefs || [],
+                schedule_slots: (app.sector as { schedule_slots?: string[] }).schedule_slots || [],
             },
         };
     }
@@ -487,7 +488,7 @@ export class ApplicationsService {
             { header: 'Empresa', key: 'company', width: 20 },
             { header: 'Setor', key: 'sector', width: 20 },
             { header: 'Valor Transporte (R$)', key: 'vt_value', width: 18 },
-            { header: 'Horários da Vaga', key: 'schedule_prefs', width: 22 },
+            { header: 'Horários da Vaga', key: 'schedule_slots', width: 30 },
             { header: 'Status', key: 'status', width: 15 },
         ];
 
@@ -495,9 +496,9 @@ export class ApplicationsService {
             const vtValue = app.candidate.vt_value_cents != null
                 ? (app.candidate.vt_value_cents / 100).toFixed(2)
                 : '';
-            const sectorPrefs = (app.sector as { schedule_prefs?: string[] }).schedule_prefs;
-            const schedulePrefs = Array.isArray(sectorPrefs) && sectorPrefs.length
-                ? sectorPrefs.map((p: string) => p === 'MANHA' ? 'Manhã' : p === 'TARDE' ? 'Tarde' : p === 'NOITE' ? 'Noite' : p).join(', ')
+            const sectorSlots = (app.sector as { schedule_slots?: string[] }).schedule_slots;
+            const scheduleSlotsStr = Array.isArray(sectorSlots) && sectorSlots.length
+                ? sectorSlots.join(' | ')
                 : '';
 
             sheet.addRow({
@@ -509,7 +510,7 @@ export class ApplicationsService {
                 company: app.company.sigilosa ? 'Confidencial' : app.company.nome_interno,
                 sector: app.sector.nome,
                 vt_value: vtValue,
-                schedule_prefs: schedulePrefs,
+                schedule_slots: scheduleSlotsStr,
                 status: app.status,
             });
         });
@@ -528,8 +529,8 @@ export class ApplicationsService {
             },
             alignment: { vertical: 'middle' as const, wrapText: true },
         };
-        sheet.getRow(1).eachCell((cell: unknown) => {
-            Object.assign(cell as object, headerStyle);
+        sheet.getRow(1).eachCell((cell: Cell) => {
+            Object.assign(cell, headerStyle);
         });
 
         // --- ABA 2: EVENTOS (TIMELINE) ---
@@ -560,8 +561,8 @@ export class ApplicationsService {
         eventsSheet.getColumn('occurred_at').numFmt = 'dd/mm/yyyy hh:mm';
 
         // Formatar cabeçalho - Eventos
-        eventsSheet.getRow(1).eachCell((cell: unknown) => {
-            Object.assign(cell as object, headerStyle);
+        eventsSheet.getRow(1).eachCell((cell: Cell) => {
+            Object.assign(cell, headerStyle);
         });
 
         await workbook.xlsx.write(res);

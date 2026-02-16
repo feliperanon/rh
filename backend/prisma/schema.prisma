@@ -62,11 +62,6 @@ enum Education {
   POS_GRADUACAO
 }
 
-enum SchedulePref {
-  MANHA
-  TARDE
-  NOITE
-}
 
 // ============================================
 // MODELS
@@ -109,7 +104,7 @@ model Sector {
   company_id     String
   nome          String
   ativo         Boolean        @default(true)
-  schedule_prefs SchedulePref[]  @default([])
+  schedule_slots String[]        @default([])
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
 

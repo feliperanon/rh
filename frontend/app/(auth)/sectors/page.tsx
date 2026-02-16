@@ -214,10 +214,8 @@ export default function SectorsPage() {
                                         {sector.nome}
                                     </TableCell>
                                     <TableCell className="text-sm">
-                                        {sector.schedule_prefs?.length
-                                            ? sector.schedule_prefs
-                                                  .map((p) => (p === "MANHA" ? "Manhã" : p === "TARDE" ? "Tarde" : "Noite"))
-                                                  .join(", ")
+                                        {sector.schedule_slots?.length
+                                            ? sector.schedule_slots.join(" | ")
                                             : "—"}
                                     </TableCell>
                                     <TableCell>
