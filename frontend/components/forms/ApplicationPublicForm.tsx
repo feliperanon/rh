@@ -167,7 +167,7 @@ export function ApplicationPublicForm({ token, initialData, onSuccess }: Applica
                     name="vt_value_cents"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Valor do Vale Transporte (Diário)</FormLabel>
+                            <FormLabel>Valor do Vale Transporte (Diário - ida e volta total)</FormLabel>
                             <FormControl>
                                 <CurrencyInputBR
                                     placeholder="0,00"

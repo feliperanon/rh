@@ -487,10 +487,19 @@ export class ApplicationsService {
             { header: 'CPF', key: 'cpf', width: 15 },
             { header: 'Empresa', key: 'company', width: 20 },
             { header: 'Setor', key: 'sector', width: 20 },
+            { header: 'Valor Transporte (R$)', key: 'vt_value', width: 18 },
+            { header: 'Horário Desejado', key: 'schedule_prefs', width: 22 },
             { header: 'Status', key: 'status', width: 15 },
         ];
 
         applications.forEach((app: any) => {
+            const vtValue = app.candidate.vt_value_cents != null
+                ? (app.candidate.vt_value_cents / 100).toFixed(2)
+                : '';
+            const schedulePrefs = Array.isArray(app.candidate.schedule_prefs) && app.candidate.schedule_prefs.length
+                ? app.candidate.schedule_prefs.map((p: string) => p === 'MANHA' ? 'Manhã' : p === 'TARDE' ? 'Tarde' : p === 'NOITE' ? 'Noite' : p).join(', ')
+                : '';
+
             sheet.addRow({
                 date: app.created_at,
                 protocol: app.protocol,
@@ -499,11 +508,29 @@ export class ApplicationsService {
                 cpf: app.candidate.cpf || 'N/A',
                 company: app.company.sigilosa ? 'Confidencial' : app.company.nome_interno,
                 sector: app.sector.nome,
+                vt_value: vtValue,
+                schedule_prefs: schedulePrefs,
                 status: app.status,
             });
         });
 
         sheet.getColumn('date').numFmt = 'dd/mm/yyyy';
+
+        // Formatar cabeçalho - Inscrições
+        const headerStyle = {
+            font: { bold: true, size: 11 },
+            fill: { type: 'pattern' as const, pattern: 'solid' as const, fgColor: { argb: 'FFE8EDF4' } },
+            border: {
+                top: { style: 'thin' as const },
+                left: { style: 'thin' as const },
+                bottom: { style: 'thin' as const },
+                right: { style: 'thin' as const },
+            },
+            alignment: { vertical: 'middle' as const, wrapText: true },
+        };
+        sheet.getRow(1).eachCell((cell) => {
+            Object.assign(cell, headerStyle);
+        });
 
         // --- ABA 2: EVENTOS (TIMELINE) ---
         const eventsSheet = workbook.addWorksheet('Eventos');
@@ -531,6 +558,11 @@ export class ApplicationsService {
         });
 
         eventsSheet.getColumn('occurred_at').numFmt = 'dd/mm/yyyy hh:mm';
+
+        // Formatar cabeçalho - Eventos
+        eventsSheet.getRow(1).eachCell((cell) => {
+            Object.assign(cell, headerStyle);
+        });
 
         await workbook.xlsx.write(res);
     }
